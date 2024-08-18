@@ -34,6 +34,26 @@ struct IntCMat slice_int_matrix(struct IntCMat mat, int slice0[2], int slice1[2]
 
 struct FloatCMat slice_float_matrix(struct FloatCMat mat, int slice0[2], int slice1[2]);
 
+int assign_int_slice(struct IntCMat m1, struct IntCMat m2, int slice0[2], int slice1[2]);
+
+int assign_float_slice(struct FloatCMat m1, struct FloatCMat m2, int slice0[2], int slice1[2]);
+
+int matadd_int(struct IntCMat m1, struct IntCMat m2, struct IntCMat m3);
+
+int matadd_float(struct FloatCMat m1, struct FloatCMat m2, struct FloatCMat m3);
+
+int matsub_int(struct IntCMat m1, struct IntCMat m2, struct IntCMat m3);
+
+int matsub_float(struct FloatCMat m1, struct FloatCMat m2, struct FloatCMat m3);
+
+int matelm_int(struct IntCMat m1, struct IntCMat m2, struct IntCMat m3);
+
+int matelm_float(struct FloatCMat m1, struct FloatCMat m2, struct FloatCMat m3);
+
+int mateld_int(struct IntCMat m1, struct IntCMat m2, struct IntCMat m3);
+
+int mateld_float(struct FloatCMat m1, struct FloatCMat m2, struct FloatCMat m3);
+
 int print_int_matrix(struct IntCMat mat);
 
 int print_float_matrix(struct FloatCMat mat);

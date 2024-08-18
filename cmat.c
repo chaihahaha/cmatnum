@@ -196,6 +196,162 @@ struct FloatCMat slice_float_matrix(struct FloatCMat mat, int slice0[2], int sli
     return new_mat;
 }
 
+int assign_int_slice(struct IntCMat m1, struct IntCMat m2, int slice0[2], int slice1[2]) {
+    if (slice0[1] < 0) {
+        slice0[1] += m1.shape[0];
+    }
+    if (slice1[1] < 0) {
+        slice1[1] += m1.shape[1];
+    }
+    if (slice0[0] >= slice0[1] || slice1[0] >= slice1[1] || slice0[1] - slice0[0] != m2.shape[0] || slice1[1] - slice1[0] != m2.shape[1]) {
+        return -1;
+    }
+    for (int i = 0; i < m2.shape[0]; i++) {
+        for (int j = 0; j < m2.shape[1]; j++) {
+            m1.data[slice0[0] + i][slice1[0] + j] = m2.data[i][j];
+        }
+    }
+    return 0;
+}
+
+int assign_float_slice(struct FloatCMat m1, struct FloatCMat m2, int slice0[2], int slice1[2]) {
+    if (slice0[1] < 0) {
+        slice0[1] += m1.shape[0];
+    }
+    if (slice1[1] < 0) {
+        slice1[1] += m1.shape[1];
+    }
+    if (slice0[0] >= slice0[1] || slice1[0] >= slice1[1] || slice0[1] - slice0[0] != m2.shape[0] || slice1[1] - slice1[0] != m2.shape[1]) {
+        return -1;
+    }
+    for (int i = 0; i < m2.shape[0]; i++) {
+        for (int j = 0; j < m2.shape[1]; j++) {
+            m1.data[slice0[0] + i][slice1[0] + j] = m2.data[i][j];
+        }
+    }
+    return 0;
+}
+
+int matadd_int(struct IntCMat m1, struct IntCMat m2, struct IntCMat m3) {
+    if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
+        return -1;
+    }
+    if (m1.shape[0] != m3.shape[0] || m1.shape[1] != m3.shape[1]) {
+        return -1;
+    }
+    for (int i = 0; i < m2.shape[0]; i++) {
+        for (int j = 0; j < m2.shape[1]; j++) {
+            m3.data[i][j] = m1.data[i][j] + m2.data[i][j];
+        }
+    }
+    return 0;
+}
+
+int matadd_float(struct FloatCMat m1, struct FloatCMat m2, struct FloatCMat m3) {
+    if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
+        return -1;
+    }
+    if (m1.shape[0] != m3.shape[0] || m1.shape[1] != m3.shape[1]) {
+        return -1;
+    }
+    for (int i = 0; i < m2.shape[0]; i++) {
+        for (int j = 0; j < m2.shape[1]; j++) {
+            m3.data[i][j] = m1.data[i][j] + m2.data[i][j];
+        }
+    }
+    return 0;
+}
+
+int matsub_int(struct IntCMat m1, struct IntCMat m2, struct IntCMat m3) {
+    if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
+        return -1;
+    }
+    if (m1.shape[0] != m3.shape[0] || m1.shape[1] != m3.shape[1]) {
+        return -1;
+    }
+    for (int i = 0; i < m2.shape[0]; i++) {
+        for (int j = 0; j < m2.shape[1]; j++) {
+            m3.data[i][j] = m1.data[i][j] - m2.data[i][j];
+        }
+    }
+    return 0;
+}
+
+int matsub_float(struct FloatCMat m1, struct FloatCMat m2, struct FloatCMat m3) {
+    if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
+        return -1;
+    }
+    if (m1.shape[0] != m3.shape[0] || m1.shape[1] != m3.shape[1]) {
+        return -1;
+    }
+    for (int i = 0; i < m2.shape[0]; i++) {
+        for (int j = 0; j < m2.shape[1]; j++) {
+            m3.data[i][j] = m1.data[i][j] - m2.data[i][j];
+        }
+    }
+    return 0;
+}
+
+int matelm_int(struct IntCMat m1, struct IntCMat m2, struct IntCMat m3) {
+    if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
+        return -1;
+    }
+    if (m1.shape[0] != m3.shape[0] || m1.shape[1] != m3.shape[1]) {
+        return -1;
+    }
+    for (int i = 0; i < m2.shape[0]; i++) {
+        for (int j = 0; j < m2.shape[1]; j++) {
+            m3.data[i][j] = m1.data[i][j] * m2.data[i][j];
+        }
+    }
+    return 0;
+}
+
+int matelm_float(struct FloatCMat m1, struct FloatCMat m2, struct FloatCMat m3) {
+    if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
+        return -1;
+    }
+    if (m1.shape[0] != m3.shape[0] || m1.shape[1] != m3.shape[1]) {
+        return -1;
+    }
+    for (int i = 0; i < m2.shape[0]; i++) {
+        for (int j = 0; j < m2.shape[1]; j++) {
+            m3.data[i][j] = m1.data[i][j] * m2.data[i][j];
+        }
+    }
+    return 0;
+}
+
+int mateld_int(struct IntCMat m1, struct IntCMat m2, struct IntCMat m3) {
+    if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
+        return -1;
+    }
+    if (m1.shape[0] != m3.shape[0] || m1.shape[1] != m3.shape[1]) {
+        return -1;
+    }
+    for (int i = 0; i < m2.shape[0]; i++) {
+        for (int j = 0; j < m2.shape[1]; j++) {
+            m3.data[i][j] = m1.data[i][j] / m2.data[i][j];
+        }
+    }
+    return 0;
+}
+
+int mateld_float(struct FloatCMat m1, struct FloatCMat m2, struct FloatCMat m3) {
+    if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
+        return -1;
+    }
+    if (m1.shape[0] != m3.shape[0] || m1.shape[1] != m3.shape[1]) {
+        return -1;
+    }
+    for (int i = 0; i < m2.shape[0]; i++) {
+        for (int j = 0; j < m2.shape[1]; j++) {
+            m3.data[i][j] = m1.data[i][j] / m2.data[i][j];
+        }
+    }
+    return 0;
+}
+
 int print_int_matrix(struct IntCMat mat) {
     printf("[\n");
     for (int row = 0; row < mat.shape[0]; row++) {
@@ -247,7 +403,6 @@ int main() {
     create_float_matrix(rows, cols, &array_float);
     array_float.data[1][2] = 1.487;
     print_float_matrix(array_float);
-    free_float_matrix(array_float);
 
     int offset[2] = {0, 0};
 
@@ -255,6 +410,12 @@ int main() {
     float float_array3[6] = {1.1,2.2,3.3,4.4,5.5,6.6};
     create_float_matrix_from_stack(2, 3, float_array3, 6, offset, &array_float3);
     print_float_matrix(array_float3);
+
+    int assign_slice_float_lr0[2] = {1, 3};
+    int assign_slice_float_lr1[2] = {0, 3};
+    assign_float_slice(array_float, array_float3, assign_slice_float_lr0, assign_slice_float_lr1);
+    print_float_matrix(array_float);
+    free_float_matrix(array_float);
 
     struct IntCMat array_int3;
     int int_array3[6] = {11,22,33,44,55,66};
