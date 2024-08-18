@@ -30,15 +30,15 @@ int create_int_matrix_from_stack(int height, int width, int array[], int array_l
 
 int create_float_matrix_from_stack(int height, int width, float array[], int array_length, int offset[2], struct FloatCMat* p_new_mat);
 
-struct IntCMat slice_int_matrix(struct IntCMat* p_mat, int slice0[2], int slice1[2]);
+struct IntCMat slice_int_matrix(struct IntCMat mat, int slice0[2], int slice1[2]);
 
-struct FloatCMat slice_float_matrix(struct FloatCMat* p_mat, int slice0[2], int slice1[2]);
+struct FloatCMat slice_float_matrix(struct FloatCMat mat, int slice0[2], int slice1[2]);
 
-int print_int_matrix(struct IntCMat* p_mat);
+int print_int_matrix(struct IntCMat mat);
 
-int print_float_matrix(struct FloatCMat* p_mat);
+int print_float_matrix(struct FloatCMat mat);
 
-int free_int_matrix(struct IntCMat* pm);
+int free_int_matrix(struct IntCMat m);
 
-int free_float_matrix(struct FloatCMat* pm);
+int free_float_matrix(struct FloatCMat m);
 

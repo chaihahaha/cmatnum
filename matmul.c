@@ -33,6 +33,6 @@ int main() {
     struct FloatCMat C;
     create_float_matrix(3,2, &C);
     matmul(A, B, C);
-    print_float_matrix(&C);
+    print_float_matrix(C);
     return 0;
 }
