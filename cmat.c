@@ -388,7 +388,7 @@ int free_float_matrix(struct FloatCMat m) {
     return 0;
 }
 
-#ifdef INCLUDE_MAIN
+#ifndef INCLUDE_CMAT
 int main() {
     int rows = 3;
     int cols = 4;
