@@ -94,4 +94,6 @@ int free_int_matrix(struct int_cmat m);
 
 int free_float_matrix(struct float_cmat m);
 
+int free_double_matrix(struct double_cmat m);
+
 #endif

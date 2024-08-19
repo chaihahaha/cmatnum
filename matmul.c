@@ -46,7 +46,7 @@ static int matmul_double_sse2(struct double_cmat matA, struct double_cmat matB, 
     int N = matB.shape[1];
     int K = matB.shape[0];
     if (M % 8 != 0 || N % 8 != 0 || K % 8 != 0) {
-        return -1;
+        return matmul_double(matA, matB, matC);
     }
     int i, j, k, i2, j2, k2;
     double *restrict rC;
@@ -80,7 +80,126 @@ static int matmul_double_sse2(struct double_cmat matA, struct double_cmat matB, 
     return 0;
 }
 
+static int matmul_double_strassen_windograd(struct double_cmat matA, struct double_cmat matB, struct double_cmat matC){
+    /*
+     * matA M*K
+     * matB K*N
+     * matC M*N
+     * matC = matA * matB
+     * S1 = A21 + A22     T1 = B12 - B11
+     * S2 = S1 - A11      T2 = B22 - T1
+     * S3 = A11 - A21     T3 = B22 - B12
+     * S4 = A12 - S2      T4 = T2 - B21
+     * M1 = A11 * B11     U1 = M1 + M2
+     * M2 = A12 * B21     U2 = M1 + M6
+     * M3 = S4 * B22      U3 = U2 + M7
+     * M4 = A22 * T4      U4 = U2 + M5
+     * M5 = S1 * T1       U5 = U4 + M3
+     * M6 = S2 * T2       U6 = U3 - U4
+     * M7 = S3 * T3       U7 = U3 + M5
+     * C11 = U1
+     * C12 = U5
+     * C21 = U6
+     * C22 = U7
+     */
+    if (!(matA.shape[0] == matA.shape[1] && matA.shape[1] == matB.shape[0] && matB.shape[0] == matB.shape[1] && matA.shape[0]%2==0)) {
+        return -1;
+    }
+    int N = matA.shape[0];
+    int I = matA.shape[0]/2;
+    if (N <= 64) {
+        return matmul_double_sse2(matA, matB, matC);
+    }
+    struct double_cmat A11 = slice_double_matrix(matA, (int[2]){0,I}, (int[2]){0,I});
+    struct double_cmat A12 = slice_double_matrix(matA, (int[2]){0,I}, (int[2]){I,N});
+    struct double_cmat A21 = slice_double_matrix(matA, (int[2]){I,N}, (int[2]){0,I});
+    struct double_cmat A22 = slice_double_matrix(matA, (int[2]){I,N}, (int[2]){I,N});
+    struct double_cmat B11 = slice_double_matrix(matB, (int[2]){0,I}, (int[2]){0,I});
+    struct double_cmat B12 = slice_double_matrix(matB, (int[2]){0,I}, (int[2]){I,N});
+    struct double_cmat B21 = slice_double_matrix(matB, (int[2]){I,N}, (int[2]){0,I});
+    struct double_cmat B22 = slice_double_matrix(matB, (int[2]){I,N}, (int[2]){I,N});
+    struct double_cmat S1, S2, S3, S4, T1, T2, T3, T4, M1, M2, M3, M4, M5, M6, M7, U1, U2, U3, U4, U5, U6, U7;
+    create_double_matrix((int[2]){I,I}, &S1);
+    create_double_matrix((int[2]){I,I}, &S2);
+    create_double_matrix((int[2]){I,I}, &S3);
+    create_double_matrix((int[2]){I,I}, &S4);
+    create_double_matrix((int[2]){I,I}, &T1);
+    create_double_matrix((int[2]){I,I}, &T2);
+    create_double_matrix((int[2]){I,I}, &T3);
+    create_double_matrix((int[2]){I,I}, &T4);
+    create_double_matrix((int[2]){I,I}, &M1);
+    create_double_matrix((int[2]){I,I}, &M2);
+    create_double_matrix((int[2]){I,I}, &M3);
+    create_double_matrix((int[2]){I,I}, &M4);
+    create_double_matrix((int[2]){I,I}, &M5);
+    create_double_matrix((int[2]){I,I}, &M6);
+    create_double_matrix((int[2]){I,I}, &M7);
+    create_double_matrix((int[2]){I,I}, &U1);
+    create_double_matrix((int[2]){I,I}, &U2);
+    create_double_matrix((int[2]){I,I}, &U3);
+    create_double_matrix((int[2]){I,I}, &U4);
+    create_double_matrix((int[2]){I,I}, &U5);
+    create_double_matrix((int[2]){I,I}, &U6);
+    create_double_matrix((int[2]){I,I}, &U7);
+    matadd_double(A21, A22, S1);
+    matsub_double(S1,  A11, S2);
+    matsub_double(A11, A21, S3);
+    matsub_double(A12, S2 , S4);
+
+    matsub_double(B12, B11, T1);
+    matsub_double(B22, T1 , T2);
+    matsub_double(B22, B12, T3);
+    matsub_double(T2,  B21, T4);
+
+    matmul_double_strassen_windograd(A11, B11, M1);
+    matmul_double_strassen_windograd(A12, B21, M2);
+    matmul_double_strassen_windograd(S4 , B22, M3);
+    matmul_double_strassen_windograd(A22, T4 , M4);
+    matmul_double_strassen_windograd(S1,  T1 , M5);
+    matmul_double_strassen_windograd(S2,  T2 , M6);
+    matmul_double_strassen_windograd(S3,  T3 , M7);
+
+    matadd_double(M1, M2, U1);
+    matadd_double(M1, M6, U2);
+    matadd_double(U2, M7, U3);
+    matadd_double(U2, M5, U4);
+    matadd_double(U4, M3, U5);
+    matsub_double(U3, U4, U6);
+    matadd_double(U3, M5, U7);
+
+    assign_double_slice(matC, U1, (int[2]){0,I}, (int[2]){0,I});
+    assign_double_slice(matC, U5, (int[2]){0,I}, (int[2]){I,N});
+    assign_double_slice(matC, U6, (int[2]){I,N}, (int[2]){0,I});
+    assign_double_slice(matC, U7, (int[2]){I,N}, (int[2]){I,N});
+
+    free_double_matrix(S1);
+    free_double_matrix(S2);
+    free_double_matrix(S3);
+    free_double_matrix(S4);
+    free_double_matrix(T1);
+    free_double_matrix(T2);
+    free_double_matrix(T3);
+    free_double_matrix(T4);
+    free_double_matrix(M1);
+    free_double_matrix(M2);
+    free_double_matrix(M3);
+    free_double_matrix(M4);
+    free_double_matrix(M5);
+    free_double_matrix(M6);
+    free_double_matrix(M7);
+    free_double_matrix(U1);
+    free_double_matrix(U2);
+    free_double_matrix(U3);
+    free_double_matrix(U4);
+    free_double_matrix(U5);
+    free_double_matrix(U6);
+    free_double_matrix(U7);
+    return 0;
+}
+
 #ifdef MAIN_MATMUL
+
+#include <time.h>
 
 int main() {
     //struct float_cmat A;
@@ -98,23 +217,41 @@ int main() {
     //matmul_float(A, B, C);
     //print_float_matrix(C);
 
-    struct double_cmat A;
-    double A_data[96] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12};
-    int A_offset[2] = {0,0};
-    create_double_matrix_from_stack((int[2]){8,8},A_data, 64, A_offset, &A);
+    //struct double_cmat A;
+    //double A_data[96] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12};
+    //int A_offset[2] = {0,0};
+    //create_double_matrix_from_stack((int[2]){8,8},A_data, 64, A_offset, &A);
 
-    struct double_cmat B;
-    double B_data[160] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8};
-    int B_offset[2] = {0,0};
-    create_double_matrix_from_stack((int[2]){8,16},B_data, 128, B_offset, &B);
+    //struct double_cmat B;
+    //double B_data[160] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8};
+    //int B_offset[2] = {0,0};
+    //create_double_matrix_from_stack((int[2]){8,16},B_data, 128, B_offset, &B);
 
-    struct double_cmat C, D;
-    create_double_matrix((int[2]){8,16}, &C);
-    create_double_matrix((int[2]){8,16}, &D);
-    matmul_double_sse2(A, B, C);
-    matmul_double(A, B, D);
-    print_double_matrix(C);
-    print_double_matrix(D);
+    //struct double_cmat C, D;
+    //create_double_matrix((int[2]){8,16}, &C);
+    //create_double_matrix((int[2]){8,16}, &D);
+    //matmul_double_sse2(A, B, C);
+    //matmul_double(A, B, D);
+    //print_double_matrix(C);
+    //print_double_matrix(D);
+
+    struct double_cmat A, B, C;
+    int N = 1024;
+    create_double_matrix((int[2]){N, N}, &A);
+    create_double_matrix((int[2]){N, N}, &B);
+    create_double_matrix((int[2]){N, N}, &C);
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            A.data[i][j] = rand();
+            B.data[i][j] = rand();
+        }
+    }
+    clock_t start, end;
+    start = clock();
+    matmul_double_strassen_windograd(A, B, C);
+    end = clock();
+    double endtime = (double) (end - start)/CLOCKS_PER_SEC;
+    printf("strassen winnograd time: %f(s)\n", endtime);
     return 0;
 }
 
