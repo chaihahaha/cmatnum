@@ -1,3 +1,6 @@
+#ifndef CMAT_H
+#define CMAT_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -62,3 +65,4 @@ int free_int_matrix(struct IntCMat m);
 
 int free_float_matrix(struct FloatCMat m);
 
+#endif
