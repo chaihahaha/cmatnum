@@ -19,6 +19,8 @@ static int matmul(struct FloatCMat matA, struct FloatCMat matB, struct FloatCMat
     return 0;
 }
 
+#ifndef INCLUDE_MATMUL
+
 int main() {
     struct FloatCMat A;
     float A_data[12] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12};
@@ -36,3 +38,5 @@ int main() {
     print_float_matrix(C);
     return 0;
 }
+
+#endif
