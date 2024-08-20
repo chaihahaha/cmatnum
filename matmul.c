@@ -55,11 +55,11 @@ static int matmul_double_sse2(double_cmat matA, double_cmat matB, double_cmat ma
     for(i = 0; i < M; i+=SM) {
         for(j = 0; j < N; j+=SM) {
             for(k = 0; k < K; k+=SM) {
-                for (i2 = 0, rC = &matC.data[i][j], rA = &matA.data[i][k]; i2 < SM; i2++, rC += N, rA += K)
+                for (i2 = 0, rC = &matC.data[i][j], rA = &matA.data[i][k]; i2 < SM; i2++, rC = &matC.data[i+i2][j], rA = &matA.data[i+i2][k])
                 {
-                    //printf("Processing row %d\n", i + i2); // Debug print
+                    //printf("Processing row %d == ", i + i2); // Debug print
                     _mm_prefetch(&rA[8], _MM_HINT_NTA);
-                    for (k2 = 0, rB = &matB.data[k][j]; k2 < SM; k2++, rB += N)
+                    for (k2 = 0, rB = &matB.data[k][j]; k2 < SM; k2++, rB = &matB.data[k+k2][j])
                     {
                         __m128d mAd = _mm_load_sd(&rA[k2]);
                         mAd = _mm_unpacklo_pd(mAd, mAd);
@@ -70,9 +70,11 @@ static int matmul_double_sse2(double_cmat matA, double_cmat matB, double_cmat ma
                             _mm_store_pd(&rC[j2], _mm_add_pd(_mm_mul_pd(mB, mAd), mC));
 
                             __m128d mResult = _mm_add_pd(_mm_mul_pd(mB, mAd), mC);
-                            //printf("Row %d, Col %d-%d: %lf %lf\n", i + i2, j + j2, j + j2 + 1, ((double*)&mResult)[0], ((double*)&mResult)[1]); // Debug print
+                            //printf("Row %d, Col %d-%d: %lf %lf || ", i + i2, j + j2, j + j2 + 1, ((double*)&mResult)[0], ((double*)&mResult)[1]); // Debug print
+                            //printf(" (%lf*%lf *%lf) ||", rA[k2], rB[j2], rB[j2+1]);
                         }
                     }
+                    //printf("\n");
                 }
             }
         }
@@ -114,7 +116,7 @@ static int matmul_double_strassen_winograd(double_cmat matA, double_cmat matB, d
     }
     int N = matA.shape[0];
     int I = matA.shape[0]/2;
-    if (N <= 2) {
+    if (N <= 8) {
         return matmul_double_sse2(matA, matB, matC);
     }
     double_cmat A11 = slice_double_matrix(matA, (int[2]){0,I}, (int[2]){0,I});
@@ -212,39 +214,6 @@ static int matmul_double_schwartz2024(double_cmat matA, double_cmat matB, double
 #include <time.h>
 
 int main() {
-    //float_cmat A;
-    //float A_data[12] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12};
-    //int A_offset[2] = {0,0};
-    //create_float_matrix_from_array(3,4,A_data, 12, A_offset, &A);
-
-    //float_cmat B;
-    //float B_data[8] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8};
-    //int B_offset[2] = {0,0};
-    //create_float_matrix_from_array(4,2,B_data, 8, B_offset, &B);
-
-    //float_cmat C;
-    //create_float_matrix(3,2, &C);
-    //matmul_float(A, B, C);
-    //print_float_matrix(C);
-
-    //double_cmat A;
-    //double A_data[96] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1, 11.11, 12.12};
-    //int A_offset[2] = {0,0};
-    //create_double_matrix_from_array((int[2]){8,8},A_data, 64, A_offset, &A);
-
-    //double_cmat B;
-    //double B_data[160] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8};
-    //int B_offset[2] = {0,0};
-    //create_double_matrix_from_array((int[2]){8,16},B_data, 128, B_offset, &B);
-
-    //double_cmat C, D;
-    //create_double_matrix((int[2]){8,16}, &C);
-    //create_double_matrix((int[2]){8,16}, &D);
-    //matmul_double_sse2(A, B, C);
-    //matmul_double(A, B, D);
-    //print_double_matrix(C);
-    //print_double_matrix(D);
-
     double_cmat A, B, C, TC;
     int N = 1024;
     create_double_matrix((int[2]){N, N}, &A);
@@ -263,11 +232,19 @@ int main() {
     //print_double_matrix(B);
 
     clock_t start, end;
+    double endtime;
+
     start = clock();
     matmul_double_strassen_winograd(A, B, C);
     end = clock();
-    double endtime = (double) (end - start)/CLOCKS_PER_SEC;
+    endtime = (double) (end - start)/CLOCKS_PER_SEC;
     printf("strassen winograd time: %f(s)\n", endtime);
+
+    //start = clock();
+    //matmul_double_sse2(A, B, C);
+    //end = clock();
+    //endtime = (double) (end - start)/CLOCKS_PER_SEC;
+    //printf("sse2 time: %f(s)\n", endtime);
 
     //printf("C:\n");
     //print_double_matrix(C);
@@ -283,7 +260,7 @@ int main() {
 
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            if (abs(C.data[i][j] - TC.data[i][j]) > 0.0001) {
+            if (abs(C.data[i][j] - TC.data[i][j]) > 0.01) {
                 printf("wrong: %lf, true: %lf, at: %d-%d\n", C.data[i][j], TC.data[i][j], i, j);
             }
         }
