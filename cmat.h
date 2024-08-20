@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct int_cmat {
     int* arena; // keep all the data in one arena

@@ -247,9 +247,10 @@ int assign_int_slice(int_cmat m1, int_cmat m2, int slice0[2], int slice1[2]) {
         return -1;
     }
     for (int i = 0; i < m2.shape[0]; i++) {
-        for (int j = 0; j < m2.shape[1]; j++) {
-            m1.data[slice0[0] + i][slice1[0] + j] = m2.data[i][j];
-        }
+        memcpy(&m1.data[slice0[0] + i][slice1[0]],  m2.data[i], sizeof(int) * m2.shape[1]);
+        //for (int j = 0; j < m2.shape[1]; j++) {
+        //    m1.data[slice0[0] + i][slice1[0] + j] = m2.data[i][j];
+        //}
     }
     return 0;
 }
@@ -265,9 +266,10 @@ int assign_float_slice(float_cmat m1, float_cmat m2, int slice0[2], int slice1[2
         return -1;
     }
     for (int i = 0; i < m2.shape[0]; i++) {
-        for (int j = 0; j < m2.shape[1]; j++) {
-            m1.data[slice0[0] + i][slice1[0] + j] = m2.data[i][j];
-        }
+        memcpy(&m1.data[slice0[0] + i][slice1[0]],  m2.data[i], sizeof(float) * m2.shape[1]);
+        //for (int j = 0; j < m2.shape[1]; j++) {
+        //    m1.data[slice0[0] + i][slice1[0] + j] = m2.data[i][j];
+        //}
     }
     return 0;
 }
@@ -283,9 +285,10 @@ int assign_double_slice(double_cmat m1, double_cmat m2, int slice0[2], int slice
         return -1;
     }
     for (int i = 0; i < m2.shape[0]; i++) {
-        for (int j = 0; j < m2.shape[1]; j++) {
-            m1.data[slice0[0] + i][slice1[0] + j] = m2.data[i][j];
-        }
+        memcpy(&m1.data[slice0[0] + i][slice1[0]],  m2.data[i], sizeof(double) * m2.shape[1]);
+        //for (int j = 0; j < m2.shape[1]; j++) {
+        //    m1.data[slice0[0] + i][slice1[0] + j] = m2.data[i][j];
+        //}
     }
     return 0;
 }
@@ -542,10 +545,10 @@ int main() {
 
     double_cmat array_double3;
     double double_array3[6] = {1.1,2.2,3.3,4.4,5.5,6.6};
-    create_double_matrix_from_array((int[2]){2, 3}, double_array3, 6, (int[2]){0, 0}, &array_double3);
+    create_double_matrix_from_array((int[2]){2, 2}, double_array3, 4, (int[2]){0, 0}, &array_double3);
     print_double_matrix(array_double3);
 
-    assign_double_slice(array_double, array_double3, (int[2]){1, 3}, (int[2]){0, 3});
+    assign_double_slice(array_double, array_double3, (int[2]){1, 3}, (int[2]){0, 2});
     print_double_matrix(array_double);
     free_double_matrix(array_double);
 

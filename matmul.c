@@ -95,19 +95,26 @@ static int matmul_double_strassen_winograd(double_cmat matA, double_cmat matB, d
      * M3 = S4 * B22      U3 = U2 + M7
      * M4 = A22 * T4      U4 = U2 + M5
      * M5 = S1 * T1       U5 = U4 + M3
-     * M6 = S2 * T2       U6 = U3 - U4
+     * M6 = S2 * T2       U6 = U3 - M4
      * M7 = S3 * T3       U7 = U3 + M5
      * C11 = U1
      * C12 = U5
      * C21 = U6
      * C22 = U7
      */
+    //if (matA.shape[0] <= 1) {
+    //    print_double_matrix(matC);
+    //    matC.data[0][0] = matA.data[0][0] * matB.data[0][0];
+    //    print_double_matrix(matC);
+    //    return 0;
+    //}
+
     if (!(matA.shape[0] == matA.shape[1] && matA.shape[1] == matB.shape[0] && matB.shape[0] == matB.shape[1] && matA.shape[0]%2==0)) {
         return -1;
     }
     int N = matA.shape[0];
     int I = matA.shape[0]/2;
-    if (N <= 64) {
+    if (N <= 2) {
         return matmul_double_sse2(matA, matB, matC);
     }
     double_cmat A11 = slice_double_matrix(matA, (int[2]){0,I}, (int[2]){0,I});
@@ -164,7 +171,7 @@ static int matmul_double_strassen_winograd(double_cmat matA, double_cmat matB, d
     matadd_double(U2, M7, U3);
     matadd_double(U2, M5, U4);
     matadd_double(U4, M3, U5);
-    matsub_double(U3, U4, U6);
+    matsub_double(U3, M4, U6);
     matadd_double(U3, M5, U7);
 
     assign_double_slice(matC, U1, (int[2]){0,I}, (int[2]){0,I});
@@ -197,6 +204,9 @@ static int matmul_double_strassen_winograd(double_cmat matA, double_cmat matB, d
     return 0;
 }
 
+static int matmul_double_schwartz2024(double_cmat matA, double_cmat matB, double_cmat matC){
+    return 0;
+}
 #ifdef MAIN_MATMUL
 
 #include <time.h>
@@ -243,10 +253,15 @@ int main() {
     create_double_matrix((int[2]){N, N}, &TC);
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            A.data[i][j] = 2.0 * rand() / RAND_MAX - 1.0;
-            B.data[i][j] = 2.0 * rand() / RAND_MAX - 1.0;
+            A.data[i][j] = 2.0 * rand() / RAND_MAX - 1;
+            B.data[i][j] = 2.0 * rand() / RAND_MAX - 1;
         }
     }
+    //printf("A:\n");
+    //print_double_matrix(A);
+    //printf("B:\n");
+    //print_double_matrix(B);
+
     clock_t start, end;
     start = clock();
     matmul_double_strassen_winograd(A, B, C);
@@ -254,11 +269,17 @@ int main() {
     double endtime = (double) (end - start)/CLOCKS_PER_SEC;
     printf("strassen winograd time: %f(s)\n", endtime);
 
+    //printf("C:\n");
+    //print_double_matrix(C);
+
     start = clock();
     matmul_double(A, B, TC);
     end = clock();
     endtime = (double) (end - start)/CLOCKS_PER_SEC;
     printf("naive time: %f(s)\n", endtime);
+
+    //printf("TC:\n");
+    //print_double_matrix(TC);
 
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
