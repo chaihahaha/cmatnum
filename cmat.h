@@ -28,72 +28,68 @@ struct double_cmat {
     int offset[2]; // to offset sliced matrix index
 };
 
+typedef struct int_cmat int_cmat;
+typedef struct float_cmat float_cmat;
+typedef struct double_cmat double_cmat;
 
+int create_int_matrix(int shape[2], int_cmat* p_new_mat);
 
-int create_int_matrix(int shape[2], struct int_cmat* p_new_mat);
+int create_float_matrix(int shape[2], float_cmat* p_new_mat);
 
-int create_float_matrix(int shape[2], struct float_cmat* p_new_mat);
+int create_double_matrix(int shape[2], double_cmat* p_new_mat);
 
-int create_double_matrix(int shape[2], struct double_cmat* p_new_mat);
+int create_int_matrix_from_array(int shape[2], int* array, int array_length, int offset[2], int_cmat* p_new_mat);
 
-int create_int_matrix_from_array(int shape[2], int* array, int array_length, int offset[2], struct int_cmat* p_new_mat);
+int create_float_matrix_from_array(int shape[2], float* array, int array_length, int offset[2], float_cmat* p_new_mat);
 
-int create_float_matrix_from_array(int shape[2], float* array, int array_length, int offset[2], struct float_cmat* p_new_mat);
+int create_double_matrix_from_array(int shape[2], double* array, int array_length, int offset[2], double_cmat* p_new_mat);
 
-int create_double_matrix_from_array(int shape[2], double* array, int array_length, int offset[2], struct double_cmat* p_new_mat);
+int_cmat slice_int_matrix(int_cmat mat, int slice0[2], int slice1[2]);
 
-int create_int_matrix_from_stack(int shape[2], int array[], int array_length, int offset[2], struct int_cmat* p_new_mat);
+float_cmat slice_float_matrix(float_cmat mat, int slice0[2], int slice1[2]);
 
-int create_float_matrix_from_stack(int shape[2], float array[], int array_length, int offset[2], struct float_cmat* p_new_mat);
+double_cmat slice_double_matrix(double_cmat mat, int slice0[2], int slice1[2]);
 
-int create_double_matrix_from_stack(int shape[2], double array[], int array_length, int offset[2], struct double_cmat* p_new_mat);
+int assign_int_slice(int_cmat m1, int_cmat m2, int slice0[2], int slice1[2]);
 
-struct int_cmat slice_int_matrix(struct int_cmat mat, int slice0[2], int slice1[2]);
+int assign_float_slice(float_cmat m1, float_cmat m2, int slice0[2], int slice1[2]);
 
-struct float_cmat slice_float_matrix(struct float_cmat mat, int slice0[2], int slice1[2]);
+int assign_double_slice(double_cmat m1, double_cmat m2, int slice0[2], int slice1[2]);
 
-struct double_cmat slice_double_matrix(struct double_cmat mat, int slice0[2], int slice1[2]);
+int matadd_int(int_cmat m1, int_cmat m2, int_cmat m3);
 
-int assign_int_slice(struct int_cmat m1, struct int_cmat m2, int slice0[2], int slice1[2]);
+int matadd_float(float_cmat m1, float_cmat m2, float_cmat m3);
 
-int assign_float_slice(struct float_cmat m1, struct float_cmat m2, int slice0[2], int slice1[2]);
+int matadd_double(double_cmat m1, double_cmat m2, double_cmat m3);
 
-int assign_double_slice(struct double_cmat m1, struct double_cmat m2, int slice0[2], int slice1[2]);
+int matsub_int(int_cmat m1, int_cmat m2, int_cmat m3);
 
-int matadd_int(struct int_cmat m1, struct int_cmat m2, struct int_cmat m3);
+int matsub_float(float_cmat m1, float_cmat m2, float_cmat m3);
 
-int matadd_float(struct float_cmat m1, struct float_cmat m2, struct float_cmat m3);
+int matsub_double(double_cmat m1, double_cmat m2, double_cmat m3);
 
-int matadd_double(struct double_cmat m1, struct double_cmat m2, struct double_cmat m3);
+int matelm_int(int_cmat m1, int_cmat m2, int_cmat m3);
 
-int matsub_int(struct int_cmat m1, struct int_cmat m2, struct int_cmat m3);
+int matelm_float(float_cmat m1, float_cmat m2, float_cmat m3);
 
-int matsub_float(struct float_cmat m1, struct float_cmat m2, struct float_cmat m3);
+int matelm_double(double_cmat m1, double_cmat m2, double_cmat m3);
 
-int matsub_double(struct double_cmat m1, struct double_cmat m2, struct double_cmat m3);
+int mateld_int(int_cmat m1, int_cmat m2, int_cmat m3);
 
-int matelm_int(struct int_cmat m1, struct int_cmat m2, struct int_cmat m3);
+int mateld_float(float_cmat m1, float_cmat m2, float_cmat m3);
 
-int matelm_float(struct float_cmat m1, struct float_cmat m2, struct float_cmat m3);
+int mateld_double(double_cmat m1, double_cmat m2, double_cmat m3);
 
-int matelm_double(struct double_cmat m1, struct double_cmat m2, struct double_cmat m3);
+int print_int_matrix(int_cmat mat);
 
-int mateld_int(struct int_cmat m1, struct int_cmat m2, struct int_cmat m3);
+int print_float_matrix(float_cmat mat);
 
-int mateld_float(struct float_cmat m1, struct float_cmat m2, struct float_cmat m3);
+int print_double_matrix(double_cmat mat);
 
-int mateld_double(struct double_cmat m1, struct double_cmat m2, struct double_cmat m3);
+int free_int_matrix(int_cmat m);
 
-int print_int_matrix(struct int_cmat mat);
+int free_float_matrix(float_cmat m);
 
-int print_float_matrix(struct float_cmat mat);
-
-int print_double_matrix(struct double_cmat mat);
-
-int free_int_matrix(struct int_cmat m);
-
-int free_float_matrix(struct float_cmat m);
-
-int free_double_matrix(struct double_cmat m);
+int free_double_matrix(double_cmat m);
 
 #endif
