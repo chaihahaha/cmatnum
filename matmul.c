@@ -80,7 +80,7 @@ static int matmul_double_sse2(struct double_cmat matA, struct double_cmat matB, 
     return 0;
 }
 
-static int matmul_double_strassen_windograd(struct double_cmat matA, struct double_cmat matB, struct double_cmat matC){
+static int matmul_double_strassen_winograd(struct double_cmat matA, struct double_cmat matB, struct double_cmat matC){
     /*
      * matA M*K
      * matB K*N
@@ -151,13 +151,13 @@ static int matmul_double_strassen_windograd(struct double_cmat matA, struct doub
     matsub_double(B22, B12, T3);
     matsub_double(T2,  B21, T4);
 
-    matmul_double_strassen_windograd(A11, B11, M1);
-    matmul_double_strassen_windograd(A12, B21, M2);
-    matmul_double_strassen_windograd(S4 , B22, M3);
-    matmul_double_strassen_windograd(A22, T4 , M4);
-    matmul_double_strassen_windograd(S1,  T1 , M5);
-    matmul_double_strassen_windograd(S2,  T2 , M6);
-    matmul_double_strassen_windograd(S3,  T3 , M7);
+    matmul_double_strassen_winograd(A11, B11, M1);
+    matmul_double_strassen_winograd(A12, B21, M2);
+    matmul_double_strassen_winograd(S4 , B22, M3);
+    matmul_double_strassen_winograd(A22, T4 , M4);
+    matmul_double_strassen_winograd(S1,  T1 , M5);
+    matmul_double_strassen_winograd(S2,  T2 , M6);
+    matmul_double_strassen_winograd(S3,  T3 , M7);
 
     matadd_double(M1, M2, U1);
     matadd_double(M1, M6, U2);
@@ -248,10 +248,10 @@ int main() {
     }
     clock_t start, end;
     start = clock();
-    matmul_double_strassen_windograd(A, B, C);
+    matmul_double_strassen_winograd(A, B, C);
     end = clock();
     double endtime = (double) (end - start)/CLOCKS_PER_SEC;
-    printf("strassen winnograd time: %f(s)\n", endtime);
+    printf("strassen winograd time: %f(s)\n", endtime);
     return 0;
 }
 
