@@ -260,7 +260,7 @@ int main() {
 
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            if (abs(C.data[i][j] - TC.data[i][j]) > 0.01) {
+            if (fabs(C.data[i][j] - TC.data[i][j]) > 0.01) {
                 printf("wrong: %lf, true: %lf, at: %d-%d\n", C.data[i][j], TC.data[i][j], i, j);
             }
         }
