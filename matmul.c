@@ -116,7 +116,7 @@ static int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, d
     }
     int N = matA.shape[0];
     int I = matA.shape[0]/2;
-    if (N <= 8) {
+    if (N <= 64) {
         return matmul_double_sse2(matC, matA, matB);
     }
     double_cmat A11 = slice_double_matrix(matA, pairint {0,I}, pairint {0,I});
@@ -224,7 +224,7 @@ static int matmul_double_recursive_bilinear(double_cmat matC, double_cmat matA, 
     }
     int N = matA.shape[0];
     int I = matA.shape[0]/2;
-    if (N <= 8) {
+    if (N <= 64) {
         return matmul_double_sse2(matC, matA, matB);
     }
     double_cmat A11 = slice_double_matrix(matA, pairint {0,I}, pairint {0,I});
@@ -314,7 +314,7 @@ static int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double
     }
     int N = matA.shape[0];
     int I = matA.shape[0]/2;
-    if (N <= 8) {
+    if (N <= 64) {
         return matmul_double_sse2(matC, matA, matB);
     }
     double_cmat A11 = slice_double_matrix(matA, pairint {0,I}, pairint {0,I});
@@ -392,6 +392,7 @@ static int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double
 
 
     free_double_matrix(tmp1);
+    free_double_matrix(tmp2);
     free_double_matrix(A11);
     free_double_matrix(A12);
     free_double_matrix(A21);
@@ -438,11 +439,11 @@ int main() {
     endtime = (double) (end - start)/CLOCKS_PER_SEC;
     printf("strassen winograd time: %f(s)\n", endtime);
 
-    start = clock();
     create_double_matrix(pairint {N, N}, &Ac);
     create_double_matrix(pairint {N, N}, &Bc);
     assign_double_clone(Ac, A);
     assign_double_clone(Bc, B);
+    start = clock();
     matmul_double_schwartz2024(C, Ac, Bc);
     end = clock();
     endtime = (double) (end - start)/CLOCKS_PER_SEC;
