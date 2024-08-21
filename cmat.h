@@ -33,6 +33,7 @@ struct double_cmat {
 typedef struct int_cmat int_cmat;
 typedef struct float_cmat float_cmat;
 typedef struct double_cmat double_cmat;
+#define pairint (int[2])
 
 int create_int_matrix(int shape[2], int_cmat* p_new_mat);
 

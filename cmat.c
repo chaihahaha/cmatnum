@@ -533,19 +533,25 @@ int print_double_matrix(double_cmat mat) {
 
 int free_int_matrix(int_cmat m) {
     free(m.data);
-    free(m.arena);
+    if (m.arena_shape[0] == m.shape[0] && m.arena_shape[1] == m.shape[1]) {
+        free(m.arena);
+    }
     return 0;
 }
 
 int free_float_matrix(float_cmat m) {
     free(m.data);
-    free(m.arena);
+    if (m.arena_shape[0] == m.shape[0] && m.arena_shape[1] == m.shape[1]) {
+        free(m.arena);
+    }
     return 0;
 }
 
 int free_double_matrix(double_cmat m) {
     free(m.data);
-    free(m.arena);
+    if (m.arena_shape[0] == m.shape[0] && m.arena_shape[1] == m.shape[1]) {
+        free(m.arena);
+    }
     return 0;
 }
 
@@ -555,28 +561,28 @@ int main() {
     int cols = 4;
 
     int_cmat array_2d;
-    create_int_matrix((int[2]){rows, cols}, &array_2d);
+    create_int_matrix(pairint {rows, cols}, &array_2d);
     array_2d.data[1][2] = 10;
     print_int_matrix(array_2d);
     free_int_matrix(array_2d);
 
     double_cmat array_double;
-    create_double_matrix((int[2]){rows, cols}, &array_double);
+    create_double_matrix(pairint {rows, cols}, &array_double);
     array_double.data[1][2] = 1.487;
     print_double_matrix(array_double);
 
     double_cmat array_double3;
     double double_array3[6] = {1.1,2.2,3.3,4.4,5.5,6.6};
-    create_double_matrix_from_array((int[2]){2, 2}, double_array3, 4, (int[2]){0, 0}, &array_double3);
+    create_double_matrix_from_array(pairint {2, 2}, double_array3, 4, pairint {0, 0}, &array_double3);
     print_double_matrix(array_double3);
 
-    assign_double_slice(array_double, array_double3, (int[2]){1, 3}, (int[2]){0, 2});
+    assign_double_slice(array_double, array_double3, pairint {1, 3}, pairint {0, 2});
     print_double_matrix(array_double);
     free_double_matrix(array_double);
 
     int_cmat array_int3;
     int int_array3[6] = {11,22,33,44,55,66};
-    create_int_matrix_from_array((int[2]){2, 3}, int_array3, 6, (int[2]){0, 0}, &array_int3);
+    create_int_matrix_from_array(pairint {2, 3}, int_array3, 6, pairint {0, 0}, &array_int3);
     print_int_matrix(array_int3);
 
     double_cmat array_double2;
@@ -584,7 +590,7 @@ int main() {
     for (int i=0; i < 6; i++) {
         double_array2[i] = double_array3[i];
     }
-    create_double_matrix_from_array((int[2]){2, 3}, double_array2, 6, (int[2]){0, 0}, &array_double2);
+    create_double_matrix_from_array(pairint {2, 3}, double_array2, 6, pairint {0, 0}, &array_double2);
     print_double_matrix(array_double2);
     int slice_double_lr0[2] = {1, 3};
     int slice_double_lr1[2] = {1, -1};
@@ -597,9 +603,9 @@ int main() {
     for (int i=0; i < 6; i++) {
         int_array2[i] = int_array3[i];
     }
-    create_int_matrix_from_array((int[2]){2, 3}, int_array2, 6, (int[2]){0, 0}, &array_int2);
+    create_int_matrix_from_array(pairint {2, 3}, int_array2, 6, pairint {0, 0}, &array_int2);
     print_int_matrix(array_int2);
-    int_cmat slice_int2 = slice_int_matrix(array_int2, (int[2]){0, -1}, (int[2]){1, -1});
+    int_cmat slice_int2 = slice_int_matrix(array_int2, pairint {0, -1}, pairint {1, -1});
     print_int_matrix(slice_int2);
     free_int_matrix(array_int2);
 
