@@ -18,4 +18,7 @@ static int matmul_double_sse2(double_cmat matA, double_cmat matB, double_cmat ma
 
 static int matmul_double_strassen_winograd(double_cmat matA, double_cmat matB, double_cmat matC);
 
+static int matmul_double_schwartz2024(double_cmat matA, double_cmat matB, double_cmat matC);
+
+static int matmul_double_recursive_bilinear(double_cmat matA, double_cmat matB, double_cmat matC);
 #endif

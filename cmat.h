@@ -58,6 +58,8 @@ int assign_float_slice(float_cmat m1, float_cmat m2, int slice0[2], int slice1[2
 
 int assign_double_slice(double_cmat m1, double_cmat m2, int slice0[2], int slice1[2]);
 
+int assign_double_clone(double_cmat m1, double_cmat m2);
+
 int matadd_int(int_cmat m1, int_cmat m2, int_cmat m3);
 
 int matadd_float(float_cmat m1, float_cmat m2, float_cmat m3);
@@ -81,6 +83,8 @@ int mateld_int(int_cmat m1, int_cmat m2, int_cmat m3);
 int mateld_float(float_cmat m1, float_cmat m2, float_cmat m3);
 
 int mateld_double(double_cmat m1, double_cmat m2, double_cmat m3);
+
+int matneg_double(double_cmat m1, double_cmat m2);
 
 int print_int_matrix(int_cmat mat);
 

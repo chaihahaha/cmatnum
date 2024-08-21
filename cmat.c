@@ -293,7 +293,17 @@ int assign_double_slice(double_cmat m1, double_cmat m2, int slice0[2], int slice
     return 0;
 }
 
-int matadd_int(int_cmat m1, int_cmat m2, int_cmat m3) {
+int assign_double_clone(double_cmat m1, double_cmat m2) {
+    if (!(m1.shape[0] == m2.shape[0] && m1.shape[1] == m2.shape[1])) {
+        return -1;
+    }
+    for (int i = 0; i < m2.shape[0]; i++) {
+        memcpy(m1.data[i],  m2.data[i], sizeof(double) * m2.shape[1]);
+    }
+    return 0;
+}
+
+int matadd_int(int_cmat m3, int_cmat m1, int_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -308,7 +318,7 @@ int matadd_int(int_cmat m1, int_cmat m2, int_cmat m3) {
     return 0;
 }
 
-int matadd_float(float_cmat m1, float_cmat m2, float_cmat m3) {
+int matadd_float(float_cmat m3, float_cmat m1, float_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -323,7 +333,7 @@ int matadd_float(float_cmat m1, float_cmat m2, float_cmat m3) {
     return 0;
 }
 
-int matadd_double(double_cmat m1, double_cmat m2, double_cmat m3) {
+int matadd_double(double_cmat m3, double_cmat m1, double_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -338,7 +348,7 @@ int matadd_double(double_cmat m1, double_cmat m2, double_cmat m3) {
     return 0;
 }
 
-int matsub_int(int_cmat m1, int_cmat m2, int_cmat m3) {
+int matsub_int(int_cmat m3, int_cmat m1, int_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -353,7 +363,7 @@ int matsub_int(int_cmat m1, int_cmat m2, int_cmat m3) {
     return 0;
 }
 
-int matsub_float(float_cmat m1, float_cmat m2, float_cmat m3) {
+int matsub_float(float_cmat m3, float_cmat m1, float_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -368,7 +378,7 @@ int matsub_float(float_cmat m1, float_cmat m2, float_cmat m3) {
     return 0;
 }
 
-int matsub_double(double_cmat m1, double_cmat m2, double_cmat m3) {
+int matsub_double(double_cmat m3, double_cmat m1, double_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -383,7 +393,7 @@ int matsub_double(double_cmat m1, double_cmat m2, double_cmat m3) {
     return 0;
 }
 
-int matelm_int(int_cmat m1, int_cmat m2, int_cmat m3) {
+int matelm_int(int_cmat m3, int_cmat m1, int_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -398,7 +408,7 @@ int matelm_int(int_cmat m1, int_cmat m2, int_cmat m3) {
     return 0;
 }
 
-int matelm_float(float_cmat m1, float_cmat m2, float_cmat m3) {
+int matelm_float(float_cmat m3, float_cmat m1, float_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -413,7 +423,7 @@ int matelm_float(float_cmat m1, float_cmat m2, float_cmat m3) {
     return 0;
 }
 
-int matelm_double(double_cmat m1, double_cmat m2, double_cmat m3) {
+int matelm_double(double_cmat m3, double_cmat m1, double_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -428,7 +438,7 @@ int matelm_double(double_cmat m1, double_cmat m2, double_cmat m3) {
     return 0;
 }
 
-int mateld_int(int_cmat m1, int_cmat m2, int_cmat m3) {
+int mateld_int(int_cmat m3, int_cmat m1, int_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -443,7 +453,7 @@ int mateld_int(int_cmat m1, int_cmat m2, int_cmat m3) {
     return 0;
 }
 
-int mateld_float(float_cmat m1, float_cmat m2, float_cmat m3) {
+int mateld_float(float_cmat m3, float_cmat m1, float_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -458,7 +468,7 @@ int mateld_float(float_cmat m1, float_cmat m2, float_cmat m3) {
     return 0;
 }
 
-int mateld_double(double_cmat m1, double_cmat m2, double_cmat m3) {
+int mateld_double(double_cmat m3, double_cmat m1, double_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -468,6 +478,18 @@ int mateld_double(double_cmat m1, double_cmat m2, double_cmat m3) {
     for (int i = 0; i < m2.shape[0]; i++) {
         for (int j = 0; j < m2.shape[1]; j++) {
             m3.data[i][j] = m1.data[i][j] / m2.data[i][j];
+        }
+    }
+    return 0;
+}
+
+int matneg_double(double_cmat m2, double_cmat m1) {
+    if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
+        return -1;
+    }
+    for (int i = 0; i < m2.shape[0]; i++) {
+        for (int j = 0; j < m2.shape[1]; j++) {
+            m2.data[i][j] = -m1.data[i][j];
         }
     }
     return 0;
