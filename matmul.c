@@ -414,7 +414,7 @@ static int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double
 int main() {
     double_cmat A, B, C, TC;
     double_cmat Ac, Bc;
-    int N = 1024*4;
+    int N = 1024*8;
     create_double_matrix(pairint {N, N}, &A);
     create_double_matrix(pairint {N, N}, &B);
     create_double_matrix(pairint {N, N}, &C);
