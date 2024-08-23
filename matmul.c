@@ -127,6 +127,10 @@ static int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, d
     double_cmat B12 = slice_double_matrix(matB, pairint {0,I}, pairint {I,N});
     double_cmat B21 = slice_double_matrix(matB, pairint {I,N}, pairint {0,I});
     double_cmat B22 = slice_double_matrix(matB, pairint {I,N}, pairint {I,N});
+    double_cmat C11 = slice_double_matrix(matC, pairint {0,I}, pairint {0,I});
+    double_cmat C12 = slice_double_matrix(matC, pairint {0,I}, pairint {I,N});
+    double_cmat C21 = slice_double_matrix(matC, pairint {I,N}, pairint {0,I});
+    double_cmat C22 = slice_double_matrix(matC, pairint {I,N}, pairint {I,N});
     double_cmat S1, S2, S3, S4, T1, T2, T3, T4, M1, M2, M3, M4, M5, M6, M7, U1, U2, U3, U4, U5, U6, U7;
     create_double_matrix(pairint {I,I}, &S1);
     create_double_matrix(pairint {I,I}, &S2);
@@ -168,18 +172,13 @@ static int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, d
     matmul_double_strassen_winograd(M6, S2,  T2 );
     matmul_double_strassen_winograd(M7, S3,  T3 );
 
-    matadd_double(U1, M1, M2);
+    matadd_double(C11, M1, M2);
     matadd_double(U2, M1, M6);
     matadd_double(U3, U2, M7);
     matadd_double(U4, U2, M5);
-    matadd_double(U5, U4, M3);
-    matsub_double(U6, U3, M4);
-    matadd_double(U7, U3, M5);
-
-    assign_double_slice(matC, U1, pairint {0,I}, pairint {0,I});
-    assign_double_slice(matC, U5, pairint {0,I}, pairint {I,N});
-    assign_double_slice(matC, U6, pairint {I,N}, pairint {0,I});
-    assign_double_slice(matC, U7, pairint {I,N}, pairint {I,N});
+    matadd_double(C12, U4, M3);
+    matsub_double(C21, U3, M4);
+    matadd_double(C22, U3, M5);
 
     free_double_matrix(S1);
     free_double_matrix(S2);
@@ -196,13 +195,9 @@ static int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, d
     free_double_matrix(M5);
     free_double_matrix(M6);
     free_double_matrix(M7);
-    free_double_matrix(U1);
     free_double_matrix(U2);
     free_double_matrix(U3);
     free_double_matrix(U4);
-    free_double_matrix(U5);
-    free_double_matrix(U6);
-    free_double_matrix(U7);
     free_double_matrix(A11);
     free_double_matrix(A12);
     free_double_matrix(A21);
@@ -211,10 +206,10 @@ static int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, d
     free_double_matrix(B12);
     free_double_matrix(B21);
     free_double_matrix(B22);
-    //free_double_matrix(C11);
-    //free_double_matrix(C12);
-    //free_double_matrix(C21);
-    //free_double_matrix(C22);
+    free_double_matrix(C11);
+    free_double_matrix(C12);
+    free_double_matrix(C21);
+    free_double_matrix(C22);
     return 0;
 }
 
