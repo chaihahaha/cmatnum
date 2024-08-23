@@ -52,4 +52,5 @@ Mkfile.old
 dkms.conf
 *.pdf
 *.txt
+!CMakeLists.txt
 *.mpl
