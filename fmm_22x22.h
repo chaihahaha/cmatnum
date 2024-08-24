@@ -2,9 +2,7 @@
 #define FMM_22X22_H
 
 #include<iostream>
-#include<Eigen/Eigen>
-#include<Eigen/Dense>
-#include "pack_mats.h"
+#include "stdafx.h"
 #include "fm_1.h"
 #include "fm_2.h"
 #include "fm_3.h"

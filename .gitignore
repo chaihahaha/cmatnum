@@ -54,3 +54,4 @@ dkms.conf
 *.txt
 !CMakeLists.txt
 *.mpl
+generated_files

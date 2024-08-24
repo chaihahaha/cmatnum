@@ -12,6 +12,10 @@ file(GLOB_RECURSE SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/generated_files/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/generated_files/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/generated_files/pack_mats.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fmm_22x22.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fmm_22x22.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/stdafx.h"
 )
 add_compile_options(-std=c++14)
 # Add the executable target
@@ -20,3 +24,4 @@ target_include_directories(MyExecutable PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/generated_files"
 )
+target_precompile_headers(MyExecutable PRIVATE stdafx.h)

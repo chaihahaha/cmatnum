@@ -30,9 +30,8 @@ def generate_header_file(fm_index):
 #ifndef FM_{fm_index}_H
 #define FM_{fm_index}_H
 
-#include <Eigen/Dense>
-#include "pack_mats.h"
-#include "fmm_22x22.h"
+#include "stdafx.h"
+MatrixXd fmm_22x22(MatrixXd A, MatrixXd B);
 
 Eigen::MatrixXd fm_{fm_index}(
 """
@@ -70,7 +69,6 @@ def separate_ab_parts(expression):
 def generate_source_file(fm_index, expression):
     content = f"""\
 #include "fm_{fm_index}.h"
-#include "fmm_22x22.h"
 
 Eigen::MatrixXd fm_{fm_index}(
 """
@@ -106,7 +104,7 @@ def generate_packmats_definitions():
         for j in range(1,23):
             pack_mats.append(f"ABs.A_{i}_{j} = A(seq({(i-1)}*BL+1, {i}*BL), seq({(j-1)}*BL+1, {j}*BL));\n")
             pack_mats.append(f"ABs.B_{i}_{j} = B(seq({(i-1)}*BL+1, {i}*BL), seq({(j-1)}*BL+1, {j}*BL));\n")
-            #pack_mats.append(f"ABs.C_{i}_{j} = C(seq({(i-1)}*BL+1, {i}*BL), seq({(j-1)}*BL+1, {j}*BL));\n")
+            pack_mats.append(f"MatrixXd C_{i}_{j} = C(seq({(i-1)}*BL+1, {i}*BL), seq({(j-1)}*BL+1, {j}*BL));\n")
     content = "".join(pack_mats)
     return content
 

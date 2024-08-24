@@ -2,6 +2,7 @@
 
 using Eigen::MatrixXd;
 using Eigen::placeholders::last;
+using Eigen::placeholders::all;
 using Eigen::seq;
 
 MatrixXd fmm_22x22(MatrixXd A, MatrixXd B) {
@@ -15,1459 +16,1460 @@ MatrixXd fmm_22x22(MatrixXd A, MatrixXd B) {
     MatrixXd C(N,N);
 
 
+
 pack_mats_22x22 ABs;
 ABs.A_1_1 = A(seq(0*BL+1, 1*BL), seq(0*BL+1, 1*BL));
 ABs.B_1_1 = B(seq(0*BL+1, 1*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_1_1 = C(seq(0*BL+1, 1*BL), seq(0*BL+1, 1*BL));
 ABs.A_1_2 = A(seq(0*BL+1, 1*BL), seq(1*BL+1, 2*BL));
 ABs.B_1_2 = B(seq(0*BL+1, 1*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_1_2 = C(seq(0*BL+1, 1*BL), seq(1*BL+1, 2*BL));
 ABs.A_1_3 = A(seq(0*BL+1, 1*BL), seq(2*BL+1, 3*BL));
 ABs.B_1_3 = B(seq(0*BL+1, 1*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_1_3 = C(seq(0*BL+1, 1*BL), seq(2*BL+1, 3*BL));
 ABs.A_1_4 = A(seq(0*BL+1, 1*BL), seq(3*BL+1, 4*BL));
 ABs.B_1_4 = B(seq(0*BL+1, 1*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_1_4 = C(seq(0*BL+1, 1*BL), seq(3*BL+1, 4*BL));
 ABs.A_1_5 = A(seq(0*BL+1, 1*BL), seq(4*BL+1, 5*BL));
 ABs.B_1_5 = B(seq(0*BL+1, 1*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_1_5 = C(seq(0*BL+1, 1*BL), seq(4*BL+1, 5*BL));
 ABs.A_1_6 = A(seq(0*BL+1, 1*BL), seq(5*BL+1, 6*BL));
 ABs.B_1_6 = B(seq(0*BL+1, 1*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_1_6 = C(seq(0*BL+1, 1*BL), seq(5*BL+1, 6*BL));
 ABs.A_1_7 = A(seq(0*BL+1, 1*BL), seq(6*BL+1, 7*BL));
 ABs.B_1_7 = B(seq(0*BL+1, 1*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_1_7 = C(seq(0*BL+1, 1*BL), seq(6*BL+1, 7*BL));
 ABs.A_1_8 = A(seq(0*BL+1, 1*BL), seq(7*BL+1, 8*BL));
 ABs.B_1_8 = B(seq(0*BL+1, 1*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_1_8 = C(seq(0*BL+1, 1*BL), seq(7*BL+1, 8*BL));
 ABs.A_1_9 = A(seq(0*BL+1, 1*BL), seq(8*BL+1, 9*BL));
 ABs.B_1_9 = B(seq(0*BL+1, 1*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_1_9 = C(seq(0*BL+1, 1*BL), seq(8*BL+1, 9*BL));
 ABs.A_1_10 = A(seq(0*BL+1, 1*BL), seq(9*BL+1, 10*BL));
 ABs.B_1_10 = B(seq(0*BL+1, 1*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_1_10 = C(seq(0*BL+1, 1*BL), seq(9*BL+1, 10*BL));
 ABs.A_1_11 = A(seq(0*BL+1, 1*BL), seq(10*BL+1, 11*BL));
 ABs.B_1_11 = B(seq(0*BL+1, 1*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_1_11 = C(seq(0*BL+1, 1*BL), seq(10*BL+1, 11*BL));
 ABs.A_1_12 = A(seq(0*BL+1, 1*BL), seq(11*BL+1, 12*BL));
 ABs.B_1_12 = B(seq(0*BL+1, 1*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_1_12 = C(seq(0*BL+1, 1*BL), seq(11*BL+1, 12*BL));
 ABs.A_1_13 = A(seq(0*BL+1, 1*BL), seq(12*BL+1, 13*BL));
 ABs.B_1_13 = B(seq(0*BL+1, 1*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_1_13 = C(seq(0*BL+1, 1*BL), seq(12*BL+1, 13*BL));
 ABs.A_1_14 = A(seq(0*BL+1, 1*BL), seq(13*BL+1, 14*BL));
 ABs.B_1_14 = B(seq(0*BL+1, 1*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_1_14 = C(seq(0*BL+1, 1*BL), seq(13*BL+1, 14*BL));
 ABs.A_1_15 = A(seq(0*BL+1, 1*BL), seq(14*BL+1, 15*BL));
 ABs.B_1_15 = B(seq(0*BL+1, 1*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_1_15 = C(seq(0*BL+1, 1*BL), seq(14*BL+1, 15*BL));
 ABs.A_1_16 = A(seq(0*BL+1, 1*BL), seq(15*BL+1, 16*BL));
 ABs.B_1_16 = B(seq(0*BL+1, 1*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_1_16 = C(seq(0*BL+1, 1*BL), seq(15*BL+1, 16*BL));
 ABs.A_1_17 = A(seq(0*BL+1, 1*BL), seq(16*BL+1, 17*BL));
 ABs.B_1_17 = B(seq(0*BL+1, 1*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_1_17 = C(seq(0*BL+1, 1*BL), seq(16*BL+1, 17*BL));
 ABs.A_1_18 = A(seq(0*BL+1, 1*BL), seq(17*BL+1, 18*BL));
 ABs.B_1_18 = B(seq(0*BL+1, 1*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_1_18 = C(seq(0*BL+1, 1*BL), seq(17*BL+1, 18*BL));
 ABs.A_1_19 = A(seq(0*BL+1, 1*BL), seq(18*BL+1, 19*BL));
 ABs.B_1_19 = B(seq(0*BL+1, 1*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_1_19 = C(seq(0*BL+1, 1*BL), seq(18*BL+1, 19*BL));
 ABs.A_1_20 = A(seq(0*BL+1, 1*BL), seq(19*BL+1, 20*BL));
 ABs.B_1_20 = B(seq(0*BL+1, 1*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_1_20 = C(seq(0*BL+1, 1*BL), seq(19*BL+1, 20*BL));
 ABs.A_1_21 = A(seq(0*BL+1, 1*BL), seq(20*BL+1, 21*BL));
 ABs.B_1_21 = B(seq(0*BL+1, 1*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_1_21 = C(seq(0*BL+1, 1*BL), seq(20*BL+1, 21*BL));
 ABs.A_1_22 = A(seq(0*BL+1, 1*BL), seq(21*BL+1, 22*BL));
 ABs.B_1_22 = B(seq(0*BL+1, 1*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_1_22 = C(seq(0*BL+1, 1*BL), seq(21*BL+1, 22*BL));
 ABs.A_2_1 = A(seq(1*BL+1, 2*BL), seq(0*BL+1, 1*BL));
 ABs.B_2_1 = B(seq(1*BL+1, 2*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_2_1 = C(seq(1*BL+1, 2*BL), seq(0*BL+1, 1*BL));
 ABs.A_2_2 = A(seq(1*BL+1, 2*BL), seq(1*BL+1, 2*BL));
 ABs.B_2_2 = B(seq(1*BL+1, 2*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_2_2 = C(seq(1*BL+1, 2*BL), seq(1*BL+1, 2*BL));
 ABs.A_2_3 = A(seq(1*BL+1, 2*BL), seq(2*BL+1, 3*BL));
 ABs.B_2_3 = B(seq(1*BL+1, 2*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_2_3 = C(seq(1*BL+1, 2*BL), seq(2*BL+1, 3*BL));
 ABs.A_2_4 = A(seq(1*BL+1, 2*BL), seq(3*BL+1, 4*BL));
 ABs.B_2_4 = B(seq(1*BL+1, 2*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_2_4 = C(seq(1*BL+1, 2*BL), seq(3*BL+1, 4*BL));
 ABs.A_2_5 = A(seq(1*BL+1, 2*BL), seq(4*BL+1, 5*BL));
 ABs.B_2_5 = B(seq(1*BL+1, 2*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_2_5 = C(seq(1*BL+1, 2*BL), seq(4*BL+1, 5*BL));
 ABs.A_2_6 = A(seq(1*BL+1, 2*BL), seq(5*BL+1, 6*BL));
 ABs.B_2_6 = B(seq(1*BL+1, 2*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_2_6 = C(seq(1*BL+1, 2*BL), seq(5*BL+1, 6*BL));
 ABs.A_2_7 = A(seq(1*BL+1, 2*BL), seq(6*BL+1, 7*BL));
 ABs.B_2_7 = B(seq(1*BL+1, 2*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_2_7 = C(seq(1*BL+1, 2*BL), seq(6*BL+1, 7*BL));
 ABs.A_2_8 = A(seq(1*BL+1, 2*BL), seq(7*BL+1, 8*BL));
 ABs.B_2_8 = B(seq(1*BL+1, 2*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_2_8 = C(seq(1*BL+1, 2*BL), seq(7*BL+1, 8*BL));
 ABs.A_2_9 = A(seq(1*BL+1, 2*BL), seq(8*BL+1, 9*BL));
 ABs.B_2_9 = B(seq(1*BL+1, 2*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_2_9 = C(seq(1*BL+1, 2*BL), seq(8*BL+1, 9*BL));
 ABs.A_2_10 = A(seq(1*BL+1, 2*BL), seq(9*BL+1, 10*BL));
 ABs.B_2_10 = B(seq(1*BL+1, 2*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_2_10 = C(seq(1*BL+1, 2*BL), seq(9*BL+1, 10*BL));
 ABs.A_2_11 = A(seq(1*BL+1, 2*BL), seq(10*BL+1, 11*BL));
 ABs.B_2_11 = B(seq(1*BL+1, 2*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_2_11 = C(seq(1*BL+1, 2*BL), seq(10*BL+1, 11*BL));
 ABs.A_2_12 = A(seq(1*BL+1, 2*BL), seq(11*BL+1, 12*BL));
 ABs.B_2_12 = B(seq(1*BL+1, 2*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_2_12 = C(seq(1*BL+1, 2*BL), seq(11*BL+1, 12*BL));
 ABs.A_2_13 = A(seq(1*BL+1, 2*BL), seq(12*BL+1, 13*BL));
 ABs.B_2_13 = B(seq(1*BL+1, 2*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_2_13 = C(seq(1*BL+1, 2*BL), seq(12*BL+1, 13*BL));
 ABs.A_2_14 = A(seq(1*BL+1, 2*BL), seq(13*BL+1, 14*BL));
 ABs.B_2_14 = B(seq(1*BL+1, 2*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_2_14 = C(seq(1*BL+1, 2*BL), seq(13*BL+1, 14*BL));
 ABs.A_2_15 = A(seq(1*BL+1, 2*BL), seq(14*BL+1, 15*BL));
 ABs.B_2_15 = B(seq(1*BL+1, 2*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_2_15 = C(seq(1*BL+1, 2*BL), seq(14*BL+1, 15*BL));
 ABs.A_2_16 = A(seq(1*BL+1, 2*BL), seq(15*BL+1, 16*BL));
 ABs.B_2_16 = B(seq(1*BL+1, 2*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_2_16 = C(seq(1*BL+1, 2*BL), seq(15*BL+1, 16*BL));
 ABs.A_2_17 = A(seq(1*BL+1, 2*BL), seq(16*BL+1, 17*BL));
 ABs.B_2_17 = B(seq(1*BL+1, 2*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_2_17 = C(seq(1*BL+1, 2*BL), seq(16*BL+1, 17*BL));
 ABs.A_2_18 = A(seq(1*BL+1, 2*BL), seq(17*BL+1, 18*BL));
 ABs.B_2_18 = B(seq(1*BL+1, 2*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_2_18 = C(seq(1*BL+1, 2*BL), seq(17*BL+1, 18*BL));
 ABs.A_2_19 = A(seq(1*BL+1, 2*BL), seq(18*BL+1, 19*BL));
 ABs.B_2_19 = B(seq(1*BL+1, 2*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_2_19 = C(seq(1*BL+1, 2*BL), seq(18*BL+1, 19*BL));
 ABs.A_2_20 = A(seq(1*BL+1, 2*BL), seq(19*BL+1, 20*BL));
 ABs.B_2_20 = B(seq(1*BL+1, 2*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_2_20 = C(seq(1*BL+1, 2*BL), seq(19*BL+1, 20*BL));
 ABs.A_2_21 = A(seq(1*BL+1, 2*BL), seq(20*BL+1, 21*BL));
 ABs.B_2_21 = B(seq(1*BL+1, 2*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_2_21 = C(seq(1*BL+1, 2*BL), seq(20*BL+1, 21*BL));
 ABs.A_2_22 = A(seq(1*BL+1, 2*BL), seq(21*BL+1, 22*BL));
 ABs.B_2_22 = B(seq(1*BL+1, 2*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_2_22 = C(seq(1*BL+1, 2*BL), seq(21*BL+1, 22*BL));
 ABs.A_3_1 = A(seq(2*BL+1, 3*BL), seq(0*BL+1, 1*BL));
 ABs.B_3_1 = B(seq(2*BL+1, 3*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_3_1 = C(seq(2*BL+1, 3*BL), seq(0*BL+1, 1*BL));
 ABs.A_3_2 = A(seq(2*BL+1, 3*BL), seq(1*BL+1, 2*BL));
 ABs.B_3_2 = B(seq(2*BL+1, 3*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_3_2 = C(seq(2*BL+1, 3*BL), seq(1*BL+1, 2*BL));
 ABs.A_3_3 = A(seq(2*BL+1, 3*BL), seq(2*BL+1, 3*BL));
 ABs.B_3_3 = B(seq(2*BL+1, 3*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_3_3 = C(seq(2*BL+1, 3*BL), seq(2*BL+1, 3*BL));
 ABs.A_3_4 = A(seq(2*BL+1, 3*BL), seq(3*BL+1, 4*BL));
 ABs.B_3_4 = B(seq(2*BL+1, 3*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_3_4 = C(seq(2*BL+1, 3*BL), seq(3*BL+1, 4*BL));
 ABs.A_3_5 = A(seq(2*BL+1, 3*BL), seq(4*BL+1, 5*BL));
 ABs.B_3_5 = B(seq(2*BL+1, 3*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_3_5 = C(seq(2*BL+1, 3*BL), seq(4*BL+1, 5*BL));
 ABs.A_3_6 = A(seq(2*BL+1, 3*BL), seq(5*BL+1, 6*BL));
 ABs.B_3_6 = B(seq(2*BL+1, 3*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_3_6 = C(seq(2*BL+1, 3*BL), seq(5*BL+1, 6*BL));
 ABs.A_3_7 = A(seq(2*BL+1, 3*BL), seq(6*BL+1, 7*BL));
 ABs.B_3_7 = B(seq(2*BL+1, 3*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_3_7 = C(seq(2*BL+1, 3*BL), seq(6*BL+1, 7*BL));
 ABs.A_3_8 = A(seq(2*BL+1, 3*BL), seq(7*BL+1, 8*BL));
 ABs.B_3_8 = B(seq(2*BL+1, 3*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_3_8 = C(seq(2*BL+1, 3*BL), seq(7*BL+1, 8*BL));
 ABs.A_3_9 = A(seq(2*BL+1, 3*BL), seq(8*BL+1, 9*BL));
 ABs.B_3_9 = B(seq(2*BL+1, 3*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_3_9 = C(seq(2*BL+1, 3*BL), seq(8*BL+1, 9*BL));
 ABs.A_3_10 = A(seq(2*BL+1, 3*BL), seq(9*BL+1, 10*BL));
 ABs.B_3_10 = B(seq(2*BL+1, 3*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_3_10 = C(seq(2*BL+1, 3*BL), seq(9*BL+1, 10*BL));
 ABs.A_3_11 = A(seq(2*BL+1, 3*BL), seq(10*BL+1, 11*BL));
 ABs.B_3_11 = B(seq(2*BL+1, 3*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_3_11 = C(seq(2*BL+1, 3*BL), seq(10*BL+1, 11*BL));
 ABs.A_3_12 = A(seq(2*BL+1, 3*BL), seq(11*BL+1, 12*BL));
 ABs.B_3_12 = B(seq(2*BL+1, 3*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_3_12 = C(seq(2*BL+1, 3*BL), seq(11*BL+1, 12*BL));
 ABs.A_3_13 = A(seq(2*BL+1, 3*BL), seq(12*BL+1, 13*BL));
 ABs.B_3_13 = B(seq(2*BL+1, 3*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_3_13 = C(seq(2*BL+1, 3*BL), seq(12*BL+1, 13*BL));
 ABs.A_3_14 = A(seq(2*BL+1, 3*BL), seq(13*BL+1, 14*BL));
 ABs.B_3_14 = B(seq(2*BL+1, 3*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_3_14 = C(seq(2*BL+1, 3*BL), seq(13*BL+1, 14*BL));
 ABs.A_3_15 = A(seq(2*BL+1, 3*BL), seq(14*BL+1, 15*BL));
 ABs.B_3_15 = B(seq(2*BL+1, 3*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_3_15 = C(seq(2*BL+1, 3*BL), seq(14*BL+1, 15*BL));
 ABs.A_3_16 = A(seq(2*BL+1, 3*BL), seq(15*BL+1, 16*BL));
 ABs.B_3_16 = B(seq(2*BL+1, 3*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_3_16 = C(seq(2*BL+1, 3*BL), seq(15*BL+1, 16*BL));
 ABs.A_3_17 = A(seq(2*BL+1, 3*BL), seq(16*BL+1, 17*BL));
 ABs.B_3_17 = B(seq(2*BL+1, 3*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_3_17 = C(seq(2*BL+1, 3*BL), seq(16*BL+1, 17*BL));
 ABs.A_3_18 = A(seq(2*BL+1, 3*BL), seq(17*BL+1, 18*BL));
 ABs.B_3_18 = B(seq(2*BL+1, 3*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_3_18 = C(seq(2*BL+1, 3*BL), seq(17*BL+1, 18*BL));
 ABs.A_3_19 = A(seq(2*BL+1, 3*BL), seq(18*BL+1, 19*BL));
 ABs.B_3_19 = B(seq(2*BL+1, 3*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_3_19 = C(seq(2*BL+1, 3*BL), seq(18*BL+1, 19*BL));
 ABs.A_3_20 = A(seq(2*BL+1, 3*BL), seq(19*BL+1, 20*BL));
 ABs.B_3_20 = B(seq(2*BL+1, 3*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_3_20 = C(seq(2*BL+1, 3*BL), seq(19*BL+1, 20*BL));
 ABs.A_3_21 = A(seq(2*BL+1, 3*BL), seq(20*BL+1, 21*BL));
 ABs.B_3_21 = B(seq(2*BL+1, 3*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_3_21 = C(seq(2*BL+1, 3*BL), seq(20*BL+1, 21*BL));
 ABs.A_3_22 = A(seq(2*BL+1, 3*BL), seq(21*BL+1, 22*BL));
 ABs.B_3_22 = B(seq(2*BL+1, 3*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_3_22 = C(seq(2*BL+1, 3*BL), seq(21*BL+1, 22*BL));
 ABs.A_4_1 = A(seq(3*BL+1, 4*BL), seq(0*BL+1, 1*BL));
 ABs.B_4_1 = B(seq(3*BL+1, 4*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_4_1 = C(seq(3*BL+1, 4*BL), seq(0*BL+1, 1*BL));
 ABs.A_4_2 = A(seq(3*BL+1, 4*BL), seq(1*BL+1, 2*BL));
 ABs.B_4_2 = B(seq(3*BL+1, 4*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_4_2 = C(seq(3*BL+1, 4*BL), seq(1*BL+1, 2*BL));
 ABs.A_4_3 = A(seq(3*BL+1, 4*BL), seq(2*BL+1, 3*BL));
 ABs.B_4_3 = B(seq(3*BL+1, 4*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_4_3 = C(seq(3*BL+1, 4*BL), seq(2*BL+1, 3*BL));
 ABs.A_4_4 = A(seq(3*BL+1, 4*BL), seq(3*BL+1, 4*BL));
 ABs.B_4_4 = B(seq(3*BL+1, 4*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_4_4 = C(seq(3*BL+1, 4*BL), seq(3*BL+1, 4*BL));
 ABs.A_4_5 = A(seq(3*BL+1, 4*BL), seq(4*BL+1, 5*BL));
 ABs.B_4_5 = B(seq(3*BL+1, 4*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_4_5 = C(seq(3*BL+1, 4*BL), seq(4*BL+1, 5*BL));
 ABs.A_4_6 = A(seq(3*BL+1, 4*BL), seq(5*BL+1, 6*BL));
 ABs.B_4_6 = B(seq(3*BL+1, 4*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_4_6 = C(seq(3*BL+1, 4*BL), seq(5*BL+1, 6*BL));
 ABs.A_4_7 = A(seq(3*BL+1, 4*BL), seq(6*BL+1, 7*BL));
 ABs.B_4_7 = B(seq(3*BL+1, 4*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_4_7 = C(seq(3*BL+1, 4*BL), seq(6*BL+1, 7*BL));
 ABs.A_4_8 = A(seq(3*BL+1, 4*BL), seq(7*BL+1, 8*BL));
 ABs.B_4_8 = B(seq(3*BL+1, 4*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_4_8 = C(seq(3*BL+1, 4*BL), seq(7*BL+1, 8*BL));
 ABs.A_4_9 = A(seq(3*BL+1, 4*BL), seq(8*BL+1, 9*BL));
 ABs.B_4_9 = B(seq(3*BL+1, 4*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_4_9 = C(seq(3*BL+1, 4*BL), seq(8*BL+1, 9*BL));
 ABs.A_4_10 = A(seq(3*BL+1, 4*BL), seq(9*BL+1, 10*BL));
 ABs.B_4_10 = B(seq(3*BL+1, 4*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_4_10 = C(seq(3*BL+1, 4*BL), seq(9*BL+1, 10*BL));
 ABs.A_4_11 = A(seq(3*BL+1, 4*BL), seq(10*BL+1, 11*BL));
 ABs.B_4_11 = B(seq(3*BL+1, 4*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_4_11 = C(seq(3*BL+1, 4*BL), seq(10*BL+1, 11*BL));
 ABs.A_4_12 = A(seq(3*BL+1, 4*BL), seq(11*BL+1, 12*BL));
 ABs.B_4_12 = B(seq(3*BL+1, 4*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_4_12 = C(seq(3*BL+1, 4*BL), seq(11*BL+1, 12*BL));
 ABs.A_4_13 = A(seq(3*BL+1, 4*BL), seq(12*BL+1, 13*BL));
 ABs.B_4_13 = B(seq(3*BL+1, 4*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_4_13 = C(seq(3*BL+1, 4*BL), seq(12*BL+1, 13*BL));
 ABs.A_4_14 = A(seq(3*BL+1, 4*BL), seq(13*BL+1, 14*BL));
 ABs.B_4_14 = B(seq(3*BL+1, 4*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_4_14 = C(seq(3*BL+1, 4*BL), seq(13*BL+1, 14*BL));
 ABs.A_4_15 = A(seq(3*BL+1, 4*BL), seq(14*BL+1, 15*BL));
 ABs.B_4_15 = B(seq(3*BL+1, 4*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_4_15 = C(seq(3*BL+1, 4*BL), seq(14*BL+1, 15*BL));
 ABs.A_4_16 = A(seq(3*BL+1, 4*BL), seq(15*BL+1, 16*BL));
 ABs.B_4_16 = B(seq(3*BL+1, 4*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_4_16 = C(seq(3*BL+1, 4*BL), seq(15*BL+1, 16*BL));
 ABs.A_4_17 = A(seq(3*BL+1, 4*BL), seq(16*BL+1, 17*BL));
 ABs.B_4_17 = B(seq(3*BL+1, 4*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_4_17 = C(seq(3*BL+1, 4*BL), seq(16*BL+1, 17*BL));
 ABs.A_4_18 = A(seq(3*BL+1, 4*BL), seq(17*BL+1, 18*BL));
 ABs.B_4_18 = B(seq(3*BL+1, 4*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_4_18 = C(seq(3*BL+1, 4*BL), seq(17*BL+1, 18*BL));
 ABs.A_4_19 = A(seq(3*BL+1, 4*BL), seq(18*BL+1, 19*BL));
 ABs.B_4_19 = B(seq(3*BL+1, 4*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_4_19 = C(seq(3*BL+1, 4*BL), seq(18*BL+1, 19*BL));
 ABs.A_4_20 = A(seq(3*BL+1, 4*BL), seq(19*BL+1, 20*BL));
 ABs.B_4_20 = B(seq(3*BL+1, 4*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_4_20 = C(seq(3*BL+1, 4*BL), seq(19*BL+1, 20*BL));
 ABs.A_4_21 = A(seq(3*BL+1, 4*BL), seq(20*BL+1, 21*BL));
 ABs.B_4_21 = B(seq(3*BL+1, 4*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_4_21 = C(seq(3*BL+1, 4*BL), seq(20*BL+1, 21*BL));
 ABs.A_4_22 = A(seq(3*BL+1, 4*BL), seq(21*BL+1, 22*BL));
 ABs.B_4_22 = B(seq(3*BL+1, 4*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_4_22 = C(seq(3*BL+1, 4*BL), seq(21*BL+1, 22*BL));
 ABs.A_5_1 = A(seq(4*BL+1, 5*BL), seq(0*BL+1, 1*BL));
 ABs.B_5_1 = B(seq(4*BL+1, 5*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_5_1 = C(seq(4*BL+1, 5*BL), seq(0*BL+1, 1*BL));
 ABs.A_5_2 = A(seq(4*BL+1, 5*BL), seq(1*BL+1, 2*BL));
 ABs.B_5_2 = B(seq(4*BL+1, 5*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_5_2 = C(seq(4*BL+1, 5*BL), seq(1*BL+1, 2*BL));
 ABs.A_5_3 = A(seq(4*BL+1, 5*BL), seq(2*BL+1, 3*BL));
 ABs.B_5_3 = B(seq(4*BL+1, 5*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_5_3 = C(seq(4*BL+1, 5*BL), seq(2*BL+1, 3*BL));
 ABs.A_5_4 = A(seq(4*BL+1, 5*BL), seq(3*BL+1, 4*BL));
 ABs.B_5_4 = B(seq(4*BL+1, 5*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_5_4 = C(seq(4*BL+1, 5*BL), seq(3*BL+1, 4*BL));
 ABs.A_5_5 = A(seq(4*BL+1, 5*BL), seq(4*BL+1, 5*BL));
 ABs.B_5_5 = B(seq(4*BL+1, 5*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_5_5 = C(seq(4*BL+1, 5*BL), seq(4*BL+1, 5*BL));
 ABs.A_5_6 = A(seq(4*BL+1, 5*BL), seq(5*BL+1, 6*BL));
 ABs.B_5_6 = B(seq(4*BL+1, 5*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_5_6 = C(seq(4*BL+1, 5*BL), seq(5*BL+1, 6*BL));
 ABs.A_5_7 = A(seq(4*BL+1, 5*BL), seq(6*BL+1, 7*BL));
 ABs.B_5_7 = B(seq(4*BL+1, 5*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_5_7 = C(seq(4*BL+1, 5*BL), seq(6*BL+1, 7*BL));
 ABs.A_5_8 = A(seq(4*BL+1, 5*BL), seq(7*BL+1, 8*BL));
 ABs.B_5_8 = B(seq(4*BL+1, 5*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_5_8 = C(seq(4*BL+1, 5*BL), seq(7*BL+1, 8*BL));
 ABs.A_5_9 = A(seq(4*BL+1, 5*BL), seq(8*BL+1, 9*BL));
 ABs.B_5_9 = B(seq(4*BL+1, 5*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_5_9 = C(seq(4*BL+1, 5*BL), seq(8*BL+1, 9*BL));
 ABs.A_5_10 = A(seq(4*BL+1, 5*BL), seq(9*BL+1, 10*BL));
 ABs.B_5_10 = B(seq(4*BL+1, 5*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_5_10 = C(seq(4*BL+1, 5*BL), seq(9*BL+1, 10*BL));
 ABs.A_5_11 = A(seq(4*BL+1, 5*BL), seq(10*BL+1, 11*BL));
 ABs.B_5_11 = B(seq(4*BL+1, 5*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_5_11 = C(seq(4*BL+1, 5*BL), seq(10*BL+1, 11*BL));
 ABs.A_5_12 = A(seq(4*BL+1, 5*BL), seq(11*BL+1, 12*BL));
 ABs.B_5_12 = B(seq(4*BL+1, 5*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_5_12 = C(seq(4*BL+1, 5*BL), seq(11*BL+1, 12*BL));
 ABs.A_5_13 = A(seq(4*BL+1, 5*BL), seq(12*BL+1, 13*BL));
 ABs.B_5_13 = B(seq(4*BL+1, 5*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_5_13 = C(seq(4*BL+1, 5*BL), seq(12*BL+1, 13*BL));
 ABs.A_5_14 = A(seq(4*BL+1, 5*BL), seq(13*BL+1, 14*BL));
 ABs.B_5_14 = B(seq(4*BL+1, 5*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_5_14 = C(seq(4*BL+1, 5*BL), seq(13*BL+1, 14*BL));
 ABs.A_5_15 = A(seq(4*BL+1, 5*BL), seq(14*BL+1, 15*BL));
 ABs.B_5_15 = B(seq(4*BL+1, 5*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_5_15 = C(seq(4*BL+1, 5*BL), seq(14*BL+1, 15*BL));
 ABs.A_5_16 = A(seq(4*BL+1, 5*BL), seq(15*BL+1, 16*BL));
 ABs.B_5_16 = B(seq(4*BL+1, 5*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_5_16 = C(seq(4*BL+1, 5*BL), seq(15*BL+1, 16*BL));
 ABs.A_5_17 = A(seq(4*BL+1, 5*BL), seq(16*BL+1, 17*BL));
 ABs.B_5_17 = B(seq(4*BL+1, 5*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_5_17 = C(seq(4*BL+1, 5*BL), seq(16*BL+1, 17*BL));
 ABs.A_5_18 = A(seq(4*BL+1, 5*BL), seq(17*BL+1, 18*BL));
 ABs.B_5_18 = B(seq(4*BL+1, 5*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_5_18 = C(seq(4*BL+1, 5*BL), seq(17*BL+1, 18*BL));
 ABs.A_5_19 = A(seq(4*BL+1, 5*BL), seq(18*BL+1, 19*BL));
 ABs.B_5_19 = B(seq(4*BL+1, 5*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_5_19 = C(seq(4*BL+1, 5*BL), seq(18*BL+1, 19*BL));
 ABs.A_5_20 = A(seq(4*BL+1, 5*BL), seq(19*BL+1, 20*BL));
 ABs.B_5_20 = B(seq(4*BL+1, 5*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_5_20 = C(seq(4*BL+1, 5*BL), seq(19*BL+1, 20*BL));
 ABs.A_5_21 = A(seq(4*BL+1, 5*BL), seq(20*BL+1, 21*BL));
 ABs.B_5_21 = B(seq(4*BL+1, 5*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_5_21 = C(seq(4*BL+1, 5*BL), seq(20*BL+1, 21*BL));
 ABs.A_5_22 = A(seq(4*BL+1, 5*BL), seq(21*BL+1, 22*BL));
 ABs.B_5_22 = B(seq(4*BL+1, 5*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_5_22 = C(seq(4*BL+1, 5*BL), seq(21*BL+1, 22*BL));
 ABs.A_6_1 = A(seq(5*BL+1, 6*BL), seq(0*BL+1, 1*BL));
 ABs.B_6_1 = B(seq(5*BL+1, 6*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_6_1 = C(seq(5*BL+1, 6*BL), seq(0*BL+1, 1*BL));
 ABs.A_6_2 = A(seq(5*BL+1, 6*BL), seq(1*BL+1, 2*BL));
 ABs.B_6_2 = B(seq(5*BL+1, 6*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_6_2 = C(seq(5*BL+1, 6*BL), seq(1*BL+1, 2*BL));
 ABs.A_6_3 = A(seq(5*BL+1, 6*BL), seq(2*BL+1, 3*BL));
 ABs.B_6_3 = B(seq(5*BL+1, 6*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_6_3 = C(seq(5*BL+1, 6*BL), seq(2*BL+1, 3*BL));
 ABs.A_6_4 = A(seq(5*BL+1, 6*BL), seq(3*BL+1, 4*BL));
 ABs.B_6_4 = B(seq(5*BL+1, 6*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_6_4 = C(seq(5*BL+1, 6*BL), seq(3*BL+1, 4*BL));
 ABs.A_6_5 = A(seq(5*BL+1, 6*BL), seq(4*BL+1, 5*BL));
 ABs.B_6_5 = B(seq(5*BL+1, 6*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_6_5 = C(seq(5*BL+1, 6*BL), seq(4*BL+1, 5*BL));
 ABs.A_6_6 = A(seq(5*BL+1, 6*BL), seq(5*BL+1, 6*BL));
 ABs.B_6_6 = B(seq(5*BL+1, 6*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_6_6 = C(seq(5*BL+1, 6*BL), seq(5*BL+1, 6*BL));
 ABs.A_6_7 = A(seq(5*BL+1, 6*BL), seq(6*BL+1, 7*BL));
 ABs.B_6_7 = B(seq(5*BL+1, 6*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_6_7 = C(seq(5*BL+1, 6*BL), seq(6*BL+1, 7*BL));
 ABs.A_6_8 = A(seq(5*BL+1, 6*BL), seq(7*BL+1, 8*BL));
 ABs.B_6_8 = B(seq(5*BL+1, 6*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_6_8 = C(seq(5*BL+1, 6*BL), seq(7*BL+1, 8*BL));
 ABs.A_6_9 = A(seq(5*BL+1, 6*BL), seq(8*BL+1, 9*BL));
 ABs.B_6_9 = B(seq(5*BL+1, 6*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_6_9 = C(seq(5*BL+1, 6*BL), seq(8*BL+1, 9*BL));
 ABs.A_6_10 = A(seq(5*BL+1, 6*BL), seq(9*BL+1, 10*BL));
 ABs.B_6_10 = B(seq(5*BL+1, 6*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_6_10 = C(seq(5*BL+1, 6*BL), seq(9*BL+1, 10*BL));
 ABs.A_6_11 = A(seq(5*BL+1, 6*BL), seq(10*BL+1, 11*BL));
 ABs.B_6_11 = B(seq(5*BL+1, 6*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_6_11 = C(seq(5*BL+1, 6*BL), seq(10*BL+1, 11*BL));
 ABs.A_6_12 = A(seq(5*BL+1, 6*BL), seq(11*BL+1, 12*BL));
 ABs.B_6_12 = B(seq(5*BL+1, 6*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_6_12 = C(seq(5*BL+1, 6*BL), seq(11*BL+1, 12*BL));
 ABs.A_6_13 = A(seq(5*BL+1, 6*BL), seq(12*BL+1, 13*BL));
 ABs.B_6_13 = B(seq(5*BL+1, 6*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_6_13 = C(seq(5*BL+1, 6*BL), seq(12*BL+1, 13*BL));
 ABs.A_6_14 = A(seq(5*BL+1, 6*BL), seq(13*BL+1, 14*BL));
 ABs.B_6_14 = B(seq(5*BL+1, 6*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_6_14 = C(seq(5*BL+1, 6*BL), seq(13*BL+1, 14*BL));
 ABs.A_6_15 = A(seq(5*BL+1, 6*BL), seq(14*BL+1, 15*BL));
 ABs.B_6_15 = B(seq(5*BL+1, 6*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_6_15 = C(seq(5*BL+1, 6*BL), seq(14*BL+1, 15*BL));
 ABs.A_6_16 = A(seq(5*BL+1, 6*BL), seq(15*BL+1, 16*BL));
 ABs.B_6_16 = B(seq(5*BL+1, 6*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_6_16 = C(seq(5*BL+1, 6*BL), seq(15*BL+1, 16*BL));
 ABs.A_6_17 = A(seq(5*BL+1, 6*BL), seq(16*BL+1, 17*BL));
 ABs.B_6_17 = B(seq(5*BL+1, 6*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_6_17 = C(seq(5*BL+1, 6*BL), seq(16*BL+1, 17*BL));
 ABs.A_6_18 = A(seq(5*BL+1, 6*BL), seq(17*BL+1, 18*BL));
 ABs.B_6_18 = B(seq(5*BL+1, 6*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_6_18 = C(seq(5*BL+1, 6*BL), seq(17*BL+1, 18*BL));
 ABs.A_6_19 = A(seq(5*BL+1, 6*BL), seq(18*BL+1, 19*BL));
 ABs.B_6_19 = B(seq(5*BL+1, 6*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_6_19 = C(seq(5*BL+1, 6*BL), seq(18*BL+1, 19*BL));
 ABs.A_6_20 = A(seq(5*BL+1, 6*BL), seq(19*BL+1, 20*BL));
 ABs.B_6_20 = B(seq(5*BL+1, 6*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_6_20 = C(seq(5*BL+1, 6*BL), seq(19*BL+1, 20*BL));
 ABs.A_6_21 = A(seq(5*BL+1, 6*BL), seq(20*BL+1, 21*BL));
 ABs.B_6_21 = B(seq(5*BL+1, 6*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_6_21 = C(seq(5*BL+1, 6*BL), seq(20*BL+1, 21*BL));
 ABs.A_6_22 = A(seq(5*BL+1, 6*BL), seq(21*BL+1, 22*BL));
 ABs.B_6_22 = B(seq(5*BL+1, 6*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_6_22 = C(seq(5*BL+1, 6*BL), seq(21*BL+1, 22*BL));
 ABs.A_7_1 = A(seq(6*BL+1, 7*BL), seq(0*BL+1, 1*BL));
 ABs.B_7_1 = B(seq(6*BL+1, 7*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_7_1 = C(seq(6*BL+1, 7*BL), seq(0*BL+1, 1*BL));
 ABs.A_7_2 = A(seq(6*BL+1, 7*BL), seq(1*BL+1, 2*BL));
 ABs.B_7_2 = B(seq(6*BL+1, 7*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_7_2 = C(seq(6*BL+1, 7*BL), seq(1*BL+1, 2*BL));
 ABs.A_7_3 = A(seq(6*BL+1, 7*BL), seq(2*BL+1, 3*BL));
 ABs.B_7_3 = B(seq(6*BL+1, 7*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_7_3 = C(seq(6*BL+1, 7*BL), seq(2*BL+1, 3*BL));
 ABs.A_7_4 = A(seq(6*BL+1, 7*BL), seq(3*BL+1, 4*BL));
 ABs.B_7_4 = B(seq(6*BL+1, 7*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_7_4 = C(seq(6*BL+1, 7*BL), seq(3*BL+1, 4*BL));
 ABs.A_7_5 = A(seq(6*BL+1, 7*BL), seq(4*BL+1, 5*BL));
 ABs.B_7_5 = B(seq(6*BL+1, 7*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_7_5 = C(seq(6*BL+1, 7*BL), seq(4*BL+1, 5*BL));
 ABs.A_7_6 = A(seq(6*BL+1, 7*BL), seq(5*BL+1, 6*BL));
 ABs.B_7_6 = B(seq(6*BL+1, 7*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_7_6 = C(seq(6*BL+1, 7*BL), seq(5*BL+1, 6*BL));
 ABs.A_7_7 = A(seq(6*BL+1, 7*BL), seq(6*BL+1, 7*BL));
 ABs.B_7_7 = B(seq(6*BL+1, 7*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_7_7 = C(seq(6*BL+1, 7*BL), seq(6*BL+1, 7*BL));
 ABs.A_7_8 = A(seq(6*BL+1, 7*BL), seq(7*BL+1, 8*BL));
 ABs.B_7_8 = B(seq(6*BL+1, 7*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_7_8 = C(seq(6*BL+1, 7*BL), seq(7*BL+1, 8*BL));
 ABs.A_7_9 = A(seq(6*BL+1, 7*BL), seq(8*BL+1, 9*BL));
 ABs.B_7_9 = B(seq(6*BL+1, 7*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_7_9 = C(seq(6*BL+1, 7*BL), seq(8*BL+1, 9*BL));
 ABs.A_7_10 = A(seq(6*BL+1, 7*BL), seq(9*BL+1, 10*BL));
 ABs.B_7_10 = B(seq(6*BL+1, 7*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_7_10 = C(seq(6*BL+1, 7*BL), seq(9*BL+1, 10*BL));
 ABs.A_7_11 = A(seq(6*BL+1, 7*BL), seq(10*BL+1, 11*BL));
 ABs.B_7_11 = B(seq(6*BL+1, 7*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_7_11 = C(seq(6*BL+1, 7*BL), seq(10*BL+1, 11*BL));
 ABs.A_7_12 = A(seq(6*BL+1, 7*BL), seq(11*BL+1, 12*BL));
 ABs.B_7_12 = B(seq(6*BL+1, 7*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_7_12 = C(seq(6*BL+1, 7*BL), seq(11*BL+1, 12*BL));
 ABs.A_7_13 = A(seq(6*BL+1, 7*BL), seq(12*BL+1, 13*BL));
 ABs.B_7_13 = B(seq(6*BL+1, 7*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_7_13 = C(seq(6*BL+1, 7*BL), seq(12*BL+1, 13*BL));
 ABs.A_7_14 = A(seq(6*BL+1, 7*BL), seq(13*BL+1, 14*BL));
 ABs.B_7_14 = B(seq(6*BL+1, 7*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_7_14 = C(seq(6*BL+1, 7*BL), seq(13*BL+1, 14*BL));
 ABs.A_7_15 = A(seq(6*BL+1, 7*BL), seq(14*BL+1, 15*BL));
 ABs.B_7_15 = B(seq(6*BL+1, 7*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_7_15 = C(seq(6*BL+1, 7*BL), seq(14*BL+1, 15*BL));
 ABs.A_7_16 = A(seq(6*BL+1, 7*BL), seq(15*BL+1, 16*BL));
 ABs.B_7_16 = B(seq(6*BL+1, 7*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_7_16 = C(seq(6*BL+1, 7*BL), seq(15*BL+1, 16*BL));
 ABs.A_7_17 = A(seq(6*BL+1, 7*BL), seq(16*BL+1, 17*BL));
 ABs.B_7_17 = B(seq(6*BL+1, 7*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_7_17 = C(seq(6*BL+1, 7*BL), seq(16*BL+1, 17*BL));
 ABs.A_7_18 = A(seq(6*BL+1, 7*BL), seq(17*BL+1, 18*BL));
 ABs.B_7_18 = B(seq(6*BL+1, 7*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_7_18 = C(seq(6*BL+1, 7*BL), seq(17*BL+1, 18*BL));
 ABs.A_7_19 = A(seq(6*BL+1, 7*BL), seq(18*BL+1, 19*BL));
 ABs.B_7_19 = B(seq(6*BL+1, 7*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_7_19 = C(seq(6*BL+1, 7*BL), seq(18*BL+1, 19*BL));
 ABs.A_7_20 = A(seq(6*BL+1, 7*BL), seq(19*BL+1, 20*BL));
 ABs.B_7_20 = B(seq(6*BL+1, 7*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_7_20 = C(seq(6*BL+1, 7*BL), seq(19*BL+1, 20*BL));
 ABs.A_7_21 = A(seq(6*BL+1, 7*BL), seq(20*BL+1, 21*BL));
 ABs.B_7_21 = B(seq(6*BL+1, 7*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_7_21 = C(seq(6*BL+1, 7*BL), seq(20*BL+1, 21*BL));
 ABs.A_7_22 = A(seq(6*BL+1, 7*BL), seq(21*BL+1, 22*BL));
 ABs.B_7_22 = B(seq(6*BL+1, 7*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_7_22 = C(seq(6*BL+1, 7*BL), seq(21*BL+1, 22*BL));
 ABs.A_8_1 = A(seq(7*BL+1, 8*BL), seq(0*BL+1, 1*BL));
 ABs.B_8_1 = B(seq(7*BL+1, 8*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_8_1 = C(seq(7*BL+1, 8*BL), seq(0*BL+1, 1*BL));
 ABs.A_8_2 = A(seq(7*BL+1, 8*BL), seq(1*BL+1, 2*BL));
 ABs.B_8_2 = B(seq(7*BL+1, 8*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_8_2 = C(seq(7*BL+1, 8*BL), seq(1*BL+1, 2*BL));
 ABs.A_8_3 = A(seq(7*BL+1, 8*BL), seq(2*BL+1, 3*BL));
 ABs.B_8_3 = B(seq(7*BL+1, 8*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_8_3 = C(seq(7*BL+1, 8*BL), seq(2*BL+1, 3*BL));
 ABs.A_8_4 = A(seq(7*BL+1, 8*BL), seq(3*BL+1, 4*BL));
 ABs.B_8_4 = B(seq(7*BL+1, 8*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_8_4 = C(seq(7*BL+1, 8*BL), seq(3*BL+1, 4*BL));
 ABs.A_8_5 = A(seq(7*BL+1, 8*BL), seq(4*BL+1, 5*BL));
 ABs.B_8_5 = B(seq(7*BL+1, 8*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_8_5 = C(seq(7*BL+1, 8*BL), seq(4*BL+1, 5*BL));
 ABs.A_8_6 = A(seq(7*BL+1, 8*BL), seq(5*BL+1, 6*BL));
 ABs.B_8_6 = B(seq(7*BL+1, 8*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_8_6 = C(seq(7*BL+1, 8*BL), seq(5*BL+1, 6*BL));
 ABs.A_8_7 = A(seq(7*BL+1, 8*BL), seq(6*BL+1, 7*BL));
 ABs.B_8_7 = B(seq(7*BL+1, 8*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_8_7 = C(seq(7*BL+1, 8*BL), seq(6*BL+1, 7*BL));
 ABs.A_8_8 = A(seq(7*BL+1, 8*BL), seq(7*BL+1, 8*BL));
 ABs.B_8_8 = B(seq(7*BL+1, 8*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_8_8 = C(seq(7*BL+1, 8*BL), seq(7*BL+1, 8*BL));
 ABs.A_8_9 = A(seq(7*BL+1, 8*BL), seq(8*BL+1, 9*BL));
 ABs.B_8_9 = B(seq(7*BL+1, 8*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_8_9 = C(seq(7*BL+1, 8*BL), seq(8*BL+1, 9*BL));
 ABs.A_8_10 = A(seq(7*BL+1, 8*BL), seq(9*BL+1, 10*BL));
 ABs.B_8_10 = B(seq(7*BL+1, 8*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_8_10 = C(seq(7*BL+1, 8*BL), seq(9*BL+1, 10*BL));
 ABs.A_8_11 = A(seq(7*BL+1, 8*BL), seq(10*BL+1, 11*BL));
 ABs.B_8_11 = B(seq(7*BL+1, 8*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_8_11 = C(seq(7*BL+1, 8*BL), seq(10*BL+1, 11*BL));
 ABs.A_8_12 = A(seq(7*BL+1, 8*BL), seq(11*BL+1, 12*BL));
 ABs.B_8_12 = B(seq(7*BL+1, 8*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_8_12 = C(seq(7*BL+1, 8*BL), seq(11*BL+1, 12*BL));
 ABs.A_8_13 = A(seq(7*BL+1, 8*BL), seq(12*BL+1, 13*BL));
 ABs.B_8_13 = B(seq(7*BL+1, 8*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_8_13 = C(seq(7*BL+1, 8*BL), seq(12*BL+1, 13*BL));
 ABs.A_8_14 = A(seq(7*BL+1, 8*BL), seq(13*BL+1, 14*BL));
 ABs.B_8_14 = B(seq(7*BL+1, 8*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_8_14 = C(seq(7*BL+1, 8*BL), seq(13*BL+1, 14*BL));
 ABs.A_8_15 = A(seq(7*BL+1, 8*BL), seq(14*BL+1, 15*BL));
 ABs.B_8_15 = B(seq(7*BL+1, 8*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_8_15 = C(seq(7*BL+1, 8*BL), seq(14*BL+1, 15*BL));
 ABs.A_8_16 = A(seq(7*BL+1, 8*BL), seq(15*BL+1, 16*BL));
 ABs.B_8_16 = B(seq(7*BL+1, 8*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_8_16 = C(seq(7*BL+1, 8*BL), seq(15*BL+1, 16*BL));
 ABs.A_8_17 = A(seq(7*BL+1, 8*BL), seq(16*BL+1, 17*BL));
 ABs.B_8_17 = B(seq(7*BL+1, 8*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_8_17 = C(seq(7*BL+1, 8*BL), seq(16*BL+1, 17*BL));
 ABs.A_8_18 = A(seq(7*BL+1, 8*BL), seq(17*BL+1, 18*BL));
 ABs.B_8_18 = B(seq(7*BL+1, 8*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_8_18 = C(seq(7*BL+1, 8*BL), seq(17*BL+1, 18*BL));
 ABs.A_8_19 = A(seq(7*BL+1, 8*BL), seq(18*BL+1, 19*BL));
 ABs.B_8_19 = B(seq(7*BL+1, 8*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_8_19 = C(seq(7*BL+1, 8*BL), seq(18*BL+1, 19*BL));
 ABs.A_8_20 = A(seq(7*BL+1, 8*BL), seq(19*BL+1, 20*BL));
 ABs.B_8_20 = B(seq(7*BL+1, 8*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_8_20 = C(seq(7*BL+1, 8*BL), seq(19*BL+1, 20*BL));
 ABs.A_8_21 = A(seq(7*BL+1, 8*BL), seq(20*BL+1, 21*BL));
 ABs.B_8_21 = B(seq(7*BL+1, 8*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_8_21 = C(seq(7*BL+1, 8*BL), seq(20*BL+1, 21*BL));
 ABs.A_8_22 = A(seq(7*BL+1, 8*BL), seq(21*BL+1, 22*BL));
 ABs.B_8_22 = B(seq(7*BL+1, 8*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_8_22 = C(seq(7*BL+1, 8*BL), seq(21*BL+1, 22*BL));
 ABs.A_9_1 = A(seq(8*BL+1, 9*BL), seq(0*BL+1, 1*BL));
 ABs.B_9_1 = B(seq(8*BL+1, 9*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_9_1 = C(seq(8*BL+1, 9*BL), seq(0*BL+1, 1*BL));
 ABs.A_9_2 = A(seq(8*BL+1, 9*BL), seq(1*BL+1, 2*BL));
 ABs.B_9_2 = B(seq(8*BL+1, 9*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_9_2 = C(seq(8*BL+1, 9*BL), seq(1*BL+1, 2*BL));
 ABs.A_9_3 = A(seq(8*BL+1, 9*BL), seq(2*BL+1, 3*BL));
 ABs.B_9_3 = B(seq(8*BL+1, 9*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_9_3 = C(seq(8*BL+1, 9*BL), seq(2*BL+1, 3*BL));
 ABs.A_9_4 = A(seq(8*BL+1, 9*BL), seq(3*BL+1, 4*BL));
 ABs.B_9_4 = B(seq(8*BL+1, 9*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_9_4 = C(seq(8*BL+1, 9*BL), seq(3*BL+1, 4*BL));
 ABs.A_9_5 = A(seq(8*BL+1, 9*BL), seq(4*BL+1, 5*BL));
 ABs.B_9_5 = B(seq(8*BL+1, 9*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_9_5 = C(seq(8*BL+1, 9*BL), seq(4*BL+1, 5*BL));
 ABs.A_9_6 = A(seq(8*BL+1, 9*BL), seq(5*BL+1, 6*BL));
 ABs.B_9_6 = B(seq(8*BL+1, 9*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_9_6 = C(seq(8*BL+1, 9*BL), seq(5*BL+1, 6*BL));
 ABs.A_9_7 = A(seq(8*BL+1, 9*BL), seq(6*BL+1, 7*BL));
 ABs.B_9_7 = B(seq(8*BL+1, 9*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_9_7 = C(seq(8*BL+1, 9*BL), seq(6*BL+1, 7*BL));
 ABs.A_9_8 = A(seq(8*BL+1, 9*BL), seq(7*BL+1, 8*BL));
 ABs.B_9_8 = B(seq(8*BL+1, 9*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_9_8 = C(seq(8*BL+1, 9*BL), seq(7*BL+1, 8*BL));
 ABs.A_9_9 = A(seq(8*BL+1, 9*BL), seq(8*BL+1, 9*BL));
 ABs.B_9_9 = B(seq(8*BL+1, 9*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_9_9 = C(seq(8*BL+1, 9*BL), seq(8*BL+1, 9*BL));
 ABs.A_9_10 = A(seq(8*BL+1, 9*BL), seq(9*BL+1, 10*BL));
 ABs.B_9_10 = B(seq(8*BL+1, 9*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_9_10 = C(seq(8*BL+1, 9*BL), seq(9*BL+1, 10*BL));
 ABs.A_9_11 = A(seq(8*BL+1, 9*BL), seq(10*BL+1, 11*BL));
 ABs.B_9_11 = B(seq(8*BL+1, 9*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_9_11 = C(seq(8*BL+1, 9*BL), seq(10*BL+1, 11*BL));
 ABs.A_9_12 = A(seq(8*BL+1, 9*BL), seq(11*BL+1, 12*BL));
 ABs.B_9_12 = B(seq(8*BL+1, 9*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_9_12 = C(seq(8*BL+1, 9*BL), seq(11*BL+1, 12*BL));
 ABs.A_9_13 = A(seq(8*BL+1, 9*BL), seq(12*BL+1, 13*BL));
 ABs.B_9_13 = B(seq(8*BL+1, 9*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_9_13 = C(seq(8*BL+1, 9*BL), seq(12*BL+1, 13*BL));
 ABs.A_9_14 = A(seq(8*BL+1, 9*BL), seq(13*BL+1, 14*BL));
 ABs.B_9_14 = B(seq(8*BL+1, 9*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_9_14 = C(seq(8*BL+1, 9*BL), seq(13*BL+1, 14*BL));
 ABs.A_9_15 = A(seq(8*BL+1, 9*BL), seq(14*BL+1, 15*BL));
 ABs.B_9_15 = B(seq(8*BL+1, 9*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_9_15 = C(seq(8*BL+1, 9*BL), seq(14*BL+1, 15*BL));
 ABs.A_9_16 = A(seq(8*BL+1, 9*BL), seq(15*BL+1, 16*BL));
 ABs.B_9_16 = B(seq(8*BL+1, 9*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_9_16 = C(seq(8*BL+1, 9*BL), seq(15*BL+1, 16*BL));
 ABs.A_9_17 = A(seq(8*BL+1, 9*BL), seq(16*BL+1, 17*BL));
 ABs.B_9_17 = B(seq(8*BL+1, 9*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_9_17 = C(seq(8*BL+1, 9*BL), seq(16*BL+1, 17*BL));
 ABs.A_9_18 = A(seq(8*BL+1, 9*BL), seq(17*BL+1, 18*BL));
 ABs.B_9_18 = B(seq(8*BL+1, 9*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_9_18 = C(seq(8*BL+1, 9*BL), seq(17*BL+1, 18*BL));
 ABs.A_9_19 = A(seq(8*BL+1, 9*BL), seq(18*BL+1, 19*BL));
 ABs.B_9_19 = B(seq(8*BL+1, 9*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_9_19 = C(seq(8*BL+1, 9*BL), seq(18*BL+1, 19*BL));
 ABs.A_9_20 = A(seq(8*BL+1, 9*BL), seq(19*BL+1, 20*BL));
 ABs.B_9_20 = B(seq(8*BL+1, 9*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_9_20 = C(seq(8*BL+1, 9*BL), seq(19*BL+1, 20*BL));
 ABs.A_9_21 = A(seq(8*BL+1, 9*BL), seq(20*BL+1, 21*BL));
 ABs.B_9_21 = B(seq(8*BL+1, 9*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_9_21 = C(seq(8*BL+1, 9*BL), seq(20*BL+1, 21*BL));
 ABs.A_9_22 = A(seq(8*BL+1, 9*BL), seq(21*BL+1, 22*BL));
 ABs.B_9_22 = B(seq(8*BL+1, 9*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_9_22 = C(seq(8*BL+1, 9*BL), seq(21*BL+1, 22*BL));
 ABs.A_10_1 = A(seq(9*BL+1, 10*BL), seq(0*BL+1, 1*BL));
 ABs.B_10_1 = B(seq(9*BL+1, 10*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_10_1 = C(seq(9*BL+1, 10*BL), seq(0*BL+1, 1*BL));
 ABs.A_10_2 = A(seq(9*BL+1, 10*BL), seq(1*BL+1, 2*BL));
 ABs.B_10_2 = B(seq(9*BL+1, 10*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_10_2 = C(seq(9*BL+1, 10*BL), seq(1*BL+1, 2*BL));
 ABs.A_10_3 = A(seq(9*BL+1, 10*BL), seq(2*BL+1, 3*BL));
 ABs.B_10_3 = B(seq(9*BL+1, 10*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_10_3 = C(seq(9*BL+1, 10*BL), seq(2*BL+1, 3*BL));
 ABs.A_10_4 = A(seq(9*BL+1, 10*BL), seq(3*BL+1, 4*BL));
 ABs.B_10_4 = B(seq(9*BL+1, 10*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_10_4 = C(seq(9*BL+1, 10*BL), seq(3*BL+1, 4*BL));
 ABs.A_10_5 = A(seq(9*BL+1, 10*BL), seq(4*BL+1, 5*BL));
 ABs.B_10_5 = B(seq(9*BL+1, 10*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_10_5 = C(seq(9*BL+1, 10*BL), seq(4*BL+1, 5*BL));
 ABs.A_10_6 = A(seq(9*BL+1, 10*BL), seq(5*BL+1, 6*BL));
 ABs.B_10_6 = B(seq(9*BL+1, 10*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_10_6 = C(seq(9*BL+1, 10*BL), seq(5*BL+1, 6*BL));
 ABs.A_10_7 = A(seq(9*BL+1, 10*BL), seq(6*BL+1, 7*BL));
 ABs.B_10_7 = B(seq(9*BL+1, 10*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_10_7 = C(seq(9*BL+1, 10*BL), seq(6*BL+1, 7*BL));
 ABs.A_10_8 = A(seq(9*BL+1, 10*BL), seq(7*BL+1, 8*BL));
 ABs.B_10_8 = B(seq(9*BL+1, 10*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_10_8 = C(seq(9*BL+1, 10*BL), seq(7*BL+1, 8*BL));
 ABs.A_10_9 = A(seq(9*BL+1, 10*BL), seq(8*BL+1, 9*BL));
 ABs.B_10_9 = B(seq(9*BL+1, 10*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_10_9 = C(seq(9*BL+1, 10*BL), seq(8*BL+1, 9*BL));
 ABs.A_10_10 = A(seq(9*BL+1, 10*BL), seq(9*BL+1, 10*BL));
 ABs.B_10_10 = B(seq(9*BL+1, 10*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_10_10 = C(seq(9*BL+1, 10*BL), seq(9*BL+1, 10*BL));
 ABs.A_10_11 = A(seq(9*BL+1, 10*BL), seq(10*BL+1, 11*BL));
 ABs.B_10_11 = B(seq(9*BL+1, 10*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_10_11 = C(seq(9*BL+1, 10*BL), seq(10*BL+1, 11*BL));
 ABs.A_10_12 = A(seq(9*BL+1, 10*BL), seq(11*BL+1, 12*BL));
 ABs.B_10_12 = B(seq(9*BL+1, 10*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_10_12 = C(seq(9*BL+1, 10*BL), seq(11*BL+1, 12*BL));
 ABs.A_10_13 = A(seq(9*BL+1, 10*BL), seq(12*BL+1, 13*BL));
 ABs.B_10_13 = B(seq(9*BL+1, 10*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_10_13 = C(seq(9*BL+1, 10*BL), seq(12*BL+1, 13*BL));
 ABs.A_10_14 = A(seq(9*BL+1, 10*BL), seq(13*BL+1, 14*BL));
 ABs.B_10_14 = B(seq(9*BL+1, 10*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_10_14 = C(seq(9*BL+1, 10*BL), seq(13*BL+1, 14*BL));
 ABs.A_10_15 = A(seq(9*BL+1, 10*BL), seq(14*BL+1, 15*BL));
 ABs.B_10_15 = B(seq(9*BL+1, 10*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_10_15 = C(seq(9*BL+1, 10*BL), seq(14*BL+1, 15*BL));
 ABs.A_10_16 = A(seq(9*BL+1, 10*BL), seq(15*BL+1, 16*BL));
 ABs.B_10_16 = B(seq(9*BL+1, 10*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_10_16 = C(seq(9*BL+1, 10*BL), seq(15*BL+1, 16*BL));
 ABs.A_10_17 = A(seq(9*BL+1, 10*BL), seq(16*BL+1, 17*BL));
 ABs.B_10_17 = B(seq(9*BL+1, 10*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_10_17 = C(seq(9*BL+1, 10*BL), seq(16*BL+1, 17*BL));
 ABs.A_10_18 = A(seq(9*BL+1, 10*BL), seq(17*BL+1, 18*BL));
 ABs.B_10_18 = B(seq(9*BL+1, 10*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_10_18 = C(seq(9*BL+1, 10*BL), seq(17*BL+1, 18*BL));
 ABs.A_10_19 = A(seq(9*BL+1, 10*BL), seq(18*BL+1, 19*BL));
 ABs.B_10_19 = B(seq(9*BL+1, 10*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_10_19 = C(seq(9*BL+1, 10*BL), seq(18*BL+1, 19*BL));
 ABs.A_10_20 = A(seq(9*BL+1, 10*BL), seq(19*BL+1, 20*BL));
 ABs.B_10_20 = B(seq(9*BL+1, 10*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_10_20 = C(seq(9*BL+1, 10*BL), seq(19*BL+1, 20*BL));
 ABs.A_10_21 = A(seq(9*BL+1, 10*BL), seq(20*BL+1, 21*BL));
 ABs.B_10_21 = B(seq(9*BL+1, 10*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_10_21 = C(seq(9*BL+1, 10*BL), seq(20*BL+1, 21*BL));
 ABs.A_10_22 = A(seq(9*BL+1, 10*BL), seq(21*BL+1, 22*BL));
 ABs.B_10_22 = B(seq(9*BL+1, 10*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_10_22 = C(seq(9*BL+1, 10*BL), seq(21*BL+1, 22*BL));
 ABs.A_11_1 = A(seq(10*BL+1, 11*BL), seq(0*BL+1, 1*BL));
 ABs.B_11_1 = B(seq(10*BL+1, 11*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_11_1 = C(seq(10*BL+1, 11*BL), seq(0*BL+1, 1*BL));
 ABs.A_11_2 = A(seq(10*BL+1, 11*BL), seq(1*BL+1, 2*BL));
 ABs.B_11_2 = B(seq(10*BL+1, 11*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_11_2 = C(seq(10*BL+1, 11*BL), seq(1*BL+1, 2*BL));
 ABs.A_11_3 = A(seq(10*BL+1, 11*BL), seq(2*BL+1, 3*BL));
 ABs.B_11_3 = B(seq(10*BL+1, 11*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_11_3 = C(seq(10*BL+1, 11*BL), seq(2*BL+1, 3*BL));
 ABs.A_11_4 = A(seq(10*BL+1, 11*BL), seq(3*BL+1, 4*BL));
 ABs.B_11_4 = B(seq(10*BL+1, 11*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_11_4 = C(seq(10*BL+1, 11*BL), seq(3*BL+1, 4*BL));
 ABs.A_11_5 = A(seq(10*BL+1, 11*BL), seq(4*BL+1, 5*BL));
 ABs.B_11_5 = B(seq(10*BL+1, 11*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_11_5 = C(seq(10*BL+1, 11*BL), seq(4*BL+1, 5*BL));
 ABs.A_11_6 = A(seq(10*BL+1, 11*BL), seq(5*BL+1, 6*BL));
 ABs.B_11_6 = B(seq(10*BL+1, 11*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_11_6 = C(seq(10*BL+1, 11*BL), seq(5*BL+1, 6*BL));
 ABs.A_11_7 = A(seq(10*BL+1, 11*BL), seq(6*BL+1, 7*BL));
 ABs.B_11_7 = B(seq(10*BL+1, 11*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_11_7 = C(seq(10*BL+1, 11*BL), seq(6*BL+1, 7*BL));
 ABs.A_11_8 = A(seq(10*BL+1, 11*BL), seq(7*BL+1, 8*BL));
 ABs.B_11_8 = B(seq(10*BL+1, 11*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_11_8 = C(seq(10*BL+1, 11*BL), seq(7*BL+1, 8*BL));
 ABs.A_11_9 = A(seq(10*BL+1, 11*BL), seq(8*BL+1, 9*BL));
 ABs.B_11_9 = B(seq(10*BL+1, 11*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_11_9 = C(seq(10*BL+1, 11*BL), seq(8*BL+1, 9*BL));
 ABs.A_11_10 = A(seq(10*BL+1, 11*BL), seq(9*BL+1, 10*BL));
 ABs.B_11_10 = B(seq(10*BL+1, 11*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_11_10 = C(seq(10*BL+1, 11*BL), seq(9*BL+1, 10*BL));
 ABs.A_11_11 = A(seq(10*BL+1, 11*BL), seq(10*BL+1, 11*BL));
 ABs.B_11_11 = B(seq(10*BL+1, 11*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_11_11 = C(seq(10*BL+1, 11*BL), seq(10*BL+1, 11*BL));
 ABs.A_11_12 = A(seq(10*BL+1, 11*BL), seq(11*BL+1, 12*BL));
 ABs.B_11_12 = B(seq(10*BL+1, 11*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_11_12 = C(seq(10*BL+1, 11*BL), seq(11*BL+1, 12*BL));
 ABs.A_11_13 = A(seq(10*BL+1, 11*BL), seq(12*BL+1, 13*BL));
 ABs.B_11_13 = B(seq(10*BL+1, 11*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_11_13 = C(seq(10*BL+1, 11*BL), seq(12*BL+1, 13*BL));
 ABs.A_11_14 = A(seq(10*BL+1, 11*BL), seq(13*BL+1, 14*BL));
 ABs.B_11_14 = B(seq(10*BL+1, 11*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_11_14 = C(seq(10*BL+1, 11*BL), seq(13*BL+1, 14*BL));
 ABs.A_11_15 = A(seq(10*BL+1, 11*BL), seq(14*BL+1, 15*BL));
 ABs.B_11_15 = B(seq(10*BL+1, 11*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_11_15 = C(seq(10*BL+1, 11*BL), seq(14*BL+1, 15*BL));
 ABs.A_11_16 = A(seq(10*BL+1, 11*BL), seq(15*BL+1, 16*BL));
 ABs.B_11_16 = B(seq(10*BL+1, 11*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_11_16 = C(seq(10*BL+1, 11*BL), seq(15*BL+1, 16*BL));
 ABs.A_11_17 = A(seq(10*BL+1, 11*BL), seq(16*BL+1, 17*BL));
 ABs.B_11_17 = B(seq(10*BL+1, 11*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_11_17 = C(seq(10*BL+1, 11*BL), seq(16*BL+1, 17*BL));
 ABs.A_11_18 = A(seq(10*BL+1, 11*BL), seq(17*BL+1, 18*BL));
 ABs.B_11_18 = B(seq(10*BL+1, 11*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_11_18 = C(seq(10*BL+1, 11*BL), seq(17*BL+1, 18*BL));
 ABs.A_11_19 = A(seq(10*BL+1, 11*BL), seq(18*BL+1, 19*BL));
 ABs.B_11_19 = B(seq(10*BL+1, 11*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_11_19 = C(seq(10*BL+1, 11*BL), seq(18*BL+1, 19*BL));
 ABs.A_11_20 = A(seq(10*BL+1, 11*BL), seq(19*BL+1, 20*BL));
 ABs.B_11_20 = B(seq(10*BL+1, 11*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_11_20 = C(seq(10*BL+1, 11*BL), seq(19*BL+1, 20*BL));
 ABs.A_11_21 = A(seq(10*BL+1, 11*BL), seq(20*BL+1, 21*BL));
 ABs.B_11_21 = B(seq(10*BL+1, 11*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_11_21 = C(seq(10*BL+1, 11*BL), seq(20*BL+1, 21*BL));
 ABs.A_11_22 = A(seq(10*BL+1, 11*BL), seq(21*BL+1, 22*BL));
 ABs.B_11_22 = B(seq(10*BL+1, 11*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_11_22 = C(seq(10*BL+1, 11*BL), seq(21*BL+1, 22*BL));
 ABs.A_12_1 = A(seq(11*BL+1, 12*BL), seq(0*BL+1, 1*BL));
 ABs.B_12_1 = B(seq(11*BL+1, 12*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_12_1 = C(seq(11*BL+1, 12*BL), seq(0*BL+1, 1*BL));
 ABs.A_12_2 = A(seq(11*BL+1, 12*BL), seq(1*BL+1, 2*BL));
 ABs.B_12_2 = B(seq(11*BL+1, 12*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_12_2 = C(seq(11*BL+1, 12*BL), seq(1*BL+1, 2*BL));
 ABs.A_12_3 = A(seq(11*BL+1, 12*BL), seq(2*BL+1, 3*BL));
 ABs.B_12_3 = B(seq(11*BL+1, 12*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_12_3 = C(seq(11*BL+1, 12*BL), seq(2*BL+1, 3*BL));
 ABs.A_12_4 = A(seq(11*BL+1, 12*BL), seq(3*BL+1, 4*BL));
 ABs.B_12_4 = B(seq(11*BL+1, 12*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_12_4 = C(seq(11*BL+1, 12*BL), seq(3*BL+1, 4*BL));
 ABs.A_12_5 = A(seq(11*BL+1, 12*BL), seq(4*BL+1, 5*BL));
 ABs.B_12_5 = B(seq(11*BL+1, 12*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_12_5 = C(seq(11*BL+1, 12*BL), seq(4*BL+1, 5*BL));
 ABs.A_12_6 = A(seq(11*BL+1, 12*BL), seq(5*BL+1, 6*BL));
 ABs.B_12_6 = B(seq(11*BL+1, 12*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_12_6 = C(seq(11*BL+1, 12*BL), seq(5*BL+1, 6*BL));
 ABs.A_12_7 = A(seq(11*BL+1, 12*BL), seq(6*BL+1, 7*BL));
 ABs.B_12_7 = B(seq(11*BL+1, 12*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_12_7 = C(seq(11*BL+1, 12*BL), seq(6*BL+1, 7*BL));
 ABs.A_12_8 = A(seq(11*BL+1, 12*BL), seq(7*BL+1, 8*BL));
 ABs.B_12_8 = B(seq(11*BL+1, 12*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_12_8 = C(seq(11*BL+1, 12*BL), seq(7*BL+1, 8*BL));
 ABs.A_12_9 = A(seq(11*BL+1, 12*BL), seq(8*BL+1, 9*BL));
 ABs.B_12_9 = B(seq(11*BL+1, 12*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_12_9 = C(seq(11*BL+1, 12*BL), seq(8*BL+1, 9*BL));
 ABs.A_12_10 = A(seq(11*BL+1, 12*BL), seq(9*BL+1, 10*BL));
 ABs.B_12_10 = B(seq(11*BL+1, 12*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_12_10 = C(seq(11*BL+1, 12*BL), seq(9*BL+1, 10*BL));
 ABs.A_12_11 = A(seq(11*BL+1, 12*BL), seq(10*BL+1, 11*BL));
 ABs.B_12_11 = B(seq(11*BL+1, 12*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_12_11 = C(seq(11*BL+1, 12*BL), seq(10*BL+1, 11*BL));
 ABs.A_12_12 = A(seq(11*BL+1, 12*BL), seq(11*BL+1, 12*BL));
 ABs.B_12_12 = B(seq(11*BL+1, 12*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_12_12 = C(seq(11*BL+1, 12*BL), seq(11*BL+1, 12*BL));
 ABs.A_12_13 = A(seq(11*BL+1, 12*BL), seq(12*BL+1, 13*BL));
 ABs.B_12_13 = B(seq(11*BL+1, 12*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_12_13 = C(seq(11*BL+1, 12*BL), seq(12*BL+1, 13*BL));
 ABs.A_12_14 = A(seq(11*BL+1, 12*BL), seq(13*BL+1, 14*BL));
 ABs.B_12_14 = B(seq(11*BL+1, 12*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_12_14 = C(seq(11*BL+1, 12*BL), seq(13*BL+1, 14*BL));
 ABs.A_12_15 = A(seq(11*BL+1, 12*BL), seq(14*BL+1, 15*BL));
 ABs.B_12_15 = B(seq(11*BL+1, 12*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_12_15 = C(seq(11*BL+1, 12*BL), seq(14*BL+1, 15*BL));
 ABs.A_12_16 = A(seq(11*BL+1, 12*BL), seq(15*BL+1, 16*BL));
 ABs.B_12_16 = B(seq(11*BL+1, 12*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_12_16 = C(seq(11*BL+1, 12*BL), seq(15*BL+1, 16*BL));
 ABs.A_12_17 = A(seq(11*BL+1, 12*BL), seq(16*BL+1, 17*BL));
 ABs.B_12_17 = B(seq(11*BL+1, 12*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_12_17 = C(seq(11*BL+1, 12*BL), seq(16*BL+1, 17*BL));
 ABs.A_12_18 = A(seq(11*BL+1, 12*BL), seq(17*BL+1, 18*BL));
 ABs.B_12_18 = B(seq(11*BL+1, 12*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_12_18 = C(seq(11*BL+1, 12*BL), seq(17*BL+1, 18*BL));
 ABs.A_12_19 = A(seq(11*BL+1, 12*BL), seq(18*BL+1, 19*BL));
 ABs.B_12_19 = B(seq(11*BL+1, 12*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_12_19 = C(seq(11*BL+1, 12*BL), seq(18*BL+1, 19*BL));
 ABs.A_12_20 = A(seq(11*BL+1, 12*BL), seq(19*BL+1, 20*BL));
 ABs.B_12_20 = B(seq(11*BL+1, 12*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_12_20 = C(seq(11*BL+1, 12*BL), seq(19*BL+1, 20*BL));
 ABs.A_12_21 = A(seq(11*BL+1, 12*BL), seq(20*BL+1, 21*BL));
 ABs.B_12_21 = B(seq(11*BL+1, 12*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_12_21 = C(seq(11*BL+1, 12*BL), seq(20*BL+1, 21*BL));
 ABs.A_12_22 = A(seq(11*BL+1, 12*BL), seq(21*BL+1, 22*BL));
 ABs.B_12_22 = B(seq(11*BL+1, 12*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_12_22 = C(seq(11*BL+1, 12*BL), seq(21*BL+1, 22*BL));
 ABs.A_13_1 = A(seq(12*BL+1, 13*BL), seq(0*BL+1, 1*BL));
 ABs.B_13_1 = B(seq(12*BL+1, 13*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_13_1 = C(seq(12*BL+1, 13*BL), seq(0*BL+1, 1*BL));
 ABs.A_13_2 = A(seq(12*BL+1, 13*BL), seq(1*BL+1, 2*BL));
 ABs.B_13_2 = B(seq(12*BL+1, 13*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_13_2 = C(seq(12*BL+1, 13*BL), seq(1*BL+1, 2*BL));
 ABs.A_13_3 = A(seq(12*BL+1, 13*BL), seq(2*BL+1, 3*BL));
 ABs.B_13_3 = B(seq(12*BL+1, 13*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_13_3 = C(seq(12*BL+1, 13*BL), seq(2*BL+1, 3*BL));
 ABs.A_13_4 = A(seq(12*BL+1, 13*BL), seq(3*BL+1, 4*BL));
 ABs.B_13_4 = B(seq(12*BL+1, 13*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_13_4 = C(seq(12*BL+1, 13*BL), seq(3*BL+1, 4*BL));
 ABs.A_13_5 = A(seq(12*BL+1, 13*BL), seq(4*BL+1, 5*BL));
 ABs.B_13_5 = B(seq(12*BL+1, 13*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_13_5 = C(seq(12*BL+1, 13*BL), seq(4*BL+1, 5*BL));
 ABs.A_13_6 = A(seq(12*BL+1, 13*BL), seq(5*BL+1, 6*BL));
 ABs.B_13_6 = B(seq(12*BL+1, 13*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_13_6 = C(seq(12*BL+1, 13*BL), seq(5*BL+1, 6*BL));
 ABs.A_13_7 = A(seq(12*BL+1, 13*BL), seq(6*BL+1, 7*BL));
 ABs.B_13_7 = B(seq(12*BL+1, 13*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_13_7 = C(seq(12*BL+1, 13*BL), seq(6*BL+1, 7*BL));
 ABs.A_13_8 = A(seq(12*BL+1, 13*BL), seq(7*BL+1, 8*BL));
 ABs.B_13_8 = B(seq(12*BL+1, 13*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_13_8 = C(seq(12*BL+1, 13*BL), seq(7*BL+1, 8*BL));
 ABs.A_13_9 = A(seq(12*BL+1, 13*BL), seq(8*BL+1, 9*BL));
 ABs.B_13_9 = B(seq(12*BL+1, 13*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_13_9 = C(seq(12*BL+1, 13*BL), seq(8*BL+1, 9*BL));
 ABs.A_13_10 = A(seq(12*BL+1, 13*BL), seq(9*BL+1, 10*BL));
 ABs.B_13_10 = B(seq(12*BL+1, 13*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_13_10 = C(seq(12*BL+1, 13*BL), seq(9*BL+1, 10*BL));
 ABs.A_13_11 = A(seq(12*BL+1, 13*BL), seq(10*BL+1, 11*BL));
 ABs.B_13_11 = B(seq(12*BL+1, 13*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_13_11 = C(seq(12*BL+1, 13*BL), seq(10*BL+1, 11*BL));
 ABs.A_13_12 = A(seq(12*BL+1, 13*BL), seq(11*BL+1, 12*BL));
 ABs.B_13_12 = B(seq(12*BL+1, 13*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_13_12 = C(seq(12*BL+1, 13*BL), seq(11*BL+1, 12*BL));
 ABs.A_13_13 = A(seq(12*BL+1, 13*BL), seq(12*BL+1, 13*BL));
 ABs.B_13_13 = B(seq(12*BL+1, 13*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_13_13 = C(seq(12*BL+1, 13*BL), seq(12*BL+1, 13*BL));
 ABs.A_13_14 = A(seq(12*BL+1, 13*BL), seq(13*BL+1, 14*BL));
 ABs.B_13_14 = B(seq(12*BL+1, 13*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_13_14 = C(seq(12*BL+1, 13*BL), seq(13*BL+1, 14*BL));
 ABs.A_13_15 = A(seq(12*BL+1, 13*BL), seq(14*BL+1, 15*BL));
 ABs.B_13_15 = B(seq(12*BL+1, 13*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_13_15 = C(seq(12*BL+1, 13*BL), seq(14*BL+1, 15*BL));
 ABs.A_13_16 = A(seq(12*BL+1, 13*BL), seq(15*BL+1, 16*BL));
 ABs.B_13_16 = B(seq(12*BL+1, 13*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_13_16 = C(seq(12*BL+1, 13*BL), seq(15*BL+1, 16*BL));
 ABs.A_13_17 = A(seq(12*BL+1, 13*BL), seq(16*BL+1, 17*BL));
 ABs.B_13_17 = B(seq(12*BL+1, 13*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_13_17 = C(seq(12*BL+1, 13*BL), seq(16*BL+1, 17*BL));
 ABs.A_13_18 = A(seq(12*BL+1, 13*BL), seq(17*BL+1, 18*BL));
 ABs.B_13_18 = B(seq(12*BL+1, 13*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_13_18 = C(seq(12*BL+1, 13*BL), seq(17*BL+1, 18*BL));
 ABs.A_13_19 = A(seq(12*BL+1, 13*BL), seq(18*BL+1, 19*BL));
 ABs.B_13_19 = B(seq(12*BL+1, 13*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_13_19 = C(seq(12*BL+1, 13*BL), seq(18*BL+1, 19*BL));
 ABs.A_13_20 = A(seq(12*BL+1, 13*BL), seq(19*BL+1, 20*BL));
 ABs.B_13_20 = B(seq(12*BL+1, 13*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_13_20 = C(seq(12*BL+1, 13*BL), seq(19*BL+1, 20*BL));
 ABs.A_13_21 = A(seq(12*BL+1, 13*BL), seq(20*BL+1, 21*BL));
 ABs.B_13_21 = B(seq(12*BL+1, 13*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_13_21 = C(seq(12*BL+1, 13*BL), seq(20*BL+1, 21*BL));
 ABs.A_13_22 = A(seq(12*BL+1, 13*BL), seq(21*BL+1, 22*BL));
 ABs.B_13_22 = B(seq(12*BL+1, 13*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_13_22 = C(seq(12*BL+1, 13*BL), seq(21*BL+1, 22*BL));
 ABs.A_14_1 = A(seq(13*BL+1, 14*BL), seq(0*BL+1, 1*BL));
 ABs.B_14_1 = B(seq(13*BL+1, 14*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_14_1 = C(seq(13*BL+1, 14*BL), seq(0*BL+1, 1*BL));
 ABs.A_14_2 = A(seq(13*BL+1, 14*BL), seq(1*BL+1, 2*BL));
 ABs.B_14_2 = B(seq(13*BL+1, 14*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_14_2 = C(seq(13*BL+1, 14*BL), seq(1*BL+1, 2*BL));
 ABs.A_14_3 = A(seq(13*BL+1, 14*BL), seq(2*BL+1, 3*BL));
 ABs.B_14_3 = B(seq(13*BL+1, 14*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_14_3 = C(seq(13*BL+1, 14*BL), seq(2*BL+1, 3*BL));
 ABs.A_14_4 = A(seq(13*BL+1, 14*BL), seq(3*BL+1, 4*BL));
 ABs.B_14_4 = B(seq(13*BL+1, 14*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_14_4 = C(seq(13*BL+1, 14*BL), seq(3*BL+1, 4*BL));
 ABs.A_14_5 = A(seq(13*BL+1, 14*BL), seq(4*BL+1, 5*BL));
 ABs.B_14_5 = B(seq(13*BL+1, 14*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_14_5 = C(seq(13*BL+1, 14*BL), seq(4*BL+1, 5*BL));
 ABs.A_14_6 = A(seq(13*BL+1, 14*BL), seq(5*BL+1, 6*BL));
 ABs.B_14_6 = B(seq(13*BL+1, 14*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_14_6 = C(seq(13*BL+1, 14*BL), seq(5*BL+1, 6*BL));
 ABs.A_14_7 = A(seq(13*BL+1, 14*BL), seq(6*BL+1, 7*BL));
 ABs.B_14_7 = B(seq(13*BL+1, 14*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_14_7 = C(seq(13*BL+1, 14*BL), seq(6*BL+1, 7*BL));
 ABs.A_14_8 = A(seq(13*BL+1, 14*BL), seq(7*BL+1, 8*BL));
 ABs.B_14_8 = B(seq(13*BL+1, 14*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_14_8 = C(seq(13*BL+1, 14*BL), seq(7*BL+1, 8*BL));
 ABs.A_14_9 = A(seq(13*BL+1, 14*BL), seq(8*BL+1, 9*BL));
 ABs.B_14_9 = B(seq(13*BL+1, 14*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_14_9 = C(seq(13*BL+1, 14*BL), seq(8*BL+1, 9*BL));
 ABs.A_14_10 = A(seq(13*BL+1, 14*BL), seq(9*BL+1, 10*BL));
 ABs.B_14_10 = B(seq(13*BL+1, 14*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_14_10 = C(seq(13*BL+1, 14*BL), seq(9*BL+1, 10*BL));
 ABs.A_14_11 = A(seq(13*BL+1, 14*BL), seq(10*BL+1, 11*BL));
 ABs.B_14_11 = B(seq(13*BL+1, 14*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_14_11 = C(seq(13*BL+1, 14*BL), seq(10*BL+1, 11*BL));
 ABs.A_14_12 = A(seq(13*BL+1, 14*BL), seq(11*BL+1, 12*BL));
 ABs.B_14_12 = B(seq(13*BL+1, 14*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_14_12 = C(seq(13*BL+1, 14*BL), seq(11*BL+1, 12*BL));
 ABs.A_14_13 = A(seq(13*BL+1, 14*BL), seq(12*BL+1, 13*BL));
 ABs.B_14_13 = B(seq(13*BL+1, 14*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_14_13 = C(seq(13*BL+1, 14*BL), seq(12*BL+1, 13*BL));
 ABs.A_14_14 = A(seq(13*BL+1, 14*BL), seq(13*BL+1, 14*BL));
 ABs.B_14_14 = B(seq(13*BL+1, 14*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_14_14 = C(seq(13*BL+1, 14*BL), seq(13*BL+1, 14*BL));
 ABs.A_14_15 = A(seq(13*BL+1, 14*BL), seq(14*BL+1, 15*BL));
 ABs.B_14_15 = B(seq(13*BL+1, 14*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_14_15 = C(seq(13*BL+1, 14*BL), seq(14*BL+1, 15*BL));
 ABs.A_14_16 = A(seq(13*BL+1, 14*BL), seq(15*BL+1, 16*BL));
 ABs.B_14_16 = B(seq(13*BL+1, 14*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_14_16 = C(seq(13*BL+1, 14*BL), seq(15*BL+1, 16*BL));
 ABs.A_14_17 = A(seq(13*BL+1, 14*BL), seq(16*BL+1, 17*BL));
 ABs.B_14_17 = B(seq(13*BL+1, 14*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_14_17 = C(seq(13*BL+1, 14*BL), seq(16*BL+1, 17*BL));
 ABs.A_14_18 = A(seq(13*BL+1, 14*BL), seq(17*BL+1, 18*BL));
 ABs.B_14_18 = B(seq(13*BL+1, 14*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_14_18 = C(seq(13*BL+1, 14*BL), seq(17*BL+1, 18*BL));
 ABs.A_14_19 = A(seq(13*BL+1, 14*BL), seq(18*BL+1, 19*BL));
 ABs.B_14_19 = B(seq(13*BL+1, 14*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_14_19 = C(seq(13*BL+1, 14*BL), seq(18*BL+1, 19*BL));
 ABs.A_14_20 = A(seq(13*BL+1, 14*BL), seq(19*BL+1, 20*BL));
 ABs.B_14_20 = B(seq(13*BL+1, 14*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_14_20 = C(seq(13*BL+1, 14*BL), seq(19*BL+1, 20*BL));
 ABs.A_14_21 = A(seq(13*BL+1, 14*BL), seq(20*BL+1, 21*BL));
 ABs.B_14_21 = B(seq(13*BL+1, 14*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_14_21 = C(seq(13*BL+1, 14*BL), seq(20*BL+1, 21*BL));
 ABs.A_14_22 = A(seq(13*BL+1, 14*BL), seq(21*BL+1, 22*BL));
 ABs.B_14_22 = B(seq(13*BL+1, 14*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_14_22 = C(seq(13*BL+1, 14*BL), seq(21*BL+1, 22*BL));
 ABs.A_15_1 = A(seq(14*BL+1, 15*BL), seq(0*BL+1, 1*BL));
 ABs.B_15_1 = B(seq(14*BL+1, 15*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_15_1 = C(seq(14*BL+1, 15*BL), seq(0*BL+1, 1*BL));
 ABs.A_15_2 = A(seq(14*BL+1, 15*BL), seq(1*BL+1, 2*BL));
 ABs.B_15_2 = B(seq(14*BL+1, 15*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_15_2 = C(seq(14*BL+1, 15*BL), seq(1*BL+1, 2*BL));
 ABs.A_15_3 = A(seq(14*BL+1, 15*BL), seq(2*BL+1, 3*BL));
 ABs.B_15_3 = B(seq(14*BL+1, 15*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_15_3 = C(seq(14*BL+1, 15*BL), seq(2*BL+1, 3*BL));
 ABs.A_15_4 = A(seq(14*BL+1, 15*BL), seq(3*BL+1, 4*BL));
 ABs.B_15_4 = B(seq(14*BL+1, 15*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_15_4 = C(seq(14*BL+1, 15*BL), seq(3*BL+1, 4*BL));
 ABs.A_15_5 = A(seq(14*BL+1, 15*BL), seq(4*BL+1, 5*BL));
 ABs.B_15_5 = B(seq(14*BL+1, 15*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_15_5 = C(seq(14*BL+1, 15*BL), seq(4*BL+1, 5*BL));
 ABs.A_15_6 = A(seq(14*BL+1, 15*BL), seq(5*BL+1, 6*BL));
 ABs.B_15_6 = B(seq(14*BL+1, 15*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_15_6 = C(seq(14*BL+1, 15*BL), seq(5*BL+1, 6*BL));
 ABs.A_15_7 = A(seq(14*BL+1, 15*BL), seq(6*BL+1, 7*BL));
 ABs.B_15_7 = B(seq(14*BL+1, 15*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_15_7 = C(seq(14*BL+1, 15*BL), seq(6*BL+1, 7*BL));
 ABs.A_15_8 = A(seq(14*BL+1, 15*BL), seq(7*BL+1, 8*BL));
 ABs.B_15_8 = B(seq(14*BL+1, 15*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_15_8 = C(seq(14*BL+1, 15*BL), seq(7*BL+1, 8*BL));
 ABs.A_15_9 = A(seq(14*BL+1, 15*BL), seq(8*BL+1, 9*BL));
 ABs.B_15_9 = B(seq(14*BL+1, 15*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_15_9 = C(seq(14*BL+1, 15*BL), seq(8*BL+1, 9*BL));
 ABs.A_15_10 = A(seq(14*BL+1, 15*BL), seq(9*BL+1, 10*BL));
 ABs.B_15_10 = B(seq(14*BL+1, 15*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_15_10 = C(seq(14*BL+1, 15*BL), seq(9*BL+1, 10*BL));
 ABs.A_15_11 = A(seq(14*BL+1, 15*BL), seq(10*BL+1, 11*BL));
 ABs.B_15_11 = B(seq(14*BL+1, 15*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_15_11 = C(seq(14*BL+1, 15*BL), seq(10*BL+1, 11*BL));
 ABs.A_15_12 = A(seq(14*BL+1, 15*BL), seq(11*BL+1, 12*BL));
 ABs.B_15_12 = B(seq(14*BL+1, 15*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_15_12 = C(seq(14*BL+1, 15*BL), seq(11*BL+1, 12*BL));
 ABs.A_15_13 = A(seq(14*BL+1, 15*BL), seq(12*BL+1, 13*BL));
 ABs.B_15_13 = B(seq(14*BL+1, 15*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_15_13 = C(seq(14*BL+1, 15*BL), seq(12*BL+1, 13*BL));
 ABs.A_15_14 = A(seq(14*BL+1, 15*BL), seq(13*BL+1, 14*BL));
 ABs.B_15_14 = B(seq(14*BL+1, 15*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_15_14 = C(seq(14*BL+1, 15*BL), seq(13*BL+1, 14*BL));
 ABs.A_15_15 = A(seq(14*BL+1, 15*BL), seq(14*BL+1, 15*BL));
 ABs.B_15_15 = B(seq(14*BL+1, 15*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_15_15 = C(seq(14*BL+1, 15*BL), seq(14*BL+1, 15*BL));
 ABs.A_15_16 = A(seq(14*BL+1, 15*BL), seq(15*BL+1, 16*BL));
 ABs.B_15_16 = B(seq(14*BL+1, 15*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_15_16 = C(seq(14*BL+1, 15*BL), seq(15*BL+1, 16*BL));
 ABs.A_15_17 = A(seq(14*BL+1, 15*BL), seq(16*BL+1, 17*BL));
 ABs.B_15_17 = B(seq(14*BL+1, 15*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_15_17 = C(seq(14*BL+1, 15*BL), seq(16*BL+1, 17*BL));
 ABs.A_15_18 = A(seq(14*BL+1, 15*BL), seq(17*BL+1, 18*BL));
 ABs.B_15_18 = B(seq(14*BL+1, 15*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_15_18 = C(seq(14*BL+1, 15*BL), seq(17*BL+1, 18*BL));
 ABs.A_15_19 = A(seq(14*BL+1, 15*BL), seq(18*BL+1, 19*BL));
 ABs.B_15_19 = B(seq(14*BL+1, 15*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_15_19 = C(seq(14*BL+1, 15*BL), seq(18*BL+1, 19*BL));
 ABs.A_15_20 = A(seq(14*BL+1, 15*BL), seq(19*BL+1, 20*BL));
 ABs.B_15_20 = B(seq(14*BL+1, 15*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_15_20 = C(seq(14*BL+1, 15*BL), seq(19*BL+1, 20*BL));
 ABs.A_15_21 = A(seq(14*BL+1, 15*BL), seq(20*BL+1, 21*BL));
 ABs.B_15_21 = B(seq(14*BL+1, 15*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_15_21 = C(seq(14*BL+1, 15*BL), seq(20*BL+1, 21*BL));
 ABs.A_15_22 = A(seq(14*BL+1, 15*BL), seq(21*BL+1, 22*BL));
 ABs.B_15_22 = B(seq(14*BL+1, 15*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_15_22 = C(seq(14*BL+1, 15*BL), seq(21*BL+1, 22*BL));
 ABs.A_16_1 = A(seq(15*BL+1, 16*BL), seq(0*BL+1, 1*BL));
 ABs.B_16_1 = B(seq(15*BL+1, 16*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_16_1 = C(seq(15*BL+1, 16*BL), seq(0*BL+1, 1*BL));
 ABs.A_16_2 = A(seq(15*BL+1, 16*BL), seq(1*BL+1, 2*BL));
 ABs.B_16_2 = B(seq(15*BL+1, 16*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_16_2 = C(seq(15*BL+1, 16*BL), seq(1*BL+1, 2*BL));
 ABs.A_16_3 = A(seq(15*BL+1, 16*BL), seq(2*BL+1, 3*BL));
 ABs.B_16_3 = B(seq(15*BL+1, 16*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_16_3 = C(seq(15*BL+1, 16*BL), seq(2*BL+1, 3*BL));
 ABs.A_16_4 = A(seq(15*BL+1, 16*BL), seq(3*BL+1, 4*BL));
 ABs.B_16_4 = B(seq(15*BL+1, 16*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_16_4 = C(seq(15*BL+1, 16*BL), seq(3*BL+1, 4*BL));
 ABs.A_16_5 = A(seq(15*BL+1, 16*BL), seq(4*BL+1, 5*BL));
 ABs.B_16_5 = B(seq(15*BL+1, 16*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_16_5 = C(seq(15*BL+1, 16*BL), seq(4*BL+1, 5*BL));
 ABs.A_16_6 = A(seq(15*BL+1, 16*BL), seq(5*BL+1, 6*BL));
 ABs.B_16_6 = B(seq(15*BL+1, 16*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_16_6 = C(seq(15*BL+1, 16*BL), seq(5*BL+1, 6*BL));
 ABs.A_16_7 = A(seq(15*BL+1, 16*BL), seq(6*BL+1, 7*BL));
 ABs.B_16_7 = B(seq(15*BL+1, 16*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_16_7 = C(seq(15*BL+1, 16*BL), seq(6*BL+1, 7*BL));
 ABs.A_16_8 = A(seq(15*BL+1, 16*BL), seq(7*BL+1, 8*BL));
 ABs.B_16_8 = B(seq(15*BL+1, 16*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_16_8 = C(seq(15*BL+1, 16*BL), seq(7*BL+1, 8*BL));
 ABs.A_16_9 = A(seq(15*BL+1, 16*BL), seq(8*BL+1, 9*BL));
 ABs.B_16_9 = B(seq(15*BL+1, 16*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_16_9 = C(seq(15*BL+1, 16*BL), seq(8*BL+1, 9*BL));
 ABs.A_16_10 = A(seq(15*BL+1, 16*BL), seq(9*BL+1, 10*BL));
 ABs.B_16_10 = B(seq(15*BL+1, 16*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_16_10 = C(seq(15*BL+1, 16*BL), seq(9*BL+1, 10*BL));
 ABs.A_16_11 = A(seq(15*BL+1, 16*BL), seq(10*BL+1, 11*BL));
 ABs.B_16_11 = B(seq(15*BL+1, 16*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_16_11 = C(seq(15*BL+1, 16*BL), seq(10*BL+1, 11*BL));
 ABs.A_16_12 = A(seq(15*BL+1, 16*BL), seq(11*BL+1, 12*BL));
 ABs.B_16_12 = B(seq(15*BL+1, 16*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_16_12 = C(seq(15*BL+1, 16*BL), seq(11*BL+1, 12*BL));
 ABs.A_16_13 = A(seq(15*BL+1, 16*BL), seq(12*BL+1, 13*BL));
 ABs.B_16_13 = B(seq(15*BL+1, 16*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_16_13 = C(seq(15*BL+1, 16*BL), seq(12*BL+1, 13*BL));
 ABs.A_16_14 = A(seq(15*BL+1, 16*BL), seq(13*BL+1, 14*BL));
 ABs.B_16_14 = B(seq(15*BL+1, 16*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_16_14 = C(seq(15*BL+1, 16*BL), seq(13*BL+1, 14*BL));
 ABs.A_16_15 = A(seq(15*BL+1, 16*BL), seq(14*BL+1, 15*BL));
 ABs.B_16_15 = B(seq(15*BL+1, 16*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_16_15 = C(seq(15*BL+1, 16*BL), seq(14*BL+1, 15*BL));
 ABs.A_16_16 = A(seq(15*BL+1, 16*BL), seq(15*BL+1, 16*BL));
 ABs.B_16_16 = B(seq(15*BL+1, 16*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_16_16 = C(seq(15*BL+1, 16*BL), seq(15*BL+1, 16*BL));
 ABs.A_16_17 = A(seq(15*BL+1, 16*BL), seq(16*BL+1, 17*BL));
 ABs.B_16_17 = B(seq(15*BL+1, 16*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_16_17 = C(seq(15*BL+1, 16*BL), seq(16*BL+1, 17*BL));
 ABs.A_16_18 = A(seq(15*BL+1, 16*BL), seq(17*BL+1, 18*BL));
 ABs.B_16_18 = B(seq(15*BL+1, 16*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_16_18 = C(seq(15*BL+1, 16*BL), seq(17*BL+1, 18*BL));
 ABs.A_16_19 = A(seq(15*BL+1, 16*BL), seq(18*BL+1, 19*BL));
 ABs.B_16_19 = B(seq(15*BL+1, 16*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_16_19 = C(seq(15*BL+1, 16*BL), seq(18*BL+1, 19*BL));
 ABs.A_16_20 = A(seq(15*BL+1, 16*BL), seq(19*BL+1, 20*BL));
 ABs.B_16_20 = B(seq(15*BL+1, 16*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_16_20 = C(seq(15*BL+1, 16*BL), seq(19*BL+1, 20*BL));
 ABs.A_16_21 = A(seq(15*BL+1, 16*BL), seq(20*BL+1, 21*BL));
 ABs.B_16_21 = B(seq(15*BL+1, 16*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_16_21 = C(seq(15*BL+1, 16*BL), seq(20*BL+1, 21*BL));
 ABs.A_16_22 = A(seq(15*BL+1, 16*BL), seq(21*BL+1, 22*BL));
 ABs.B_16_22 = B(seq(15*BL+1, 16*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_16_22 = C(seq(15*BL+1, 16*BL), seq(21*BL+1, 22*BL));
 ABs.A_17_1 = A(seq(16*BL+1, 17*BL), seq(0*BL+1, 1*BL));
 ABs.B_17_1 = B(seq(16*BL+1, 17*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_17_1 = C(seq(16*BL+1, 17*BL), seq(0*BL+1, 1*BL));
 ABs.A_17_2 = A(seq(16*BL+1, 17*BL), seq(1*BL+1, 2*BL));
 ABs.B_17_2 = B(seq(16*BL+1, 17*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_17_2 = C(seq(16*BL+1, 17*BL), seq(1*BL+1, 2*BL));
 ABs.A_17_3 = A(seq(16*BL+1, 17*BL), seq(2*BL+1, 3*BL));
 ABs.B_17_3 = B(seq(16*BL+1, 17*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_17_3 = C(seq(16*BL+1, 17*BL), seq(2*BL+1, 3*BL));
 ABs.A_17_4 = A(seq(16*BL+1, 17*BL), seq(3*BL+1, 4*BL));
 ABs.B_17_4 = B(seq(16*BL+1, 17*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_17_4 = C(seq(16*BL+1, 17*BL), seq(3*BL+1, 4*BL));
 ABs.A_17_5 = A(seq(16*BL+1, 17*BL), seq(4*BL+1, 5*BL));
 ABs.B_17_5 = B(seq(16*BL+1, 17*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_17_5 = C(seq(16*BL+1, 17*BL), seq(4*BL+1, 5*BL));
 ABs.A_17_6 = A(seq(16*BL+1, 17*BL), seq(5*BL+1, 6*BL));
 ABs.B_17_6 = B(seq(16*BL+1, 17*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_17_6 = C(seq(16*BL+1, 17*BL), seq(5*BL+1, 6*BL));
 ABs.A_17_7 = A(seq(16*BL+1, 17*BL), seq(6*BL+1, 7*BL));
 ABs.B_17_7 = B(seq(16*BL+1, 17*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_17_7 = C(seq(16*BL+1, 17*BL), seq(6*BL+1, 7*BL));
 ABs.A_17_8 = A(seq(16*BL+1, 17*BL), seq(7*BL+1, 8*BL));
 ABs.B_17_8 = B(seq(16*BL+1, 17*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_17_8 = C(seq(16*BL+1, 17*BL), seq(7*BL+1, 8*BL));
 ABs.A_17_9 = A(seq(16*BL+1, 17*BL), seq(8*BL+1, 9*BL));
 ABs.B_17_9 = B(seq(16*BL+1, 17*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_17_9 = C(seq(16*BL+1, 17*BL), seq(8*BL+1, 9*BL));
 ABs.A_17_10 = A(seq(16*BL+1, 17*BL), seq(9*BL+1, 10*BL));
 ABs.B_17_10 = B(seq(16*BL+1, 17*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_17_10 = C(seq(16*BL+1, 17*BL), seq(9*BL+1, 10*BL));
 ABs.A_17_11 = A(seq(16*BL+1, 17*BL), seq(10*BL+1, 11*BL));
 ABs.B_17_11 = B(seq(16*BL+1, 17*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_17_11 = C(seq(16*BL+1, 17*BL), seq(10*BL+1, 11*BL));
 ABs.A_17_12 = A(seq(16*BL+1, 17*BL), seq(11*BL+1, 12*BL));
 ABs.B_17_12 = B(seq(16*BL+1, 17*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_17_12 = C(seq(16*BL+1, 17*BL), seq(11*BL+1, 12*BL));
 ABs.A_17_13 = A(seq(16*BL+1, 17*BL), seq(12*BL+1, 13*BL));
 ABs.B_17_13 = B(seq(16*BL+1, 17*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_17_13 = C(seq(16*BL+1, 17*BL), seq(12*BL+1, 13*BL));
 ABs.A_17_14 = A(seq(16*BL+1, 17*BL), seq(13*BL+1, 14*BL));
 ABs.B_17_14 = B(seq(16*BL+1, 17*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_17_14 = C(seq(16*BL+1, 17*BL), seq(13*BL+1, 14*BL));
 ABs.A_17_15 = A(seq(16*BL+1, 17*BL), seq(14*BL+1, 15*BL));
 ABs.B_17_15 = B(seq(16*BL+1, 17*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_17_15 = C(seq(16*BL+1, 17*BL), seq(14*BL+1, 15*BL));
 ABs.A_17_16 = A(seq(16*BL+1, 17*BL), seq(15*BL+1, 16*BL));
 ABs.B_17_16 = B(seq(16*BL+1, 17*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_17_16 = C(seq(16*BL+1, 17*BL), seq(15*BL+1, 16*BL));
 ABs.A_17_17 = A(seq(16*BL+1, 17*BL), seq(16*BL+1, 17*BL));
 ABs.B_17_17 = B(seq(16*BL+1, 17*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_17_17 = C(seq(16*BL+1, 17*BL), seq(16*BL+1, 17*BL));
 ABs.A_17_18 = A(seq(16*BL+1, 17*BL), seq(17*BL+1, 18*BL));
 ABs.B_17_18 = B(seq(16*BL+1, 17*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_17_18 = C(seq(16*BL+1, 17*BL), seq(17*BL+1, 18*BL));
 ABs.A_17_19 = A(seq(16*BL+1, 17*BL), seq(18*BL+1, 19*BL));
 ABs.B_17_19 = B(seq(16*BL+1, 17*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_17_19 = C(seq(16*BL+1, 17*BL), seq(18*BL+1, 19*BL));
 ABs.A_17_20 = A(seq(16*BL+1, 17*BL), seq(19*BL+1, 20*BL));
 ABs.B_17_20 = B(seq(16*BL+1, 17*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_17_20 = C(seq(16*BL+1, 17*BL), seq(19*BL+1, 20*BL));
 ABs.A_17_21 = A(seq(16*BL+1, 17*BL), seq(20*BL+1, 21*BL));
 ABs.B_17_21 = B(seq(16*BL+1, 17*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_17_21 = C(seq(16*BL+1, 17*BL), seq(20*BL+1, 21*BL));
 ABs.A_17_22 = A(seq(16*BL+1, 17*BL), seq(21*BL+1, 22*BL));
 ABs.B_17_22 = B(seq(16*BL+1, 17*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_17_22 = C(seq(16*BL+1, 17*BL), seq(21*BL+1, 22*BL));
 ABs.A_18_1 = A(seq(17*BL+1, 18*BL), seq(0*BL+1, 1*BL));
 ABs.B_18_1 = B(seq(17*BL+1, 18*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_18_1 = C(seq(17*BL+1, 18*BL), seq(0*BL+1, 1*BL));
 ABs.A_18_2 = A(seq(17*BL+1, 18*BL), seq(1*BL+1, 2*BL));
 ABs.B_18_2 = B(seq(17*BL+1, 18*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_18_2 = C(seq(17*BL+1, 18*BL), seq(1*BL+1, 2*BL));
 ABs.A_18_3 = A(seq(17*BL+1, 18*BL), seq(2*BL+1, 3*BL));
 ABs.B_18_3 = B(seq(17*BL+1, 18*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_18_3 = C(seq(17*BL+1, 18*BL), seq(2*BL+1, 3*BL));
 ABs.A_18_4 = A(seq(17*BL+1, 18*BL), seq(3*BL+1, 4*BL));
 ABs.B_18_4 = B(seq(17*BL+1, 18*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_18_4 = C(seq(17*BL+1, 18*BL), seq(3*BL+1, 4*BL));
 ABs.A_18_5 = A(seq(17*BL+1, 18*BL), seq(4*BL+1, 5*BL));
 ABs.B_18_5 = B(seq(17*BL+1, 18*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_18_5 = C(seq(17*BL+1, 18*BL), seq(4*BL+1, 5*BL));
 ABs.A_18_6 = A(seq(17*BL+1, 18*BL), seq(5*BL+1, 6*BL));
 ABs.B_18_6 = B(seq(17*BL+1, 18*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_18_6 = C(seq(17*BL+1, 18*BL), seq(5*BL+1, 6*BL));
 ABs.A_18_7 = A(seq(17*BL+1, 18*BL), seq(6*BL+1, 7*BL));
 ABs.B_18_7 = B(seq(17*BL+1, 18*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_18_7 = C(seq(17*BL+1, 18*BL), seq(6*BL+1, 7*BL));
 ABs.A_18_8 = A(seq(17*BL+1, 18*BL), seq(7*BL+1, 8*BL));
 ABs.B_18_8 = B(seq(17*BL+1, 18*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_18_8 = C(seq(17*BL+1, 18*BL), seq(7*BL+1, 8*BL));
 ABs.A_18_9 = A(seq(17*BL+1, 18*BL), seq(8*BL+1, 9*BL));
 ABs.B_18_9 = B(seq(17*BL+1, 18*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_18_9 = C(seq(17*BL+1, 18*BL), seq(8*BL+1, 9*BL));
 ABs.A_18_10 = A(seq(17*BL+1, 18*BL), seq(9*BL+1, 10*BL));
 ABs.B_18_10 = B(seq(17*BL+1, 18*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_18_10 = C(seq(17*BL+1, 18*BL), seq(9*BL+1, 10*BL));
 ABs.A_18_11 = A(seq(17*BL+1, 18*BL), seq(10*BL+1, 11*BL));
 ABs.B_18_11 = B(seq(17*BL+1, 18*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_18_11 = C(seq(17*BL+1, 18*BL), seq(10*BL+1, 11*BL));
 ABs.A_18_12 = A(seq(17*BL+1, 18*BL), seq(11*BL+1, 12*BL));
 ABs.B_18_12 = B(seq(17*BL+1, 18*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_18_12 = C(seq(17*BL+1, 18*BL), seq(11*BL+1, 12*BL));
 ABs.A_18_13 = A(seq(17*BL+1, 18*BL), seq(12*BL+1, 13*BL));
 ABs.B_18_13 = B(seq(17*BL+1, 18*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_18_13 = C(seq(17*BL+1, 18*BL), seq(12*BL+1, 13*BL));
 ABs.A_18_14 = A(seq(17*BL+1, 18*BL), seq(13*BL+1, 14*BL));
 ABs.B_18_14 = B(seq(17*BL+1, 18*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_18_14 = C(seq(17*BL+1, 18*BL), seq(13*BL+1, 14*BL));
 ABs.A_18_15 = A(seq(17*BL+1, 18*BL), seq(14*BL+1, 15*BL));
 ABs.B_18_15 = B(seq(17*BL+1, 18*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_18_15 = C(seq(17*BL+1, 18*BL), seq(14*BL+1, 15*BL));
 ABs.A_18_16 = A(seq(17*BL+1, 18*BL), seq(15*BL+1, 16*BL));
 ABs.B_18_16 = B(seq(17*BL+1, 18*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_18_16 = C(seq(17*BL+1, 18*BL), seq(15*BL+1, 16*BL));
 ABs.A_18_17 = A(seq(17*BL+1, 18*BL), seq(16*BL+1, 17*BL));
 ABs.B_18_17 = B(seq(17*BL+1, 18*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_18_17 = C(seq(17*BL+1, 18*BL), seq(16*BL+1, 17*BL));
 ABs.A_18_18 = A(seq(17*BL+1, 18*BL), seq(17*BL+1, 18*BL));
 ABs.B_18_18 = B(seq(17*BL+1, 18*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_18_18 = C(seq(17*BL+1, 18*BL), seq(17*BL+1, 18*BL));
 ABs.A_18_19 = A(seq(17*BL+1, 18*BL), seq(18*BL+1, 19*BL));
 ABs.B_18_19 = B(seq(17*BL+1, 18*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_18_19 = C(seq(17*BL+1, 18*BL), seq(18*BL+1, 19*BL));
 ABs.A_18_20 = A(seq(17*BL+1, 18*BL), seq(19*BL+1, 20*BL));
 ABs.B_18_20 = B(seq(17*BL+1, 18*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_18_20 = C(seq(17*BL+1, 18*BL), seq(19*BL+1, 20*BL));
 ABs.A_18_21 = A(seq(17*BL+1, 18*BL), seq(20*BL+1, 21*BL));
 ABs.B_18_21 = B(seq(17*BL+1, 18*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_18_21 = C(seq(17*BL+1, 18*BL), seq(20*BL+1, 21*BL));
 ABs.A_18_22 = A(seq(17*BL+1, 18*BL), seq(21*BL+1, 22*BL));
 ABs.B_18_22 = B(seq(17*BL+1, 18*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_18_22 = C(seq(17*BL+1, 18*BL), seq(21*BL+1, 22*BL));
 ABs.A_19_1 = A(seq(18*BL+1, 19*BL), seq(0*BL+1, 1*BL));
 ABs.B_19_1 = B(seq(18*BL+1, 19*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_19_1 = C(seq(18*BL+1, 19*BL), seq(0*BL+1, 1*BL));
 ABs.A_19_2 = A(seq(18*BL+1, 19*BL), seq(1*BL+1, 2*BL));
 ABs.B_19_2 = B(seq(18*BL+1, 19*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_19_2 = C(seq(18*BL+1, 19*BL), seq(1*BL+1, 2*BL));
 ABs.A_19_3 = A(seq(18*BL+1, 19*BL), seq(2*BL+1, 3*BL));
 ABs.B_19_3 = B(seq(18*BL+1, 19*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_19_3 = C(seq(18*BL+1, 19*BL), seq(2*BL+1, 3*BL));
 ABs.A_19_4 = A(seq(18*BL+1, 19*BL), seq(3*BL+1, 4*BL));
 ABs.B_19_4 = B(seq(18*BL+1, 19*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_19_4 = C(seq(18*BL+1, 19*BL), seq(3*BL+1, 4*BL));
 ABs.A_19_5 = A(seq(18*BL+1, 19*BL), seq(4*BL+1, 5*BL));
 ABs.B_19_5 = B(seq(18*BL+1, 19*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_19_5 = C(seq(18*BL+1, 19*BL), seq(4*BL+1, 5*BL));
 ABs.A_19_6 = A(seq(18*BL+1, 19*BL), seq(5*BL+1, 6*BL));
 ABs.B_19_6 = B(seq(18*BL+1, 19*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_19_6 = C(seq(18*BL+1, 19*BL), seq(5*BL+1, 6*BL));
 ABs.A_19_7 = A(seq(18*BL+1, 19*BL), seq(6*BL+1, 7*BL));
 ABs.B_19_7 = B(seq(18*BL+1, 19*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_19_7 = C(seq(18*BL+1, 19*BL), seq(6*BL+1, 7*BL));
 ABs.A_19_8 = A(seq(18*BL+1, 19*BL), seq(7*BL+1, 8*BL));
 ABs.B_19_8 = B(seq(18*BL+1, 19*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_19_8 = C(seq(18*BL+1, 19*BL), seq(7*BL+1, 8*BL));
 ABs.A_19_9 = A(seq(18*BL+1, 19*BL), seq(8*BL+1, 9*BL));
 ABs.B_19_9 = B(seq(18*BL+1, 19*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_19_9 = C(seq(18*BL+1, 19*BL), seq(8*BL+1, 9*BL));
 ABs.A_19_10 = A(seq(18*BL+1, 19*BL), seq(9*BL+1, 10*BL));
 ABs.B_19_10 = B(seq(18*BL+1, 19*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_19_10 = C(seq(18*BL+1, 19*BL), seq(9*BL+1, 10*BL));
 ABs.A_19_11 = A(seq(18*BL+1, 19*BL), seq(10*BL+1, 11*BL));
 ABs.B_19_11 = B(seq(18*BL+1, 19*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_19_11 = C(seq(18*BL+1, 19*BL), seq(10*BL+1, 11*BL));
 ABs.A_19_12 = A(seq(18*BL+1, 19*BL), seq(11*BL+1, 12*BL));
 ABs.B_19_12 = B(seq(18*BL+1, 19*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_19_12 = C(seq(18*BL+1, 19*BL), seq(11*BL+1, 12*BL));
 ABs.A_19_13 = A(seq(18*BL+1, 19*BL), seq(12*BL+1, 13*BL));
 ABs.B_19_13 = B(seq(18*BL+1, 19*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_19_13 = C(seq(18*BL+1, 19*BL), seq(12*BL+1, 13*BL));
 ABs.A_19_14 = A(seq(18*BL+1, 19*BL), seq(13*BL+1, 14*BL));
 ABs.B_19_14 = B(seq(18*BL+1, 19*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_19_14 = C(seq(18*BL+1, 19*BL), seq(13*BL+1, 14*BL));
 ABs.A_19_15 = A(seq(18*BL+1, 19*BL), seq(14*BL+1, 15*BL));
 ABs.B_19_15 = B(seq(18*BL+1, 19*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_19_15 = C(seq(18*BL+1, 19*BL), seq(14*BL+1, 15*BL));
 ABs.A_19_16 = A(seq(18*BL+1, 19*BL), seq(15*BL+1, 16*BL));
 ABs.B_19_16 = B(seq(18*BL+1, 19*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_19_16 = C(seq(18*BL+1, 19*BL), seq(15*BL+1, 16*BL));
 ABs.A_19_17 = A(seq(18*BL+1, 19*BL), seq(16*BL+1, 17*BL));
 ABs.B_19_17 = B(seq(18*BL+1, 19*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_19_17 = C(seq(18*BL+1, 19*BL), seq(16*BL+1, 17*BL));
 ABs.A_19_18 = A(seq(18*BL+1, 19*BL), seq(17*BL+1, 18*BL));
 ABs.B_19_18 = B(seq(18*BL+1, 19*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_19_18 = C(seq(18*BL+1, 19*BL), seq(17*BL+1, 18*BL));
 ABs.A_19_19 = A(seq(18*BL+1, 19*BL), seq(18*BL+1, 19*BL));
 ABs.B_19_19 = B(seq(18*BL+1, 19*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_19_19 = C(seq(18*BL+1, 19*BL), seq(18*BL+1, 19*BL));
 ABs.A_19_20 = A(seq(18*BL+1, 19*BL), seq(19*BL+1, 20*BL));
 ABs.B_19_20 = B(seq(18*BL+1, 19*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_19_20 = C(seq(18*BL+1, 19*BL), seq(19*BL+1, 20*BL));
 ABs.A_19_21 = A(seq(18*BL+1, 19*BL), seq(20*BL+1, 21*BL));
 ABs.B_19_21 = B(seq(18*BL+1, 19*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_19_21 = C(seq(18*BL+1, 19*BL), seq(20*BL+1, 21*BL));
 ABs.A_19_22 = A(seq(18*BL+1, 19*BL), seq(21*BL+1, 22*BL));
 ABs.B_19_22 = B(seq(18*BL+1, 19*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_19_22 = C(seq(18*BL+1, 19*BL), seq(21*BL+1, 22*BL));
 ABs.A_20_1 = A(seq(19*BL+1, 20*BL), seq(0*BL+1, 1*BL));
 ABs.B_20_1 = B(seq(19*BL+1, 20*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_20_1 = C(seq(19*BL+1, 20*BL), seq(0*BL+1, 1*BL));
 ABs.A_20_2 = A(seq(19*BL+1, 20*BL), seq(1*BL+1, 2*BL));
 ABs.B_20_2 = B(seq(19*BL+1, 20*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_20_2 = C(seq(19*BL+1, 20*BL), seq(1*BL+1, 2*BL));
 ABs.A_20_3 = A(seq(19*BL+1, 20*BL), seq(2*BL+1, 3*BL));
 ABs.B_20_3 = B(seq(19*BL+1, 20*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_20_3 = C(seq(19*BL+1, 20*BL), seq(2*BL+1, 3*BL));
 ABs.A_20_4 = A(seq(19*BL+1, 20*BL), seq(3*BL+1, 4*BL));
 ABs.B_20_4 = B(seq(19*BL+1, 20*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_20_4 = C(seq(19*BL+1, 20*BL), seq(3*BL+1, 4*BL));
 ABs.A_20_5 = A(seq(19*BL+1, 20*BL), seq(4*BL+1, 5*BL));
 ABs.B_20_5 = B(seq(19*BL+1, 20*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_20_5 = C(seq(19*BL+1, 20*BL), seq(4*BL+1, 5*BL));
 ABs.A_20_6 = A(seq(19*BL+1, 20*BL), seq(5*BL+1, 6*BL));
 ABs.B_20_6 = B(seq(19*BL+1, 20*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_20_6 = C(seq(19*BL+1, 20*BL), seq(5*BL+1, 6*BL));
 ABs.A_20_7 = A(seq(19*BL+1, 20*BL), seq(6*BL+1, 7*BL));
 ABs.B_20_7 = B(seq(19*BL+1, 20*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_20_7 = C(seq(19*BL+1, 20*BL), seq(6*BL+1, 7*BL));
 ABs.A_20_8 = A(seq(19*BL+1, 20*BL), seq(7*BL+1, 8*BL));
 ABs.B_20_8 = B(seq(19*BL+1, 20*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_20_8 = C(seq(19*BL+1, 20*BL), seq(7*BL+1, 8*BL));
 ABs.A_20_9 = A(seq(19*BL+1, 20*BL), seq(8*BL+1, 9*BL));
 ABs.B_20_9 = B(seq(19*BL+1, 20*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_20_9 = C(seq(19*BL+1, 20*BL), seq(8*BL+1, 9*BL));
 ABs.A_20_10 = A(seq(19*BL+1, 20*BL), seq(9*BL+1, 10*BL));
 ABs.B_20_10 = B(seq(19*BL+1, 20*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_20_10 = C(seq(19*BL+1, 20*BL), seq(9*BL+1, 10*BL));
 ABs.A_20_11 = A(seq(19*BL+1, 20*BL), seq(10*BL+1, 11*BL));
 ABs.B_20_11 = B(seq(19*BL+1, 20*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_20_11 = C(seq(19*BL+1, 20*BL), seq(10*BL+1, 11*BL));
 ABs.A_20_12 = A(seq(19*BL+1, 20*BL), seq(11*BL+1, 12*BL));
 ABs.B_20_12 = B(seq(19*BL+1, 20*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_20_12 = C(seq(19*BL+1, 20*BL), seq(11*BL+1, 12*BL));
 ABs.A_20_13 = A(seq(19*BL+1, 20*BL), seq(12*BL+1, 13*BL));
 ABs.B_20_13 = B(seq(19*BL+1, 20*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_20_13 = C(seq(19*BL+1, 20*BL), seq(12*BL+1, 13*BL));
 ABs.A_20_14 = A(seq(19*BL+1, 20*BL), seq(13*BL+1, 14*BL));
 ABs.B_20_14 = B(seq(19*BL+1, 20*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_20_14 = C(seq(19*BL+1, 20*BL), seq(13*BL+1, 14*BL));
 ABs.A_20_15 = A(seq(19*BL+1, 20*BL), seq(14*BL+1, 15*BL));
 ABs.B_20_15 = B(seq(19*BL+1, 20*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_20_15 = C(seq(19*BL+1, 20*BL), seq(14*BL+1, 15*BL));
 ABs.A_20_16 = A(seq(19*BL+1, 20*BL), seq(15*BL+1, 16*BL));
 ABs.B_20_16 = B(seq(19*BL+1, 20*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_20_16 = C(seq(19*BL+1, 20*BL), seq(15*BL+1, 16*BL));
 ABs.A_20_17 = A(seq(19*BL+1, 20*BL), seq(16*BL+1, 17*BL));
 ABs.B_20_17 = B(seq(19*BL+1, 20*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_20_17 = C(seq(19*BL+1, 20*BL), seq(16*BL+1, 17*BL));
 ABs.A_20_18 = A(seq(19*BL+1, 20*BL), seq(17*BL+1, 18*BL));
 ABs.B_20_18 = B(seq(19*BL+1, 20*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_20_18 = C(seq(19*BL+1, 20*BL), seq(17*BL+1, 18*BL));
 ABs.A_20_19 = A(seq(19*BL+1, 20*BL), seq(18*BL+1, 19*BL));
 ABs.B_20_19 = B(seq(19*BL+1, 20*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_20_19 = C(seq(19*BL+1, 20*BL), seq(18*BL+1, 19*BL));
 ABs.A_20_20 = A(seq(19*BL+1, 20*BL), seq(19*BL+1, 20*BL));
 ABs.B_20_20 = B(seq(19*BL+1, 20*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_20_20 = C(seq(19*BL+1, 20*BL), seq(19*BL+1, 20*BL));
 ABs.A_20_21 = A(seq(19*BL+1, 20*BL), seq(20*BL+1, 21*BL));
 ABs.B_20_21 = B(seq(19*BL+1, 20*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_20_21 = C(seq(19*BL+1, 20*BL), seq(20*BL+1, 21*BL));
 ABs.A_20_22 = A(seq(19*BL+1, 20*BL), seq(21*BL+1, 22*BL));
 ABs.B_20_22 = B(seq(19*BL+1, 20*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_20_22 = C(seq(19*BL+1, 20*BL), seq(21*BL+1, 22*BL));
 ABs.A_21_1 = A(seq(20*BL+1, 21*BL), seq(0*BL+1, 1*BL));
 ABs.B_21_1 = B(seq(20*BL+1, 21*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_21_1 = C(seq(20*BL+1, 21*BL), seq(0*BL+1, 1*BL));
 ABs.A_21_2 = A(seq(20*BL+1, 21*BL), seq(1*BL+1, 2*BL));
 ABs.B_21_2 = B(seq(20*BL+1, 21*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_21_2 = C(seq(20*BL+1, 21*BL), seq(1*BL+1, 2*BL));
 ABs.A_21_3 = A(seq(20*BL+1, 21*BL), seq(2*BL+1, 3*BL));
 ABs.B_21_3 = B(seq(20*BL+1, 21*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_21_3 = C(seq(20*BL+1, 21*BL), seq(2*BL+1, 3*BL));
 ABs.A_21_4 = A(seq(20*BL+1, 21*BL), seq(3*BL+1, 4*BL));
 ABs.B_21_4 = B(seq(20*BL+1, 21*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_21_4 = C(seq(20*BL+1, 21*BL), seq(3*BL+1, 4*BL));
 ABs.A_21_5 = A(seq(20*BL+1, 21*BL), seq(4*BL+1, 5*BL));
 ABs.B_21_5 = B(seq(20*BL+1, 21*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_21_5 = C(seq(20*BL+1, 21*BL), seq(4*BL+1, 5*BL));
 ABs.A_21_6 = A(seq(20*BL+1, 21*BL), seq(5*BL+1, 6*BL));
 ABs.B_21_6 = B(seq(20*BL+1, 21*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_21_6 = C(seq(20*BL+1, 21*BL), seq(5*BL+1, 6*BL));
 ABs.A_21_7 = A(seq(20*BL+1, 21*BL), seq(6*BL+1, 7*BL));
 ABs.B_21_7 = B(seq(20*BL+1, 21*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_21_7 = C(seq(20*BL+1, 21*BL), seq(6*BL+1, 7*BL));
 ABs.A_21_8 = A(seq(20*BL+1, 21*BL), seq(7*BL+1, 8*BL));
 ABs.B_21_8 = B(seq(20*BL+1, 21*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_21_8 = C(seq(20*BL+1, 21*BL), seq(7*BL+1, 8*BL));
 ABs.A_21_9 = A(seq(20*BL+1, 21*BL), seq(8*BL+1, 9*BL));
 ABs.B_21_9 = B(seq(20*BL+1, 21*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_21_9 = C(seq(20*BL+1, 21*BL), seq(8*BL+1, 9*BL));
 ABs.A_21_10 = A(seq(20*BL+1, 21*BL), seq(9*BL+1, 10*BL));
 ABs.B_21_10 = B(seq(20*BL+1, 21*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_21_10 = C(seq(20*BL+1, 21*BL), seq(9*BL+1, 10*BL));
 ABs.A_21_11 = A(seq(20*BL+1, 21*BL), seq(10*BL+1, 11*BL));
 ABs.B_21_11 = B(seq(20*BL+1, 21*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_21_11 = C(seq(20*BL+1, 21*BL), seq(10*BL+1, 11*BL));
 ABs.A_21_12 = A(seq(20*BL+1, 21*BL), seq(11*BL+1, 12*BL));
 ABs.B_21_12 = B(seq(20*BL+1, 21*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_21_12 = C(seq(20*BL+1, 21*BL), seq(11*BL+1, 12*BL));
 ABs.A_21_13 = A(seq(20*BL+1, 21*BL), seq(12*BL+1, 13*BL));
 ABs.B_21_13 = B(seq(20*BL+1, 21*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_21_13 = C(seq(20*BL+1, 21*BL), seq(12*BL+1, 13*BL));
 ABs.A_21_14 = A(seq(20*BL+1, 21*BL), seq(13*BL+1, 14*BL));
 ABs.B_21_14 = B(seq(20*BL+1, 21*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_21_14 = C(seq(20*BL+1, 21*BL), seq(13*BL+1, 14*BL));
 ABs.A_21_15 = A(seq(20*BL+1, 21*BL), seq(14*BL+1, 15*BL));
 ABs.B_21_15 = B(seq(20*BL+1, 21*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_21_15 = C(seq(20*BL+1, 21*BL), seq(14*BL+1, 15*BL));
 ABs.A_21_16 = A(seq(20*BL+1, 21*BL), seq(15*BL+1, 16*BL));
 ABs.B_21_16 = B(seq(20*BL+1, 21*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_21_16 = C(seq(20*BL+1, 21*BL), seq(15*BL+1, 16*BL));
 ABs.A_21_17 = A(seq(20*BL+1, 21*BL), seq(16*BL+1, 17*BL));
 ABs.B_21_17 = B(seq(20*BL+1, 21*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_21_17 = C(seq(20*BL+1, 21*BL), seq(16*BL+1, 17*BL));
 ABs.A_21_18 = A(seq(20*BL+1, 21*BL), seq(17*BL+1, 18*BL));
 ABs.B_21_18 = B(seq(20*BL+1, 21*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_21_18 = C(seq(20*BL+1, 21*BL), seq(17*BL+1, 18*BL));
 ABs.A_21_19 = A(seq(20*BL+1, 21*BL), seq(18*BL+1, 19*BL));
 ABs.B_21_19 = B(seq(20*BL+1, 21*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_21_19 = C(seq(20*BL+1, 21*BL), seq(18*BL+1, 19*BL));
 ABs.A_21_20 = A(seq(20*BL+1, 21*BL), seq(19*BL+1, 20*BL));
 ABs.B_21_20 = B(seq(20*BL+1, 21*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_21_20 = C(seq(20*BL+1, 21*BL), seq(19*BL+1, 20*BL));
 ABs.A_21_21 = A(seq(20*BL+1, 21*BL), seq(20*BL+1, 21*BL));
 ABs.B_21_21 = B(seq(20*BL+1, 21*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_21_21 = C(seq(20*BL+1, 21*BL), seq(20*BL+1, 21*BL));
 ABs.A_21_22 = A(seq(20*BL+1, 21*BL), seq(21*BL+1, 22*BL));
 ABs.B_21_22 = B(seq(20*BL+1, 21*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_21_22 = C(seq(20*BL+1, 21*BL), seq(21*BL+1, 22*BL));
 ABs.A_22_1 = A(seq(21*BL+1, 22*BL), seq(0*BL+1, 1*BL));
 ABs.B_22_1 = B(seq(21*BL+1, 22*BL), seq(0*BL+1, 1*BL));
-
+MatrixXd C_22_1 = C(seq(21*BL+1, 22*BL), seq(0*BL+1, 1*BL));
 ABs.A_22_2 = A(seq(21*BL+1, 22*BL), seq(1*BL+1, 2*BL));
 ABs.B_22_2 = B(seq(21*BL+1, 22*BL), seq(1*BL+1, 2*BL));
-
+MatrixXd C_22_2 = C(seq(21*BL+1, 22*BL), seq(1*BL+1, 2*BL));
 ABs.A_22_3 = A(seq(21*BL+1, 22*BL), seq(2*BL+1, 3*BL));
 ABs.B_22_3 = B(seq(21*BL+1, 22*BL), seq(2*BL+1, 3*BL));
-
+MatrixXd C_22_3 = C(seq(21*BL+1, 22*BL), seq(2*BL+1, 3*BL));
 ABs.A_22_4 = A(seq(21*BL+1, 22*BL), seq(3*BL+1, 4*BL));
 ABs.B_22_4 = B(seq(21*BL+1, 22*BL), seq(3*BL+1, 4*BL));
-
+MatrixXd C_22_4 = C(seq(21*BL+1, 22*BL), seq(3*BL+1, 4*BL));
 ABs.A_22_5 = A(seq(21*BL+1, 22*BL), seq(4*BL+1, 5*BL));
 ABs.B_22_5 = B(seq(21*BL+1, 22*BL), seq(4*BL+1, 5*BL));
-
+MatrixXd C_22_5 = C(seq(21*BL+1, 22*BL), seq(4*BL+1, 5*BL));
 ABs.A_22_6 = A(seq(21*BL+1, 22*BL), seq(5*BL+1, 6*BL));
 ABs.B_22_6 = B(seq(21*BL+1, 22*BL), seq(5*BL+1, 6*BL));
-
+MatrixXd C_22_6 = C(seq(21*BL+1, 22*BL), seq(5*BL+1, 6*BL));
 ABs.A_22_7 = A(seq(21*BL+1, 22*BL), seq(6*BL+1, 7*BL));
 ABs.B_22_7 = B(seq(21*BL+1, 22*BL), seq(6*BL+1, 7*BL));
-
+MatrixXd C_22_7 = C(seq(21*BL+1, 22*BL), seq(6*BL+1, 7*BL));
 ABs.A_22_8 = A(seq(21*BL+1, 22*BL), seq(7*BL+1, 8*BL));
 ABs.B_22_8 = B(seq(21*BL+1, 22*BL), seq(7*BL+1, 8*BL));
-
+MatrixXd C_22_8 = C(seq(21*BL+1, 22*BL), seq(7*BL+1, 8*BL));
 ABs.A_22_9 = A(seq(21*BL+1, 22*BL), seq(8*BL+1, 9*BL));
 ABs.B_22_9 = B(seq(21*BL+1, 22*BL), seq(8*BL+1, 9*BL));
-
+MatrixXd C_22_9 = C(seq(21*BL+1, 22*BL), seq(8*BL+1, 9*BL));
 ABs.A_22_10 = A(seq(21*BL+1, 22*BL), seq(9*BL+1, 10*BL));
 ABs.B_22_10 = B(seq(21*BL+1, 22*BL), seq(9*BL+1, 10*BL));
-
+MatrixXd C_22_10 = C(seq(21*BL+1, 22*BL), seq(9*BL+1, 10*BL));
 ABs.A_22_11 = A(seq(21*BL+1, 22*BL), seq(10*BL+1, 11*BL));
 ABs.B_22_11 = B(seq(21*BL+1, 22*BL), seq(10*BL+1, 11*BL));
-
+MatrixXd C_22_11 = C(seq(21*BL+1, 22*BL), seq(10*BL+1, 11*BL));
 ABs.A_22_12 = A(seq(21*BL+1, 22*BL), seq(11*BL+1, 12*BL));
 ABs.B_22_12 = B(seq(21*BL+1, 22*BL), seq(11*BL+1, 12*BL));
-
+MatrixXd C_22_12 = C(seq(21*BL+1, 22*BL), seq(11*BL+1, 12*BL));
 ABs.A_22_13 = A(seq(21*BL+1, 22*BL), seq(12*BL+1, 13*BL));
 ABs.B_22_13 = B(seq(21*BL+1, 22*BL), seq(12*BL+1, 13*BL));
-
+MatrixXd C_22_13 = C(seq(21*BL+1, 22*BL), seq(12*BL+1, 13*BL));
 ABs.A_22_14 = A(seq(21*BL+1, 22*BL), seq(13*BL+1, 14*BL));
 ABs.B_22_14 = B(seq(21*BL+1, 22*BL), seq(13*BL+1, 14*BL));
-
+MatrixXd C_22_14 = C(seq(21*BL+1, 22*BL), seq(13*BL+1, 14*BL));
 ABs.A_22_15 = A(seq(21*BL+1, 22*BL), seq(14*BL+1, 15*BL));
 ABs.B_22_15 = B(seq(21*BL+1, 22*BL), seq(14*BL+1, 15*BL));
-
+MatrixXd C_22_15 = C(seq(21*BL+1, 22*BL), seq(14*BL+1, 15*BL));
 ABs.A_22_16 = A(seq(21*BL+1, 22*BL), seq(15*BL+1, 16*BL));
 ABs.B_22_16 = B(seq(21*BL+1, 22*BL), seq(15*BL+1, 16*BL));
-
+MatrixXd C_22_16 = C(seq(21*BL+1, 22*BL), seq(15*BL+1, 16*BL));
 ABs.A_22_17 = A(seq(21*BL+1, 22*BL), seq(16*BL+1, 17*BL));
 ABs.B_22_17 = B(seq(21*BL+1, 22*BL), seq(16*BL+1, 17*BL));
-
+MatrixXd C_22_17 = C(seq(21*BL+1, 22*BL), seq(16*BL+1, 17*BL));
 ABs.A_22_18 = A(seq(21*BL+1, 22*BL), seq(17*BL+1, 18*BL));
 ABs.B_22_18 = B(seq(21*BL+1, 22*BL), seq(17*BL+1, 18*BL));
-
+MatrixXd C_22_18 = C(seq(21*BL+1, 22*BL), seq(17*BL+1, 18*BL));
 ABs.A_22_19 = A(seq(21*BL+1, 22*BL), seq(18*BL+1, 19*BL));
 ABs.B_22_19 = B(seq(21*BL+1, 22*BL), seq(18*BL+1, 19*BL));
-
+MatrixXd C_22_19 = C(seq(21*BL+1, 22*BL), seq(18*BL+1, 19*BL));
 ABs.A_22_20 = A(seq(21*BL+1, 22*BL), seq(19*BL+1, 20*BL));
 ABs.B_22_20 = B(seq(21*BL+1, 22*BL), seq(19*BL+1, 20*BL));
-
+MatrixXd C_22_20 = C(seq(21*BL+1, 22*BL), seq(19*BL+1, 20*BL));
 ABs.A_22_21 = A(seq(21*BL+1, 22*BL), seq(20*BL+1, 21*BL));
 ABs.B_22_21 = B(seq(21*BL+1, 22*BL), seq(20*BL+1, 21*BL));
-
+MatrixXd C_22_21 = C(seq(21*BL+1, 22*BL), seq(20*BL+1, 21*BL));
 ABs.A_22_22 = A(seq(21*BL+1, 22*BL), seq(21*BL+1, 22*BL));
 ABs.B_22_22 = B(seq(21*BL+1, 22*BL), seq(21*BL+1, 22*BL));
-
+MatrixXd C_22_22 = C(seq(21*BL+1, 22*BL), seq(21*BL+1, 22*BL));
 MatrixXd m_1 = fm_1(ABs);
 MatrixXd m_2 = fm_2(ABs);
 MatrixXd m_3 = fm_3(ABs);
