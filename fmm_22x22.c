@@ -4,12 +4,10 @@ int fmm_22x22(double_cmat C, double_cmat A, double_cmat B) {
     int height = A.shape[0];
     int width = A.shape[1];
     if (height <= 22 || width <= 22) {
-        //C.data[0][0] = A.data[0][0] * B.data[0][0];
-        //printf("C %lf = A %lf * B %lf\n", C.data[0][0], A.data[0][0], B.data[0][0]);
         matmul_double_sse2(C, A, B);
         return 0;
     }
-    if (!(height % 22 == width % 22 && height % 22 == 0 && height / 22 == width / 22)) { // && height > 22 && width > 22)) {
+    if (!(height % 22 == width % 22 && height % 22 == 0 && height / 22 == width / 22)) {
         //return matmul_double(C, A, B);
         return -1;
     }

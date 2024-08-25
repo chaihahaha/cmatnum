@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(CFMM)
 
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED 11)
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED 99)
 # Use file GLOB to find all .cpp and .h files in the current directory and subdirectories
 file(GLOB_RECURSE SOURCE_FILES
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
