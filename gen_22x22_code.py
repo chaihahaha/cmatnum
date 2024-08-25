@@ -1,5 +1,6 @@
 import os
 import re
+import sympy as sp
 
 # Define the base directory for the generated files
 base_dir = "generated_files"
@@ -10,17 +11,17 @@ def generate_packmats_file():
     content = """\
 #ifndef PACK_MATS_H
 #define PACK_MATS_H
-#include<Eigen/Dense>
-using Eigen::MatrixXd;
+#include "cmat.h"
 struct pack_mats_22x22 {
 """
     for i in range(1,23):
         for j in range(1,23):
-            content+=f"    MatrixXd A_{i}_{j};\n"
-            content+=f"    MatrixXd B_{i}_{j};\n"
+            content+=f"    double_cmat A_{i}_{j};\n"
+            content+=f"    double_cmat B_{i}_{j};\n"
 
     content +="""
 };
+typedef struct pack_mats_22x22 pack_mats_22x22;
 #endif
 """
     return content
@@ -31,38 +32,97 @@ def generate_header_file(fm_index):
 #define FM_{fm_index}_H
 
 #include "stdafx.h"
-MatrixXd fmm_22x22(MatrixXd A, MatrixXd B);
+int fmm_22x22(double_cmat C, double_cmat A, double_cmat B);
 
-Eigen::MatrixXd fm_{fm_index}(
+int fm_{fm_index}(double_cmat m, pack_mats_22x22 ABs);
+#endif
 """
-    # Add the function parameters (A_1_1 to A_22_22 and B_1_1 to B_22_22)
-    params = []
-    #for i in range(1, 23):
-    #    for j in range(1, 23):
-    #        params.append(f"    const Eigen::MatrixXd& A_{i}_{j}")
-    #for i in range(1, 23):
-    #    for j in range(1, 23):
-    #        params.append(f"    const Eigen::MatrixXd& B_{i}_{j}")
-
-    params.append(f"    pack_mats_22x22& ABs")
-    content += ",\n".join(params) + ");\n\n"
-
-    content += f"#endif // FM_{fm_index}_H\n"
     return content
 
-# Function to separate the A and B parts using regex
-def separate_ab_parts(expression):
-    # Find all terms inside the parentheses
-    terms = re.findall(r'\((.*?)\)', expression)
+def symmul12(match):
+    fraction_str = match.group(1)
+    slash = match.group(2)
+    term = match.group(3)
+    #print('frac term', fraction_str, term, match.group(2))
 
-    if len(terms) != 2:
-        raise ValueError("Expression does not contain two parts inside parentheses.")
+    if slash is None or fraction_str in ["+", "-", ""]:
+        # Default coefficient is +1 or -1
+        fraction = sp.Rational(f"{fraction_str}1") if fraction_str else sp.Rational(1)
+    else:
+        # Use the matched fraction or integer
+        fraction = sp.Rational(fraction_str.replace('*', ''))
 
-    # First part for A matrices, second part for B matrices
-    a_expression = terms[0].strip()
-    b_expression = terms[1].strip()
+    # Multiply by 12
+    simplified_fraction = fraction * 12
 
-    return a_expression, b_expression
+    # Construct the resulting string
+    if simplified_fraction == 1:
+        return f"+{term}"
+    elif simplified_fraction == -1:
+        return f"-{term}"
+    elif simplified_fraction > 0:
+        return f"+{simplified_fraction}*{term}"
+    else:
+        return f"{simplified_fraction}*{term}"
+
+
+def generate_c_code(expr):
+    # Extract the two parenthesized terms
+    terms = re.findall(r'\((.*?)\)', expr)
+
+    # Initialize a list to hold the generated code
+    code = []
+
+    # Create temporary matrices tmp0 and tmp1
+    code.append("int N = ABs.A_1_1.shape[0];")
+    code.append("double_cmat tmp0, tmp1;")
+    code.append("create_double_matrix(pairint {N, N}, &tmp0);")
+    code.append("create_double_matrix(pairint {N, N}, &tmp1);")
+    #code.append("print_double_matrix(ABs.A_1_1);")
+    #A = [[sp.Symbol(f'A_{i+1}_{j+1}') for j in range(22)] for i in range(22)]
+    #A_locals = {f'A_{i+1}_{j+1}': A[i][j] for i in range(22) for j in range(22)}
+    
+    # Function to parse and generate the element-wise computation code
+    def parse_and_generate_A_code(terms, tmp):
+        sum_expr = terms
+        pattern = r"([+-]?(\d+/\d+|\d+)?\*?)?(A_\d+_\d+)"
+        sum_expr = re.sub(pattern, symmul12, sum_expr)
+        #if sp.simplify(sp.sympify(sum_expr, locals=A_locals) - 12*sp.sympify(terms, locals=A_locals)) != 0:
+        #    print(terms)
+        #    print(sum_expr)
+        #    print('exiting')
+        #    exit()
+        sum_expr = re.sub(r'([A-Z]+\_\d+\_\d+)', r'ABs.\1.data[i][j]', sum_expr)
+        #sum_expr = re.sub(r'/(\d+)', r'/(double)\1', sum_expr)
+        return sum_expr
+
+
+    def parse_and_generate_B_code(terms, tmp):
+        sum_expr = terms
+        pattern = r"([+-]?(\d+/\d+|\d+)?\*?)?(A_\d+_\d+)"
+        sum_expr = re.sub(r'([A-Z]+\_\d+\_\d+)', r'ABs.\1.data[i][j]', sum_expr)
+        sum_expr = re.sub(r'/(\d+)', r'/(double)\1', sum_expr)
+        return sum_expr
+
+    # Generate code for the first term (tmp0)
+    sum_expr_A = parse_and_generate_A_code(terms[0], "tmp0")
+
+    # Generate code for the second term (tmp1)
+    sum_expr_B = parse_and_generate_B_code(terms[1], "tmp1")
+
+    code.append(f"for (int i=0; i<N; i++) {{")
+    code.append(f"    for (int j=0; j<N; j++) {{")
+    code.append(f"        tmp0.data[i][j] = {sum_expr_A};")
+    code.append(f"        tmp0.data[i][j] /= 12.0;")
+    code.append(f"        tmp1.data[i][j] = {sum_expr_B};")
+    code.append(f"    }}")
+    code.append(f"}}")
+
+    code.append("fmm_22x22(m, tmp0, tmp1);")
+    code.append("free_double_matrix(tmp0);")
+    code.append("free_double_matrix(tmp1);")
+
+    return "\n".join(code) + "\n"
 
 
 # Function to generate the source file content
@@ -70,41 +130,35 @@ def generate_source_file(fm_index, expression):
     content = f"""\
 #include "fm_{fm_index}.h"
 
-Eigen::MatrixXd fm_{fm_index}(
+int fm_{fm_index}(double_cmat m, pack_mats_22x22 ABs) {{
 """
-    # Add the function parameters (A_1_1 to A_22_22 and B_1_1 to B_22_22)
-    params = []
-    #for i in range(1, 23):
-    #    for j in range(1, 23):
-    #        params.append(f"    const Eigen::MatrixXd& A_{i}_{j}")
-    #for i in range(1, 23):
-    #    for j in range(1, 23):
-    #        params.append(f"    const Eigen::MatrixXd& B_{i}_{j}")
-    params.append(f"    pack_mats_22x22& ABs")
+    #content += "    double num12 = 12.0;\n"
 
-    content += ",\n".join(params) + ")\n{\n"
-    content += "double num12 = 12.0;\n"
-
-    # Replace matrix multiplication with the custom function call
     
-    expression=re.sub(r"([A,B]_\d*_\d*)",r"ABs.\1",expression)
-    expression=re.sub(r"/12",r"/num12",expression)
-    exp_a, exp_b = separate_ab_parts(expression)
-    content += f"    return fmm_22x22({exp_a}, {exp_b});\n"
+    expression= generate_c_code(expression)
+    content += expression
+    content += f"    return 0;\n"
     content += "}\n"
     return content
 
 def generate_fm_funccall(fm_index):
-    return f"MatrixXd m_{fm_index} = fm_{fm_index}(ABs);\n"
+    return f"fm_{fm_index}(m_{fm_index}, &ABs);\n"
 
 def generate_packmats_definitions():
     pack_mats = []
     pack_mats.append("pack_mats_22x22 ABs;\n")
     for i in range(1,23):
         for j in range(1,23):
-            pack_mats.append(f"ABs.A_{i}_{j} = A(seq({(i-1)}*BL+1, {i}*BL), seq({(j-1)}*BL+1, {j}*BL));\n")
-            pack_mats.append(f"ABs.B_{i}_{j} = B(seq({(i-1)}*BL+1, {i}*BL), seq({(j-1)}*BL+1, {j}*BL));\n")
-            pack_mats.append(f"MatrixXd C_{i}_{j} = C(seq({(i-1)}*BL+1, {i}*BL), seq({(j-1)}*BL+1, {j}*BL));\n")
+            #pack_mats.append(f"create_double_matrix(pairint {{BL, BL}}, &ABs.A_{i}_{j});\n")
+            #pack_mats.append(f"create_double_matrix(pairint {{BL, BL}}, &ABs.B_{i}_{j});\n")
+            pack_mats.append(f"ABs.A_{i}_{j} = slice_double_matrix(A, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{{(j-1)}*BL, {j}*BL}});\n")
+            pack_mats.append(f"ABs.B_{i}_{j} = slice_double_matrix(B, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{{(j-1)}*BL, {j}*BL}});\n")
+            pack_mats.append(f"double_cmat C_{j}_{i} = slice_double_matrix(C, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{{(j-1)}*BL, {j}*BL}});\n")
+    for i in range(1,23):
+        for j in range(1,23):
+            pack_mats.append(f"free_double_matrix(ABs.A_{i}_{j});\n")
+            pack_mats.append(f"free_double_matrix(ABs.B_{i}_{j});\n")
+            pack_mats.append(f"free_double_matrix(C_{i}_{j});\n")
     content = "".join(pack_mats)
     return content
 
@@ -117,19 +171,25 @@ with open('m.txt','r') as f:
 cab = []
 cab.append(generate_packmats_definitions())
 cheader = []
+m_defs = []
+m_frees = []
 for line in s.split("\n"):
     if line:
         m, expre = line.split("=")
         fmidx = m.split("_")[1]
         with open(f"{base_dir}/fm_{fmidx}.h", "w") as f:
             f.write(generate_header_file(fmidx))
-        with open(f"{base_dir}/fm_{fmidx}.cpp", "w") as f:
+        with open(f"{base_dir}/fm_{fmidx}.c", "w") as f:
             f.write(generate_source_file(fmidx, expre))
         cab.append(generate_fm_funccall(fmidx))
         cheader.append(generate_fmm_22x22_header(fmidx))
+        m_defs.append(f"double_cmat m_{fmidx};\ncreate_double_matrix(pairint {{BL,BL}}, &m_{fmidx});\n")
+        m_frees.append(f"free_double_matrix(m_{fmidx});\n")
 with open(f"AB.txt", "w") as fab:
     fab.write("".join(cab))
 with open(f"header.txt", "w") as fheader:
     fheader.write("".join(cheader))
+with open(f"mdef.txt", "w") as fm:
+    fm.write("".join(m_defs+m_frees))
 with open(f"{base_dir}/pack_mats.h", "w") as f:
     f.write(generate_packmats_file())

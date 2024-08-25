@@ -1,0 +1,8 @@
+#ifndef FM_1197_H
+#define FM_1197_H
+
+#include "stdafx.h"
+int fmm_22x22(double_cmat C, double_cmat A, double_cmat B);
+
+int fm_1197(double_cmat m, pack_mats_22x22 ABs);
+#endif

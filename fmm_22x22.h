@@ -1,8 +1,9 @@
 #ifndef FMM_22X22_H
 #define FMM_22X22_H
 
-#include<iostream>
+#include <stdio.h>
 #include "stdafx.h"
+#include "matmul.h"
 #include "fm_1.h"
 #include "fm_2.h"
 #include "fm_3.h"
@@ -5569,6 +5570,6 @@
 #include "fm_5564.h"
 #include "fm_5565.h"
 #include "fm_5566.h"
-MatrixXd fmm_22x22(MatrixXd A, MatrixXd B);
+int fmm_22x22(double_cmat C, double_cmat A, double_cmat B);
 
 #endif

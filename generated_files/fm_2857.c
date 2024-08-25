@@ -1,0 +1,19 @@
+#include "fm_2857.h"
+
+int fm_2857(double_cmat m, pack_mats_22x22 ABs) {
+int N = ABs.A_1_1.shape[0];
+double_cmat tmp0, tmp1;
+create_double_matrix(pairint {N, N}, &tmp0);
+create_double_matrix(pairint {N, N}, &tmp1);
+for (int i=0; i<N; i++) {
+    for (int j=0; j<N; j++) {
+        tmp0.data[i][j] = -ABs.A_8_13.data[i][j]-ABs.A_8_14.data[i][j]-ABs.A_1_12.data[i][j]-ABs.A_8_15.data[i][j]+11*ABs.A_8_16.data[i][j]-ABs.A_8_17.data[i][j]-ABs.A_8_18.data[i][j]-ABs.A_8_19.data[i][j]-ABs.A_8_20.data[i][j]-ABs.A_8_21.data[i][j]-ABs.A_8_22.data[i][j]-ABs.A_9_13.data[i][j]-ABs.A_9_14.data[i][j]-ABs.A_2_12.data[i][j]-ABs.A_9_15.data[i][j]+11*ABs.A_9_16.data[i][j]-ABs.A_9_17.data[i][j]-ABs.A_9_18.data[i][j]-ABs.A_9_19.data[i][j]-ABs.A_9_20.data[i][j]-ABs.A_9_21.data[i][j]-ABs.A_9_22.data[i][j]-ABs.A_10_13.data[i][j]-ABs.A_10_14.data[i][j]-ABs.A_3_12.data[i][j]-ABs.A_10_15.data[i][j]+11*ABs.A_10_16.data[i][j]-ABs.A_10_17.data[i][j]-ABs.A_10_18.data[i][j]-ABs.A_10_19.data[i][j]-ABs.A_10_20.data[i][j]-ABs.A_10_21.data[i][j]-ABs.A_10_22.data[i][j]-ABs.A_11_13.data[i][j]-ABs.A_11_14.data[i][j]-ABs.A_4_12.data[i][j]-ABs.A_11_15.data[i][j]+11*ABs.A_11_16.data[i][j]-ABs.A_11_17.data[i][j]-ABs.A_11_18.data[i][j]-ABs.A_11_19.data[i][j]-ABs.A_11_20.data[i][j]-ABs.A_11_21.data[i][j]-ABs.A_11_22.data[i][j]-ABs.A_5_12.data[i][j]-ABs.A_6_12.data[i][j]-ABs.A_7_12.data[i][j]-ABs.A_1_13.data[i][j]-ABs.A_1_14.data[i][j]-ABs.A_1_15.data[i][j]+11*ABs.A_1_16.data[i][j]-ABs.A_1_17.data[i][j]-ABs.A_1_18.data[i][j]-ABs.A_1_19.data[i][j]-ABs.A_1_20.data[i][j]-ABs.A_1_21.data[i][j]-ABs.A_1_22.data[i][j]-ABs.A_2_13.data[i][j]-ABs.A_2_14.data[i][j]-ABs.A_2_15.data[i][j]+11*ABs.A_2_16.data[i][j]-ABs.A_2_17.data[i][j]-ABs.A_2_18.data[i][j]-ABs.A_2_19.data[i][j]-ABs.A_2_20.data[i][j]-ABs.A_2_21.data[i][j]-ABs.A_2_22.data[i][j]-ABs.A_3_13.data[i][j]-ABs.A_3_14.data[i][j]-ABs.A_3_15.data[i][j]+11*ABs.A_3_16.data[i][j]-ABs.A_3_17.data[i][j]-ABs.A_3_18.data[i][j]-ABs.A_3_19.data[i][j]-ABs.A_3_20.data[i][j]-ABs.A_3_21.data[i][j]-ABs.A_3_22.data[i][j]-ABs.A_4_13.data[i][j]-ABs.A_4_14.data[i][j]-ABs.A_4_15.data[i][j]+11*ABs.A_4_16.data[i][j]-ABs.A_4_17.data[i][j]-ABs.A_4_18.data[i][j]-ABs.A_4_19.data[i][j]-ABs.A_4_20.data[i][j]-ABs.A_4_21.data[i][j]-ABs.A_4_22.data[i][j]-ABs.A_5_13.data[i][j]-ABs.A_5_14.data[i][j]-ABs.A_5_15.data[i][j]+11*ABs.A_5_16.data[i][j]-ABs.A_5_17.data[i][j]-ABs.A_5_18.data[i][j]-ABs.A_5_19.data[i][j]-ABs.A_5_20.data[i][j]-ABs.A_5_21.data[i][j]-ABs.A_5_22.data[i][j]-ABs.A_6_13.data[i][j]-ABs.A_6_14.data[i][j]-ABs.A_6_15.data[i][j]+11*ABs.A_6_16.data[i][j]-ABs.A_6_17.data[i][j]-ABs.A_6_18.data[i][j]-ABs.A_6_19.data[i][j]-ABs.A_6_20.data[i][j]-ABs.A_6_21.data[i][j]-ABs.A_6_22.data[i][j]-ABs.A_7_13.data[i][j]-ABs.A_7_14.data[i][j]-ABs.A_7_15.data[i][j]+11*ABs.A_7_16.data[i][j]-ABs.A_7_17.data[i][j]-ABs.A_7_18.data[i][j]-ABs.A_7_19.data[i][j]-ABs.A_7_20.data[i][j]-ABs.A_7_21.data[i][j]-ABs.A_7_22.data[i][j]-ABs.A_8_12.data[i][j]-ABs.A_9_12.data[i][j]-ABs.A_10_12.data[i][j]-ABs.A_11_12.data[i][j];
+        tmp0.data[i][j] /= 12.0;
+        tmp1.data[i][j] = ABs.B_1_5.data[i][j]+ABs.B_2_5.data[i][j]+ABs.B_3_5.data[i][j]+ABs.B_4_5.data[i][j]+ABs.B_5_5.data[i][j]+ABs.B_6_5.data[i][j]+ABs.B_7_5.data[i][j]+ABs.B_8_5.data[i][j]+ABs.B_9_5.data[i][j]+ABs.B_10_5.data[i][j]+ABs.B_11_5.data[i][j]-ABs.B_12_5.data[i][j]-ABs.B_13_5.data[i][j]-ABs.B_14_5.data[i][j]-ABs.B_15_5.data[i][j]-ABs.B_16_5.data[i][j]-ABs.B_17_5.data[i][j]-ABs.B_18_5.data[i][j]-ABs.B_19_5.data[i][j]-ABs.B_20_5.data[i][j]-ABs.B_21_5.data[i][j]-ABs.B_22_5.data[i][j];
+    }
+}
+fmm_22x22(m, tmp0, tmp1);
+free_double_matrix(tmp0);
+free_double_matrix(tmp1);
+    return 0;
+}

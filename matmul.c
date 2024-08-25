@@ -1,6 +1,6 @@
 #include "matmul.h"
 
-static int matmul_float(float_cmat matC, float_cmat matA, float_cmat matB){
+int matmul_float(float_cmat matC, float_cmat matA, float_cmat matB){
     if (matA.shape[1] != matB.shape[0]) {
         return -1;
     }
@@ -19,7 +19,7 @@ static int matmul_float(float_cmat matC, float_cmat matA, float_cmat matB){
     return 0;
 }
 
-static int matmul_double(double_cmat matC, double_cmat matA, double_cmat matB){
+int matmul_double(double_cmat matC, double_cmat matA, double_cmat matB){
     if (matA.shape[1] != matB.shape[0]) {
         return -1;
     }
@@ -38,7 +38,7 @@ static int matmul_double(double_cmat matC, double_cmat matA, double_cmat matB){
     return 0;
 }
 
-static int matmul_double_sse2(double_cmat matC, double_cmat matA, double_cmat matB){
+int matmul_double_sse2(double_cmat matC, double_cmat matA, double_cmat matB){
     if (matA.shape[1] != matB.shape[0]) {
         return -1;
     }
@@ -82,7 +82,7 @@ static int matmul_double_sse2(double_cmat matC, double_cmat matA, double_cmat ma
     return 0;
 }
 
-static int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, double_cmat matB){
+int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, double_cmat matB){
     /*
      * matA M*K
      * matB K*N
@@ -213,7 +213,7 @@ static int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, d
     return 0;
 }
 
-static int matmul_double_recursive_bilinear(double_cmat matC, double_cmat matA, double_cmat matB){
+int matmul_double_recursive_bilinear(double_cmat matC, double_cmat matA, double_cmat matB){
     if (!(matA.shape[0] == matA.shape[1] && matA.shape[1] == matB.shape[0] && matB.shape[0] == matB.shape[1] && matA.shape[0]%2==0)) {
         return -1;
     }
@@ -303,7 +303,7 @@ static int matmul_double_recursive_bilinear(double_cmat matC, double_cmat matA, 
     return 0;
 }
 
-static int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat matB){
+int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat matB){
     if (!(matA.shape[0] == matA.shape[1] && matA.shape[1] == matB.shape[0] && matB.shape[0] == matB.shape[1] && matA.shape[0]%2==0)) {
         return -1;
     }
