@@ -1,6 +1,7 @@
 import os
 import re
 import sympy as sp
+from collections import defaultdict
 
 # Define the base directory for the generated files
 base_dir = "generated_files"
@@ -65,25 +66,32 @@ def symmul12(match):
     else:
         return f"{simplified_fraction}*{term}"
 
+# Function to generate the source file content
+def generate_source_file(fm_index, expression):
+    code = []
+    code.append(f"""\
+#include "fm_{fm_index}.h"
 
-def generate_c_code(expr):
+inline int fm_{fm_index}(double_cmat m, pack_mats_22x22 ABs) {{
+""")
+
     # Extract the two parenthesized terms
-    terms = re.findall(r'\((.*?)\)', expr)
+    terms = re.findall(r'\((.*?)\)', expression)
 
     # Initialize a list to hold the generated code
-    code = []
 
     # Create temporary matrices tmp0 and tmp1
-    code.append("int N = ABs.A_1_1.shape[0];")
+    code.append("double dnum12 = 1/12.0;\n")
+    code.append("int BL = ABs.A_1_1.shape[0];")
     code.append("double_cmat tmp0, tmp1;")
-    code.append("create_double_matrix(pairint {N, N}, &tmp0);")
-    code.append("create_double_matrix(pairint {N, N}, &tmp1);")
+    code.append("create_double_matrix(pairint {BL, BL}, &tmp0);")
+    code.append("create_double_matrix(pairint {BL, BL}, &tmp1);")
     #code.append("print_double_matrix(ABs.A_1_1);")
     #A = [[sp.Symbol(f'A_{i+1}_{j+1}') for j in range(22)] for i in range(22)]
     #A_locals = {f'A_{i+1}_{j+1}': A[i][j] for i in range(22) for j in range(22)}
     
     # Function to parse and generate the element-wise computation code
-    def parse_and_generate_A_code(terms, tmp):
+    def parse_and_generate_A_code(terms):
         sum_expr = terms
         pattern = r"([+-]?(\d+/\d+|\d+)?\*?)?(A_\d+_\d+)"
         sum_expr = re.sub(pattern, symmul12, sum_expr)
@@ -97,23 +105,20 @@ def generate_c_code(expr):
         return sum_expr
 
 
-    def parse_and_generate_B_code(terms, tmp):
+    def parse_and_generate_B_code(terms):
         sum_expr = terms
         pattern = r"([+-]?(\d+/\d+|\d+)?\*?)?(A_\d+_\d+)"
         sum_expr = re.sub(r'([A-Z]+\_\d+\_\d+)', r'ABs.\1.data[i][j]', sum_expr)
         sum_expr = re.sub(r'/(\d+)', r'/(double)\1', sum_expr)
         return sum_expr
 
-    # Generate code for the first term (tmp0)
-    sum_expr_A = parse_and_generate_A_code(terms[0], "tmp0")
+    sum_expr_A = parse_and_generate_A_code(terms[0])
+    sum_expr_B = parse_and_generate_B_code(terms[1])
 
-    # Generate code for the second term (tmp1)
-    sum_expr_B = parse_and_generate_B_code(terms[1], "tmp1")
-
-    code.append(f"for (int i=0; i<N; i++) {{")
-    code.append(f"    for (int j=0; j<N; j++) {{")
+    code.append(f"for (int i=0; i<BL; i++) {{")
+    code.append(f"    for (int j=0; j<BL; j++) {{")
     code.append(f"        tmp0.data[i][j] = {sum_expr_A};")
-    code.append(f"        tmp0.data[i][j] /= 12.0;")
+    code.append(f"        tmp0.data[i][j] *= dnum12;")
     code.append(f"        tmp1.data[i][j] = {sum_expr_B};")
     code.append(f"    }}")
     code.append(f"}}")
@@ -122,27 +127,12 @@ def generate_c_code(expr):
     code.append("free_double_matrix(tmp0);")
     code.append("free_double_matrix(tmp1);")
 
+    code.append(f"    return 0;\n")
+    code.append("}\n")
     return "\n".join(code) + "\n"
 
-
-# Function to generate the source file content
-def generate_source_file(fm_index, expression):
-    content = f"""\
-#include "fm_{fm_index}.h"
-
-int fm_{fm_index}(double_cmat m, pack_mats_22x22 ABs) {{
-"""
-    #content += "    double num12 = 12.0;\n"
-
-    
-    expression= generate_c_code(expression)
-    content += expression
-    content += f"    return 0;\n"
-    content += "}\n"
-    return content
-
 def generate_fm_funccall(fm_index):
-    return f"fm_{fm_index}(m_{fm_index}, &ABs);\n"
+    return f"fm_{fm_index}(m, &ABs);\n"
 
 def generate_packmats_definitions():
     pack_mats = []
@@ -168,11 +158,45 @@ def generate_fmm_22x22_header(fm_index):
 # List of matrix expressions
 with open('m.txt','r') as f:
     s = f.read()
+with open('C.txt','r') as f:
+    Cs = f.read()
+m_to_C = defaultdict(list)
+pattern = r"([+-]?(\d+/\d+|\d+)?\*?)?(m_\d+)"
+for line in Cs.split("\n"):
+    if line:
+        Ci, formula = line.split("=")
+        matches = re.findall(pattern, formula)
+        for mat in matches:
+            if mat[0]:
+                if mat[0].endswith("*"):
+                    coefficient = mat[0][:-1]
+                else:
+                    coefficient = mat[0]
+                if mat[0] in ["+","-"]:
+                    coefficient = mat[0] + "1"
+            else:
+                coefficient = "1"
+            m_term = mat[2]
+            m_to_C[m_term].append((Ci, coefficient))
+code = []
+for m_term in m_to_C.keys():
+    code.append(f"f{m_term}(m, ABs);")
+    code.append(f"for (int i=0; i<BL; i++) {{")
+    code.append(f"    for (int j=0; j<BL; j++) {{")
+    for Ci, coefficient in m_to_C[m_term]:
+        code.append(f"        {Ci}.data[i][j]+={coefficient} * m.data[i][j];")
+    code.append(f"    }}")
+    code.append(f"}}")
+incremental_m = "\n".join(code)
+with open("inc_m.txt","w") as f:
+    f.write(incremental_m)
 cab = []
 cab.append(generate_packmats_definitions())
 cheader = []
 m_defs = []
 m_frees = []
+m_defs.append(f"double_cmat m;\ncreate_double_matrix(pairint {{BL,BL}}, &m);\n")
+m_frees.append(f"free_double_matrix(m);\n")
 for line in s.split("\n"):
     if line:
         m, expre = line.split("=")
@@ -181,10 +205,8 @@ for line in s.split("\n"):
             f.write(generate_header_file(fmidx))
         with open(f"{base_dir}/fm_{fmidx}.c", "w") as f:
             f.write(generate_source_file(fmidx, expre))
-        cab.append(generate_fm_funccall(fmidx))
+        #cab.append(generate_fm_funccall(fmidx))
         cheader.append(generate_fmm_22x22_header(fmidx))
-        m_defs.append(f"double_cmat m_{fmidx};\ncreate_double_matrix(pairint {{BL,BL}}, &m_{fmidx});\n")
-        m_frees.append(f"free_double_matrix(m_{fmidx});\n")
 with open(f"AB.txt", "w") as fab:
     fab.write("".join(cab))
 with open(f"header.txt", "w") as fheader:

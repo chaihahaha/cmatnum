@@ -2,6 +2,7 @@
 #define FMM_22X22_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "stdafx.h"
 #include "matmul.h"
 #include "fm_1.h"
