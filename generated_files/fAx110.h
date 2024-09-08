@@ -1,0 +1,7 @@
+#ifndef FAX110_H
+#define FAX110_H
+
+#include "stdafx.h"
+
+int fAx110(pack_mats_22x22 bmats);
+#endif

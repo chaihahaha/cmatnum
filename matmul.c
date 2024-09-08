@@ -45,9 +45,9 @@ int matmul_double_sse2(double_cmat matC, double_cmat matA, double_cmat matB){
     int M = matA.shape[0];
     int N = matB.shape[1];
     int K = matB.shape[0];
-    if (M % 8 != 0 || N % 8 != 0 || K % 8 != 0) {
-        return matmul_double(matC, matA, matB);
-    }
+    //if (M % 8 != 0 || N % 8 != 0 || K % 8 != 0) {
+    //    return matmul_double(matC, matA, matB);
+    //}
     int i, j, k, i2, j2, k2;
     double *restrict rC;
     double *restrict rA;

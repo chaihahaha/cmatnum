@@ -30,9 +30,9 @@ target_include_directories(fmm22x22 PRIVATE
 )
 target_precompile_headers(fmm22x22 PRIVATE stdafx.h)
 
-find_package(OpenMP REQUIRED)
-
-if(OpenMP_CXX_FOUND)
-    target_link_libraries(fmm22x22 PRIVATE OpenMP::OpenMP_CXX)
-endif()
+#find_package(OpenMP REQUIRED)
+#
+#if(OpenMP_CXX_FOUND)
+#    target_link_libraries(fmm22x22 PRIVATE OpenMP::OpenMP_CXX)
+#endif()
 

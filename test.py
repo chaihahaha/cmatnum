@@ -51,8 +51,8 @@ A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*12 for s in A_expr_str_list
 B_expr_list = [sp.parsing.sympy_parser.parse_expr(s) for s in B_expr_str_list]
 symbol_generator_A = (sp.Symbol(f'Ax{i}') for i in count())
 symbol_generator_B = (sp.Symbol(f'Bx{i}') for i in count())
-A_replacements, A_reduced_exprs = limited_cse(A_expr_list, 9, symbol_generator_A)
-B_replacements, B_reduced_exprs = limited_cse(B_expr_list, 9, symbol_generator_B)
+A_replacements, A_reduced_exprs = limited_cse(A_expr_list, 6, symbol_generator_A)
+B_replacements, B_reduced_exprs = limited_cse(B_expr_list, 6, symbol_generator_B)
 
 #print('A_replacements:', A_replacements)
 #print('A_reduced_exprs:', A_reduced_exprs)

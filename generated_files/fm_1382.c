@@ -8,9 +8,9 @@ inline int fm_1382(double_cmat m, pack_mats_22x22 bmats) {
     create_double_matrix(pairint {BL, BL}, &tmp1);
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-            tmp0.data[i][j] = -bmats.A_16_1.data[i][j] - bmats.A_16_10.data[i][j] - bmats.A_16_11.data[i][j] - bmats.A_16_2.data[i][j] - bmats.A_16_3.data[i][j] - bmats.A_16_4.data[i][j] - bmats.A_16_5.data[i][j] - bmats.A_16_6.data[i][j] + 11*bmats.A_16_7.data[i][j] - bmats.A_16_8.data[i][j] - bmats.A_16_9.data[i][j] + bmats.A_1_1.data[i][j] + bmats.A_1_10.data[i][j] + bmats.A_1_11.data[i][j] + bmats.A_1_2.data[i][j] + bmats.A_1_3.data[i][j] + bmats.A_1_4.data[i][j] - 11*bmats.A_1_5.data[i][j] + bmats.A_1_6.data[i][j] + bmats.A_1_7.data[i][j] + bmats.A_1_8.data[i][j] + bmats.A_1_9.data[i][j] + 11*bmats.A_7_12.data[i][j] - bmats.A_7_13.data[i][j] - bmats.A_7_14.data[i][j] - bmats.A_7_15.data[i][j] - bmats.A_7_16.data[i][j] - bmats.A_7_17.data[i][j] - bmats.A_7_18.data[i][j] - bmats.A_7_19.data[i][j] - bmats.A_7_20.data[i][j] - bmats.A_7_21.data[i][j] - bmats.A_7_22.data[i][j];
+            tmp0.data[i][j] = -bmats.A_16_6.data[i][j] + 11*bmats.A_16_7.data[i][j] + bmats.A_1_4.data[i][j] - 11*bmats.A_1_5.data[i][j] - bmats.Ax101.data[i][j] - bmats.Ax2376.data[i][j] - bmats.Ax41.data[i][j];
             tmp0.data[i][j] *= dnum12;
-            tmp1.data[i][j] = bmats.B_7_1.data[i][j]+bmats.B_12_5.data[i][j]+bmats.B_5_18.data[i][j];
+            tmp1.data[i][j] = bmats.B_12_5.data[i][j] + bmats.B_5_18.data[i][j] + bmats.B_7_1.data[i][j];
         }
     }
     fmm_22x22(m, tmp0, tmp1);

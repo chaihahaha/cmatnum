@@ -8,7 +8,7 @@ inline int fm_3398(double_cmat m, pack_mats_22x22 bmats) {
     create_double_matrix(pairint {BL, BL}, &tmp1);
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-            tmp0.data[i][j] = -bmats.A_8_12.data[i][j] - bmats.A_8_13.data[i][j] - bmats.A_8_14.data[i][j] - bmats.A_8_15.data[i][j] + 11*bmats.A_8_16.data[i][j] - bmats.A_8_17.data[i][j] - bmats.A_8_18.data[i][j] - bmats.A_8_19.data[i][j] - bmats.A_8_20.data[i][j] - bmats.A_8_21.data[i][j] - bmats.A_8_22.data[i][j];
+            tmp0.data[i][j] = -bmats.A_8_15.data[i][j] + 11*bmats.A_8_16.data[i][j] - bmats.Ax959.data[i][j];
             tmp0.data[i][j] *= dnum12;
             tmp1.data[i][j] = bmats.B_8_5.data[i][j];
         }
