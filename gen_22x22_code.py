@@ -3,6 +3,7 @@ import re
 import sympy as sp
 from collections import defaultdict
 from sympy.parsing.sympy_parser import parse_expr
+import pickle
 
 # Define the base directory for the generated files
 base_dir = "generated_files"
@@ -22,10 +23,14 @@ struct pack_mats_22x22 {
             content+=f"    double_cmat B_{i}_{j};\n"
             content+=f"    double_cmat C_{i}_{j};\n"
 
-    for i in range(4093):
-        content+=f"    double_cmat Ax{i};\n"
-    for i in range(4712):
-        content+=f"    double_cmat Bx{i};\n"
+    with open("A_replacements.pickle", "rb") as f:
+        A_replacements = pickle.load(f)
+    with open("B_replacements.pickle", "rb") as f:
+        B_replacements = pickle.load(f)
+    for i,j in A_replacements:
+        content+=f"    double_cmat {i};\n"
+    for i,j in B_replacements:
+        content+=f"    double_cmat {i};\n"
 
     content +="""
 };
@@ -67,15 +72,17 @@ def generate_fm_source_files(base_dir):
         Cs = f.read()
     m_to_C = get_m_to_C_inc_mapping(Cs, d_mterms)
 
-    with open('m.txt','r') as f:
-        s = f.read()
-    for line in s.split("\n"):
-        if line:
-            m, expre = line.split("=")
-            fm_index = m.split("_")[1]
-            terms = re.findall(r'\((.*?)\)', expre)
+    with open("A_reduced_exprs.pickle", "rb") as f:
+        A_reduced_exprs = pickle.load(f)
+    with open("B_reduced_exprs.pickle", "rb") as f:
+        B_reduced_exprs = pickle.load(f)
 
-            content = f"""\
+    for fm_index_1 in range(5566):
+        fm_index = fm_index_1 + 1
+        expr_A = A_reduced_exprs[fm_index_1]
+        expr_B = B_reduced_exprs[fm_index_1]
+
+        content = f"""\
 #include "fm_{fm_index}.h"
 
 inline int fm_{fm_index}(double_cmat m, pack_mats_22x22 bmats) {{
@@ -86,11 +93,14 @@ inline int fm_{fm_index}(double_cmat m, pack_mats_22x22 bmats) {{
     create_double_matrix(pairint {{BL, BL}}, &tmp1);
 """
         
-            sum_expr_A = sp.ccode(parse_expr(terms[0])*12)
-            sum_expr_A = re.sub(r'([A-Z]+\_\d+\_\d+)', r'bmats.\1.data[i][j]', sum_expr_A)
-            sum_expr_B = re.sub(r'([A-Z]+\_\d+\_\d+)', r'bmats.\1.data[i][j]', terms[1])
+        sum_expr_A = sp.ccode(expr_A)
+        sum_expr_A = re.sub(r'([A-Zx]+\_\d+\_\d+)', r'bmats.\1.data[i][j]', sum_expr_A)
+        sum_expr_A = re.sub(r'(Ax\d+)', r'bmats.\1.data[i][j]', sum_expr_A)
+        sum_expr_B = sp.ccode(expr_B)
+        sum_expr_B = re.sub(r'([A-Zx]+\_\d+\_\d+)', r'bmats.\1.data[i][j]', sum_expr_B)
+        sum_expr_B = re.sub(r'(Bx\d+)', r'bmats.\1.data[i][j]', sum_expr_B)
 
-            content += f"""\
+        content += f"""\
     for (int i=0; i<BL; i++) {{
         for (int j=0; j<BL; j++) {{
             tmp0.data[i][j] = {sum_expr_A};
@@ -103,10 +113,10 @@ inline int fm_{fm_index}(double_cmat m, pack_mats_22x22 bmats) {{
     for (int i=0; i<BL; i++) {{
         for (int j=0; j<BL; j++) {{
 """
-            m_term = f"m_{fm_index}"
-            for Ci, coefficient in m_to_C[m_term]:
-                content += f"        bmats.{Ci}.data[i][j]+={coefficient} * m.data[i][j];\n"
-            content += """\
+        m_term = f"m_{fm_index}"
+        for Ci, coefficient in m_to_C[m_term]:
+            content += f"        bmats.{Ci}.data[i][j]+={coefficient} * m.data[i][j];\n"
+        content += """\
         }
     }
     free_double_matrix(tmp0);
@@ -114,8 +124,8 @@ inline int fm_{fm_index}(double_cmat m, pack_mats_22x22 bmats) {{
     return 0;
 }
 """
-            with open(f"{base_dir}/fm_{fm_index}.c", "w") as f:
-                f.write(content)
+        with open(f"{base_dir}/fm_{fm_index}.c", "w") as f:
+            f.write(content)
     return 
 
 
@@ -131,6 +141,13 @@ def generate_fmm_22x22_header():
 """
     for fm_index in range(1, 5567):
         content += (f"#include \"fm_{fm_index}.h\"\n")
+    with open("A_replacements.pickle", "rb") as f:
+        A_replacements = pickle.load(f)
+    with open("B_replacements.pickle", "rb") as f:
+        B_replacements = pickle.load(f)
+    for i,j in A_replacements+B_replacements:
+        idf = str(i)
+        content += (f"#include \"f{idf}.h\"\n")
     content += """\
 int fmm_22x22(double_cmat C, double_cmat A, double_cmat B);
 
@@ -169,7 +186,25 @@ int fmm_22x22(double_cmat C, double_cmat A, double_cmat B) {
             content += (f"    bmats.B_{i}_{j} = slice_double_matrix(B, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{{(j-1)}*BL, {j}*BL}});\n")
             content += (f"    bmats.C_{j}_{i} = slice_double_matrix(C, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{{(j-1)}*BL, {j}*BL}});\n")
 
+    with open("A_replacements.pickle", "rb") as f:
+        A_replacements = pickle.load(f)
+    with open("B_replacements.pickle", "rb") as f:
+        B_replacements = pickle.load(f)
+    for i,j in A_replacements:
+        content+=f"    create_double_matrix(pairint {{BL, BL}}, &bmats.{i});\n"
+    for i,j in B_replacements:
+        content+=f"    create_double_matrix(pairint {{BL, BL}}, &bmats.{i});\n"
 
+    # generate func calls to fAxi, fBxi
+    with open("A_replacements.pickle", "rb") as f:
+        A_replacements = pickle.load(f)
+    with open("B_replacements.pickle", "rb") as f:
+        B_replacements = pickle.load(f)
+    for i,j in A_replacements+B_replacements:
+        idf = str(i)
+        content += f"    f{idf}(bmats);\n"
+
+    # generate func calls to fm_i
     for i in range(1, 5567):
         content += f"    fm_{i}(m, bmats);\n"
 
@@ -178,6 +213,10 @@ int fmm_22x22(double_cmat C, double_cmat A, double_cmat B) {
             content += (f"    free_double_matrix(bmats.A_{i}_{j});\n")
             content += (f"    free_double_matrix(bmats.B_{i}_{j});\n")
             content += (f"    free_double_matrix(bmats.C_{i}_{j});\n")
+    for i,j in A_replacements:
+        content+=f"    free_double_matrix(bmats.{i});\n"
+    for i,j in B_replacements:
+        content+=f"    free_double_matrix(bmats.{i});\n"
     content += """\
     free_double_matrix(m);
     return 0;
@@ -202,9 +241,102 @@ def get_m_to_C_inc_mapping(C_formulas, d_mterms):
                 m_to_C[str(m_term)].append((Ci, formula.coeff(m_term)))
     return m_to_C
 
+def generate_fAx_source_files(base_dir):
+    with open("A_replacements.pickle", "rb") as f:
+        A_replacements = pickle.load(f)
+    for i,j in A_replacements:
+        idf = str(i)
+        idf_upper = idf.upper()
+        sum_expr = sp.ccode(j)
+        sum_expr = re.sub(r'([A-Zx]+\_\d+\_\d+)', r'bmats.\1.data[i][j]', sum_expr)
+        sum_expr = re.sub(r'(Ax\d+)', r'bmats.\1.data[i][j]', sum_expr)
+        content = f"""\
+#include "f{idf}.h"
+
+inline int f{idf}(pack_mats_22x22 bmats) {{
+    int BL = bmats.A_1_1.shape[0];
+    for (int i=0; i<BL; i++) {{
+        for (int j=0; j<BL; j++) {{
+            bmats.{idf}.data[i][j] = {sum_expr};
+        }}
+    }}
+    return 0;
+}}
+"""
+        with open(f"{base_dir}/f{idf}.c", "w") as f:
+            f.write(content)
+    return
+
+def generate_fAx_header_files(base_dir):
+    with open("A_replacements.pickle", "rb") as f:
+        A_replacements = pickle.load(f)
+    for i,j in A_replacements:
+        idf = str(i)
+        idf_upper = idf.upper()
+        content = f"""\
+#ifndef F{idf_upper}_H
+#define F{idf_upper}_H
+
+#include "stdafx.h"
+
+int f{idf}(pack_mats_22x22 bmats);
+#endif
+"""
+        with open(f"{base_dir}/f{idf}.h", "w") as f:
+            f.write(content)
+    return
+
+def generate_fBx_source_files(base_dir):
+    with open("B_replacements.pickle", "rb") as f:
+        B_replacements = pickle.load(f)
+    for i,j in B_replacements:
+        idf = str(i)
+        idf_upper = idf.upper()
+        sum_expr = sp.ccode(j)
+        sum_expr = re.sub(r'([A-Zx]+\_\d+\_\d+)', r'bmats.\1.data[i][j]', sum_expr)
+        sum_expr = re.sub(r'(Bx\d+)', r'bmats.\1.data[i][j]', sum_expr)
+        content = f"""\
+#include "f{idf}.h"
+
+inline int f{idf}(pack_mats_22x22 bmats) {{
+    int BL = bmats.A_1_1.shape[0];
+    for (int i=0; i<BL; i++) {{
+        for (int j=0; j<BL; j++) {{
+            bmats.{idf}.data[i][j] = {sum_expr};
+        }}
+    }}
+    return 0;
+}}
+"""
+        with open(f"{base_dir}/f{idf}.c", "w") as f:
+            f.write(content)
+    return
+
+def generate_fBx_header_files(base_dir):
+    with open("B_replacements.pickle", "rb") as f:
+        B_replacements = pickle.load(f)
+    for i,j in B_replacements:
+        idf = str(i)
+        idf_upper = idf.upper()
+        content = f"""\
+#ifndef F{idf_upper}_H
+#define F{idf_upper}_H
+
+#include "stdafx.h"
+
+int f{idf}(pack_mats_22x22 bmats);
+#endif
+"""
+        with open(f"{base_dir}/f{idf}.h", "w") as f:
+            f.write(content)
+    return
+
 generate_fmm_22x22_header()
 generate_fmm_22x22_source()
 generate_fm_source_files(base_dir)
 generate_packmats_file(base_dir)
 generate_fm_header_files(base_dir)
-
+generate_fAx_source_files(base_dir)
+generate_fAx_header_files(base_dir)
+generate_fBx_source_files(base_dir)
+generate_fBx_header_files(base_dir)
