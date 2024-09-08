@@ -1,0 +1,7 @@
+#ifndef FAX6602_H
+#define FAX6602_H
+
+#include "stdafx.h"
+
+int fAx6602(pack_mats_32x32 bmats);
+#endif

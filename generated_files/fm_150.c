@@ -1,23 +1,25 @@
 #include "fm_150.h"
 
-inline int fm_150(double_cmat m, pack_mats_22x22 bmats) {
-    double dnum12 = 1/12.0;
+inline int fm_150(double_cmat m, pack_mats_32x32 bmats) {
+    double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-            tmp0.data[i][j] = -bmats.A_16_10.data[i][j] - bmats.A_16_11.data[i][j] - bmats.A_16_15.data[i][j] + 11*bmats.A_16_16.data[i][j] - bmats.A_5_15.data[i][j] + 11*bmats.A_5_16.data[i][j] - bmats.Ax791.data[i][j] - bmats.Ax910.data[i][j] - bmats.Ax915.data[i][j] - bmats.Ax977.data[i][j];
-            tmp0.data[i][j] *= dnum12;
-            tmp1.data[i][j] = -bmats.B_10_16.data[i][j] - bmats.B_11_16.data[i][j] - bmats.B_16_12.data[i][j] - bmats.B_16_13.data[i][j] - bmats.B_16_14.data[i][j] - bmats.B_16_15.data[i][j] - bmats.B_16_16.data[i][j] - bmats.B_16_17.data[i][j] - bmats.B_16_18.data[i][j] - bmats.B_16_19.data[i][j] - bmats.B_16_20.data[i][j] - bmats.B_16_21.data[i][j] - bmats.B_16_22.data[i][j] + bmats.B_16_5.data[i][j] - bmats.B_1_16.data[i][j] - bmats.B_2_16.data[i][j] - bmats.B_3_16.data[i][j] - bmats.B_4_16.data[i][j] - bmats.B_5_16.data[i][j] - bmats.B_6_16.data[i][j] - bmats.B_7_16.data[i][j] - bmats.B_8_16.data[i][j] - bmats.B_9_16.data[i][j];
+            tmp0.data[i][j] = 16*bmats.A_23_25.data[i][j] - bmats.A_23_26.data[i][j] + 15*bmats.A_25_23.data[i][j] - 2*bmats.A_25_24.data[i][j] - bmats.Ax236.data[i][j] - bmats.Ax316.data[i][j];
+            tmp0.data[i][j] *= dnum17;
+            tmp1.data[i][j] = bmats.B_23_25.data[i][j] + bmats.B_25_23.data[i][j] + bmats.B_25_25.data[i][j];
         }
     }
-    fmm_22x22(m, tmp0, tmp1);
+    fmm_32x32(m, tmp0, tmp1);
 
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-        bmats.C_16_16.data[i][j]+=1 * m.data[i][j];
+        bmats.C_25_23.data[i][j]+=1 * m.data[i][j];
+        bmats.C_23_25.data[i][j]+=1 * m.data[i][j];
+        bmats.C_25_25.data[i][j]+=1 * m.data[i][j];
         }
     }
     free_double_matrix(tmp0);

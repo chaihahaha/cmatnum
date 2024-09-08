@@ -47,7 +47,7 @@ for line in s.split("\n"):
         B_expre = re.match(B_pattern, terms[1])
         A_expr_str_list.append(A_expre.string)
         B_expr_str_list.append(B_expre.string)
-A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*12 for s in A_expr_str_list]
+A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*17 for s in A_expr_str_list]
 B_expr_list = [sp.parsing.sympy_parser.parse_expr(s) for s in B_expr_str_list]
 symbol_generator_A = (sp.Symbol(f'Ax{i}') for i in count())
 symbol_generator_B = (sp.Symbol(f'Bx{i}') for i in count())

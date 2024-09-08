@@ -1,0 +1,11 @@
+#include "fAx6253.h"
+
+inline int fAx6253(pack_mats_32x32 bmats) {
+    int BL = bmats.A_1_1.shape[0];
+    for (int i=0; i<BL; i++) {
+        for (int j=0; j<BL; j++) {
+            bmats.Ax6253.data[i][j] = -bmats.A_19_20.data[i][j] - bmats.A_19_21.data[i][j] - bmats.A_19_22.data[i][j] - bmats.A_19_23.data[i][j] - bmats.A_19_24.data[i][j] - bmats.A_19_27.data[i][j] - bmats.A_19_28.data[i][j] - bmats.A_19_29.data[i][j] - bmats.A_19_30.data[i][j] - bmats.A_19_31.data[i][j] - bmats.A_19_32.data[i][j];
+        }
+    }
+    return 0;
+}

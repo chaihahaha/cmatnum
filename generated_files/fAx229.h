@@ -3,5 +3,5 @@
 
 #include "stdafx.h"
 
-int fAx229(pack_mats_22x22 bmats);
+int fAx229(pack_mats_32x32 bmats);
 #endif

@@ -1,25 +1,23 @@
 #include "fm_1068.h"
 
-inline int fm_1068(double_cmat m, pack_mats_22x22 bmats) {
-    double dnum12 = 1/12.0;
+inline int fm_1068(double_cmat m, pack_mats_32x32 bmats) {
+    double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-            tmp0.data[i][j] = bmats.A_10_6.data[i][j] - 11*bmats.A_10_7.data[i][j] + 11*bmats.A_18_8.data[i][j] - bmats.A_18_9.data[i][j] + 11*bmats.A_8_21.data[i][j] - bmats.A_8_22.data[i][j] - bmats.Ax2230.data[i][j] - bmats.Ax2242.data[i][j] - bmats.Ax658.data[i][j];
-            tmp0.data[i][j] *= dnum12;
-            tmp1.data[i][j] = bmats.B_21_7.data[i][j] + bmats.B_7_19.data[i][j] + bmats.B_8_10.data[i][j];
+            tmp0.data[i][j] = -bmats.A_10_32.data[i][j] + bmats.A_24_25.data[i][j] - 16*bmats.A_24_26.data[i][j] + bmats.Ax1566.data[i][j] + bmats.Ax257.data[i][j] + bmats.Ax3419.data[i][j];
+            tmp0.data[i][j] *= dnum17;
+            tmp1.data[i][j] = -bmats.B_17_24.data[i][j] - bmats.B_18_24.data[i][j] - bmats.B_19_24.data[i][j] - bmats.B_20_24.data[i][j] - bmats.B_21_24.data[i][j] - bmats.B_22_24.data[i][j] - bmats.B_23_24.data[i][j] - bmats.B_24_24.data[i][j] - bmats.B_25_24.data[i][j] - bmats.B_26_24.data[i][j] - bmats.B_27_24.data[i][j] - bmats.B_28_24.data[i][j] - bmats.B_29_24.data[i][j] - bmats.B_30_24.data[i][j] - bmats.B_31_24.data[i][j] - bmats.B_32_24.data[i][j] + bmats.B_8_26.data[i][j] - bmats.Bx7705.data[i][j] - bmats.Bx8679.data[i][j];
         }
     }
-    fmm_22x22(m, tmp0, tmp1);
+    fmm_32x32(m, tmp0, tmp1);
 
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-        bmats.C_7_8.data[i][j]+=1 * m.data[i][j];
-        bmats.C_10_18.data[i][j]+=1 * m.data[i][j];
-        bmats.C_19_10.data[i][j]+=-1 * m.data[i][j];
+        bmats.C_10_24.data[i][j]+=1 * m.data[i][j];
         }
     }
     free_double_matrix(tmp0);

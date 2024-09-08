@@ -1,25 +1,25 @@
 #include "fm_4255.h"
 
-inline int fm_4255(double_cmat m, pack_mats_22x22 bmats) {
-    double dnum12 = 1/12.0;
+inline int fm_4255(double_cmat m, pack_mats_32x32 bmats) {
+    double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-            tmp0.data[i][j] = -11*bmats.A_14_12.data[i][j] + bmats.A_14_19.data[i][j] - bmats.A_1_19.data[i][j] + 11*bmats.A_1_20.data[i][j] - bmats.A_20_2.data[i][j] + 11*bmats.A_20_3.data[i][j] - bmats.Ax1341.data[i][j] - bmats.Ax1562.data[i][j] - bmats.Ax1851.data[i][j];
-            tmp0.data[i][j] *= dnum12;
-            tmp1.data[i][j] = bmats.B_12_9.data[i][j] + bmats.B_20_14.data[i][j] + bmats.B_3_12.data[i][j];
+            tmp0.data[i][j] = 16*bmats.A_24_5.data[i][j] - bmats.A_24_6.data[i][j] + 16*bmats.A_5_23.data[i][j] - bmats.A_5_24.data[i][j] + bmats.A_7_7.data[i][j] - 16*bmats.A_7_8.data[i][j] - bmats.Ax3439.data[i][j] - bmats.Ax3535.data[i][j] - bmats.Ax5463.data[i][j];
+            tmp0.data[i][j] *= dnum17;
+            tmp1.data[i][j] = bmats.B_23_8.data[i][j] + bmats.B_5_7.data[i][j] + bmats.B_8_21.data[i][j];
         }
     }
-    fmm_22x22(m, tmp0, tmp1);
+    fmm_32x32(m, tmp0, tmp1);
 
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-        bmats.C_9_14.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_12_20.data[i][j]+=1 * m.data[i][j];
-        bmats.C_14_1.data[i][j]+=1 * m.data[i][j];
+        bmats.C_24_7.data[i][j]+=1 * m.data[i][j];
+        bmats.C_5_8.data[i][j]+=1 * m.data[i][j];
+        bmats.C_7_21.data[i][j]+=-1 * m.data[i][j];
         }
     }
     free_double_matrix(tmp0);

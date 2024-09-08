@@ -1,10 +1,10 @@
 #include "fAx941.h"
 
-inline int fAx941(pack_mats_22x22 bmats) {
+inline int fAx941(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-            bmats.Ax941.data[i][j] = bmats.A_15_1.data[i][j] + bmats.A_15_10.data[i][j] + bmats.A_15_11.data[i][j] + bmats.A_15_2.data[i][j] + bmats.A_15_3.data[i][j] + bmats.A_15_6.data[i][j] + bmats.A_15_7.data[i][j] + bmats.A_15_8.data[i][j] + bmats.A_15_9.data[i][j];
+            bmats.Ax941.data[i][j] = -bmats.A_3_17.data[i][j] - bmats.A_3_18.data[i][j] - bmats.A_3_19.data[i][j] - bmats.A_3_20.data[i][j] - bmats.A_3_21.data[i][j] - bmats.A_3_22.data[i][j] - bmats.A_3_23.data[i][j] - bmats.A_3_24.data[i][j] - bmats.A_3_25.data[i][j] - bmats.A_3_26.data[i][j] - bmats.A_3_27.data[i][j] - bmats.A_3_28.data[i][j] - bmats.A_3_29.data[i][j] - bmats.A_3_30.data[i][j] - bmats.A_3_31.data[i][j];
         }
     }
     return 0;

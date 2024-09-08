@@ -1,10 +1,10 @@
 #include "fAx3249.h"
 
-inline int fAx3249(pack_mats_22x22 bmats) {
+inline int fAx3249(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-            bmats.Ax3249.data[i][j] = bmats.A_10_8.data[i][j] - 11*bmats.A_10_9.data[i][j] + bmats.A_11_8.data[i][j] - 11*bmats.A_11_9.data[i][j] + bmats.A_1_8.data[i][j] - 11*bmats.A_1_9.data[i][j] + bmats.A_2_8.data[i][j] - 11*bmats.A_2_9.data[i][j] + bmats.A_3_8.data[i][j] - 11*bmats.A_3_9.data[i][j] + bmats.A_4_8.data[i][j] - 11*bmats.A_4_9.data[i][j] + bmats.A_5_8.data[i][j] - 11*bmats.A_5_9.data[i][j] + bmats.A_6_8.data[i][j] - 11*bmats.A_6_9.data[i][j] - 12*bmats.A_9_9.data[i][j] + bmats.Ax1029.data[i][j] + bmats.Ax1285.data[i][j] + bmats.Ax1490.data[i][j] + bmats.Ax1679.data[i][j] + bmats.Ax1765.data[i][j] + bmats.Ax3128.data[i][j] + bmats.Ax3134.data[i][j] + bmats.Ax426.data[i][j];
+            bmats.Ax3249.data[i][j] = bmats.A_11_10.data[i][j] - 16*bmats.A_11_9.data[i][j] + bmats.A_12_10.data[i][j] - 16*bmats.A_12_9.data[i][j] + bmats.A_13_10.data[i][j] - 16*bmats.A_13_9.data[i][j] + bmats.A_15_10.data[i][j] - 16*bmats.A_15_9.data[i][j] + bmats.A_16_10.data[i][j] - 16*bmats.A_16_9.data[i][j] + bmats.A_1_10.data[i][j] - 16*bmats.A_1_9.data[i][j] + bmats.A_2_10.data[i][j] - 16*bmats.A_2_9.data[i][j] + bmats.A_3_10.data[i][j] - 16*bmats.A_3_9.data[i][j] + bmats.A_4_10.data[i][j] - 16*bmats.A_4_9.data[i][j] + bmats.A_5_10.data[i][j] - 16*bmats.A_5_9.data[i][j] + bmats.A_6_10.data[i][j] - 16*bmats.A_6_9.data[i][j] + bmats.A_7_10.data[i][j] - 16*bmats.A_7_9.data[i][j] + bmats.A_8_10.data[i][j] - 16*bmats.A_8_9.data[i][j] - 17*bmats.A_9_9.data[i][j] + bmats.Ax2053.data[i][j] + bmats.Ax2390.data[i][j] + bmats.Ax2677.data[i][j] + bmats.Ax2913.data[i][j] + bmats.Ax2917.data[i][j] + bmats.Ax2920.data[i][j] + bmats.Ax2926.data[i][j] + bmats.Ax2929.data[i][j] + bmats.Ax2932.data[i][j] + bmats.Ax2935.data[i][j] + bmats.Ax2938.data[i][j] + bmats.Ax2941.data[i][j] + bmats.Ax2944.data[i][j];
         }
     }
     return 0;

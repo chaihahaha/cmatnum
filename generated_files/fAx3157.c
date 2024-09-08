@@ -1,10 +1,10 @@
 #include "fAx3157.h"
 
-inline int fAx3157(pack_mats_22x22 bmats) {
+inline int fAx3157(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-            bmats.Ax3157.data[i][j] = bmats.A_10_8.data[i][j] - 11*bmats.A_10_9.data[i][j] + bmats.A_11_8.data[i][j] - 11*bmats.A_11_9.data[i][j] + bmats.A_1_8.data[i][j] - 11*bmats.A_1_9.data[i][j] + bmats.A_2_8.data[i][j] - 11*bmats.A_2_9.data[i][j] + bmats.A_3_8.data[i][j] - 11*bmats.A_3_9.data[i][j] + bmats.A_4_8.data[i][j] - 11*bmats.A_4_9.data[i][j] + bmats.A_5_8.data[i][j] - 11*bmats.A_5_9.data[i][j] + bmats.A_6_8.data[i][j] - 11*bmats.A_6_9.data[i][j] + bmats.A_7_8.data[i][j] - 11*bmats.A_7_9.data[i][j] + bmats.A_8_8.data[i][j] - 11*bmats.A_8_9.data[i][j] + bmats.Ax1029.data[i][j] + bmats.Ax1285.data[i][j] + bmats.Ax1490.data[i][j] + bmats.Ax1679.data[i][j] + bmats.Ax1765.data[i][j] + bmats.Ax3126.data[i][j] + bmats.Ax3128.data[i][j] + bmats.Ax3130.data[i][j] + bmats.Ax3134.data[i][j] + bmats.Ax426.data[i][j];
+            bmats.Ax3157.data[i][j] = bmats.A_17_10.data[i][j] - 16*bmats.A_17_9.data[i][j] + bmats.A_18_10.data[i][j] - 16*bmats.A_18_9.data[i][j] + bmats.A_19_10.data[i][j] - 16*bmats.A_19_9.data[i][j] + bmats.A_20_10.data[i][j] - 16*bmats.A_20_9.data[i][j] + bmats.A_21_10.data[i][j] - 16*bmats.A_21_9.data[i][j] + bmats.A_22_10.data[i][j] - 16*bmats.A_22_9.data[i][j] + bmats.A_23_10.data[i][j] - 16*bmats.A_23_9.data[i][j] + bmats.A_24_10.data[i][j] - 16*bmats.A_24_9.data[i][j] + bmats.A_25_10.data[i][j] - 16*bmats.A_25_9.data[i][j] + bmats.A_26_10.data[i][j] - 16*bmats.A_26_9.data[i][j] + bmats.A_27_10.data[i][j] - 16*bmats.A_27_9.data[i][j] + bmats.A_28_10.data[i][j] - 16*bmats.A_28_9.data[i][j] + bmats.A_29_10.data[i][j] - 16*bmats.A_29_9.data[i][j] + bmats.A_30_10.data[i][j] - 16*bmats.A_30_9.data[i][j] + bmats.A_31_10.data[i][j] - 16*bmats.A_31_9.data[i][j] + bmats.A_32_10.data[i][j] - 16*bmats.A_32_9.data[i][j] + bmats.Ax1484.data[i][j] + bmats.Ax2044.data[i][j] + bmats.Ax2384.data[i][j] + bmats.Ax2671.data[i][j] + bmats.Ax2801.data[i][j] + bmats.Ax2804.data[i][j] + bmats.Ax2807.data[i][j] + bmats.Ax2810.data[i][j] + bmats.Ax2813.data[i][j] + bmats.Ax2816.data[i][j] + bmats.Ax2819.data[i][j] + bmats.Ax2822.data[i][j] + bmats.Ax2825.data[i][j] + bmats.Ax2828.data[i][j] + bmats.Ax2831.data[i][j] + bmats.Ax2834.data[i][j];
         }
     }
     return 0;

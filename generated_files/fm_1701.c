@@ -1,25 +1,23 @@
 #include "fm_1701.h"
 
-inline int fm_1701(double_cmat m, pack_mats_22x22 bmats) {
-    double dnum12 = 1/12.0;
+inline int fm_1701(double_cmat m, pack_mats_32x32 bmats) {
+    double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-            tmp0.data[i][j] = 11*bmats.A_13_2.data[i][j] - bmats.A_13_3.data[i][j] - bmats.A_2_17.data[i][j] + 11*bmats.A_2_18.data[i][j] - 11*bmats.A_7_2.data[i][j] + bmats.A_7_3.data[i][j] + bmats.A_7_7.data[i][j] - bmats.Ax1347.data[i][j] - bmats.Ax162.data[i][j] - bmats.Ax2441.data[i][j];
-            tmp0.data[i][j] *= dnum12;
-            tmp1.data[i][j] = bmats.B_18_2.data[i][j] + bmats.B_2_13.data[i][j] + bmats.B_2_7.data[i][j];
+            tmp0.data[i][j] = -bmats.A_11_32.data[i][j] - 16*bmats.A_19_27.data[i][j] + bmats.A_19_28.data[i][j] + bmats.Ax1252.data[i][j] + bmats.Ax28.data[i][j] + bmats.Ax4508.data[i][j];
+            tmp0.data[i][j] *= dnum17;
+            tmp1.data[i][j] = -bmats.B_17_19.data[i][j] - bmats.B_18_19.data[i][j] - bmats.B_20_19.data[i][j] - bmats.B_23_19.data[i][j] - bmats.B_24_19.data[i][j] - bmats.B_26_19.data[i][j] - bmats.B_27_10.data[i][j] - bmats.B_27_11.data[i][j] - bmats.B_27_12.data[i][j] - bmats.B_27_13.data[i][j] - bmats.B_27_14.data[i][j] - bmats.B_27_15.data[i][j] - bmats.B_27_16.data[i][j] - bmats.B_27_19.data[i][j] - bmats.B_30_19.data[i][j] - bmats.B_32_19.data[i][j] + bmats.B_3_27.data[i][j] - bmats.Bx12409.data[i][j] - bmats.Bx7427.data[i][j];
         }
     }
-    fmm_22x22(m, tmp0, tmp1);
+    fmm_32x32(m, tmp0, tmp1);
 
     for (int i=0; i<BL; i++) {
         for (int j=0; j<BL; j++) {
-        bmats.C_2_2.data[i][j]+=1 * m.data[i][j];
-        bmats.C_7_13.data[i][j]+=1 * m.data[i][j];
-        bmats.C_13_7.data[i][j]+=-1 * m.data[i][j];
+        bmats.C_11_19.data[i][j]+=1 * m.data[i][j];
         }
     }
     free_double_matrix(tmp0);
