@@ -213,13 +213,9 @@ int matmul_double_recursive_bilinear(double_cmat matC, double_cmat matA, double_
     double_cmat C12 = slice_double_matrix(matC, pairint {0,I}, pairint {I,N});
     double_cmat C21 = slice_double_matrix(matC, pairint {I,N}, pairint {0,I});
     double_cmat C22 = slice_double_matrix(matC, pairint {I,N}, pairint {I,N});
-    double_cmat S5, S6, S7, T3, T5, T6, M1, M2, M3, M4, M5, M6, M7;
+    double_cmat S5, T5, M1, M2, M3, M4, M5, M6, M7;
     create_double_matrix(pairint {I,I}, &S5);
-    create_double_matrix(pairint {I,I}, &S6);
-    create_double_matrix(pairint {I,I}, &S7);
-    create_double_matrix(pairint {I,I}, &T3);
     create_double_matrix(pairint {I,I}, &T5);
-    create_double_matrix(pairint {I,I}, &T6);
     create_double_matrix(pairint {I,I}, &M1);
     create_double_matrix(pairint {I,I}, &M2);
     create_double_matrix(pairint {I,I}, &M3);
@@ -227,23 +223,24 @@ int matmul_double_recursive_bilinear(double_cmat matC, double_cmat matA, double_
     create_double_matrix(pairint {I,I}, &M5);
     create_double_matrix(pairint {I,I}, &M6);
     create_double_matrix(pairint {I,I}, &M7);
+
+
+
+
     matadd_double(S5, A21, A22);
-    matsub_double(S6, A22, A12);
-    matsub_double(S7, A22, A11);
-
-
-
-    matsub_double(T3, B22, B11);
     matadd_double(T5, B21, B22);
-    matsub_double(T6, B22, B12);
+    matmul_double_schwartz2024(M5, S5,  T5 );
+    matsub_double(S5, A22, A12);
+    matsub_double(T5, B22, B12);
+    matmul_double_schwartz2024(M6, S5,  T5 );
+    matsub_double(S5, A22, A11);
+    matmul_double_schwartz2024(M7, S5,  B12);
 
+    matsub_double(T5, B22, B11);
+    matmul_double_schwartz2024(M3, A21, T5 );
+    matmul_double_schwartz2024(M4, A22, B22);
     matmul_double_schwartz2024(M1, A11, B11);
     matmul_double_schwartz2024(M2, A12, B21);
-    matmul_double_schwartz2024(M3, A21, T3 );
-    matmul_double_schwartz2024(M4, A22, B22);
-    matmul_double_schwartz2024(M5, S5,  T5 );
-    matmul_double_schwartz2024(M6, S6,  T6 );
-    matmul_double_schwartz2024(M7, S7,  B12);
 
     matadd_double(C11, M1, M2);
     matsub_double(C12, M5, M7);
@@ -255,11 +252,7 @@ int matmul_double_recursive_bilinear(double_cmat matC, double_cmat matA, double_
     }
 
     free_double_matrix(S5);
-    free_double_matrix(S6);
-    free_double_matrix(S7);
-    free_double_matrix(T3);
     free_double_matrix(T5);
-    free_double_matrix(T6);
     free_double_matrix(M1);
     free_double_matrix(M2);
     free_double_matrix(M3);
@@ -388,7 +381,7 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
 int main() {
     double_cmat A, B, C, TC;
     double_cmat Ac, Bc;
-    int N = 1024*8;
+    int N = 1024;
     create_double_matrix(pairint {N, N}, &A);
     create_double_matrix(pairint {N, N}, &B);
     create_double_matrix(pairint {N, N}, &C);
