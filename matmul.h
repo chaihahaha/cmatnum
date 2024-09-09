@@ -17,6 +17,8 @@ int matmul_double(double_cmat matC, double_cmat matA, double_cmat matB);
 
 int matmul_double_sse2(double_cmat matC, double_cmat matA, double_cmat matB);
 
+int matmul_double_blas(double_cmat C, double_cmat A_slice, double_cmat B_slice);
+
 int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, double_cmat matB);
 
 int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat matB);

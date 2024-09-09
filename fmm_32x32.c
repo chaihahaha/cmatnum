@@ -3,8 +3,8 @@
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     int height = A.shape[0];
     int width = A.shape[1];
-    if (height <= 2048 || width <= 2048) {
-        matmul_double_strassen_winograd(C, A, B);
+    if (height <= 4096 || width <= 4096) {
+        matmul_double_blas(C, A, B);
         return 0;
     }
     if (!(height % 32 == width % 32 && height % 32 == 0 && height / 32 == width / 32)) {

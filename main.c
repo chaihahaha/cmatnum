@@ -33,10 +33,10 @@ int main() {
     printf("fmm 32x32 time: %f(s)\n", endtime);
 
     start = clock();
-    matmul_double_schwartz2024(TC, A, B);
+    matmul_double_blas(TC, A, B);
     end = clock();
     endtime = (double) (end - start)/CLOCKS_PER_SEC;
-    printf("schwartz2024 time: %f(s)\n", endtime);
+    printf("blas time: %f(s)\n", endtime);
 
     //start = clock();
     //matmul_double_sse2(C, A, B);
