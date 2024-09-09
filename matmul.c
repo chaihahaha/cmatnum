@@ -82,6 +82,27 @@ int matmul_double_sse2(double_cmat matC, double_cmat matA, double_cmat matB){
     return 0;
 }
 
+int matmul_double_blas(double_cmat C, double_cmat A_slice, double_cmat B_slice) {
+    // Check dimensions for compatibility
+    if (A_slice.shape[1] != B_slice.shape[0] || A_slice.shape[0] != C.shape[0] || B_slice.shape[1] != C.shape[1]) {
+        fprintf(stderr, "Matrix dimensions do not match for multiplication.\n");
+        return -1;
+    }
+    double_cmat A,B;
+    create_double_contiguous_from_slice(&A, &A_slice);
+    create_double_contiguous_from_slice(&B, &B_slice);
+
+    // Call dgemm
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                C.shape[0], C.shape[1], A.shape[1],
+                1.0, A.arena, A.arena_shape[1],
+                B.arena, B.arena_shape[1],
+                0.0, C.arena, C.arena_shape[1]);
+    free_double_matrix(A);
+    free_double_matrix(B);
+    return 0;
+}
+
 int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, double_cmat matB){
     /*
      * matA M*K
@@ -116,8 +137,8 @@ int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, double_c
     }
     int N = matA.shape[0];
     int I = matA.shape[0]/2;
-    if (N <= 64) {
-        return matmul_double_sse2(matC, matA, matB);
+    if (N <= 4096) {
+        return matmul_double_blas(matC, matA, matB);
     }
     double_cmat A11 = slice_double_matrix(matA, pairint {0,I}, pairint {0,I});
     double_cmat A12 = slice_double_matrix(matA, pairint {0,I}, pairint {I,N});
@@ -198,8 +219,8 @@ int matmul_double_recursive_bilinear(double_cmat matC, double_cmat matA, double_
     }
     int N = matA.shape[0];
     int I = matA.shape[0]/2;
-    if (N <= 64) {
-        return matmul_double_sse2(matC, matA, matB);
+    if (N <= 4096) {
+        return matmul_double_blas(matC, matA, matB);
     }
     double_cmat A11 = slice_double_matrix(matA, pairint {0,I}, pairint {0,I});
     double_cmat A12 = slice_double_matrix(matA, pairint {0,I}, pairint {I,N});
@@ -281,8 +302,8 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
     }
     int N = matA.shape[0];
     int I = matA.shape[0]/2;
-    if (N <= 64) {
-        return matmul_double_sse2(matC, matA, matB);
+    if (N <= 4096) {
+        return matmul_double_blas(matC, matA, matB);
     }
     double_cmat A11 = slice_double_matrix(matA, pairint {0,I}, pairint {0,I});
     double_cmat A12 = slice_double_matrix(matA, pairint {0,I}, pairint {I,N});
@@ -381,7 +402,7 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
 int main() {
     double_cmat A, B, C, TC;
     double_cmat Ac, Bc;
-    int N = 1024;
+    int N = 8192;
     create_double_matrix(pairint {N, N}, &A);
     create_double_matrix(pairint {N, N}, &B);
     create_double_matrix(pairint {N, N}, &C);
@@ -406,15 +427,15 @@ int main() {
     endtime = (double) (end - start)/CLOCKS_PER_SEC;
     printf("strassen winograd time: %f(s)\n", endtime);
 
-    create_double_matrix(pairint {N, N}, &Ac);
-    create_double_matrix(pairint {N, N}, &Bc);
-    assign_double_clone(Ac, A);
-    assign_double_clone(Bc, B);
-    start = clock();
-    matmul_double_schwartz2024(TC, Ac, Bc);
-    end = clock();
-    endtime = (double) (end - start)/CLOCKS_PER_SEC;
-    printf("schwartz 2024 time: %f(s)\n", endtime);
+    //create_double_matrix(pairint {N, N}, &Ac);
+    //create_double_matrix(pairint {N, N}, &Bc);
+    //assign_double_clone(Ac, A);
+    //assign_double_clone(Bc, B);
+    //start = clock();
+    //matmul_double_schwartz2024(TC, Ac, Bc);
+    //end = clock();
+    //endtime = (double) (end - start)/CLOCKS_PER_SEC;
+    //printf("schwartz 2024 time: %f(s)\n", endtime);
 
     //start = clock();
     //matmul_double_sse2(C, A, B);
@@ -425,11 +446,11 @@ int main() {
     //printf("C:\n");
     //print_double_matrix(C);
 
-    //start = clock();
-    //matmul_double(TC, A, B);
-    //end = clock();
-    //endtime = (double) (end - start)/CLOCKS_PER_SEC;
-    //printf("naive time: %f(s)\n", endtime);
+    start = clock();
+    matmul_double_blas(TC, A, B);
+    end = clock();
+    endtime = (double) (end - start)/CLOCKS_PER_SEC;
+    printf("blas time: %f(s)\n", endtime);
 
     //printf("TC:\n");
     //print_double_matrix(TC);

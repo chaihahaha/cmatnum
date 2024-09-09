@@ -236,6 +236,32 @@ double_cmat slice_double_matrix(double_cmat mat, int slice0[2], int slice1[2]) {
     return new_mat;
 }
 
+int create_double_contiguous_from_slice(double_cmat *dest, double_cmat *src) {
+    int i, j;
+    int rows = src->shape[0];
+    int cols = src->shape[1];
+
+    // Allocate memory for the new matrix
+    dest->arena = (double*)malloc(rows * cols * sizeof(double));
+    dest->data = (double**)malloc(rows * sizeof(double*));
+    for (i = 0; i < rows; i++) {
+        dest->data[i] = &dest->arena[i * cols];
+    }
+    dest->shape[0] = rows;
+    dest->shape[1] = cols;
+    dest->arena_shape[0] = rows;
+    dest->arena_shape[1] = cols;
+    dest->offset[0] = 0;
+    dest->offset[1] = 0;
+
+    size_t element_size = sizeof(double);
+    // Copy the slice data to the new matrix
+    for (i = 0; i < rows; ++i) {
+        memcpy(dest->data[i], src->data[i], cols * element_size);
+    }
+    return 0;
+}
+
 int assign_int_slice(int_cmat m1, int_cmat m2, int slice0[2], int slice1[2]) {
     if (slice0[1] < 0) {
         slice0[1] += m1.shape[0];

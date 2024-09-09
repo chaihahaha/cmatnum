@@ -3,6 +3,7 @@
 
 #include "cmat.h"
 #include <emmintrin.h>
+#include "cblas.h"
 
 #ifndef CLS
 #define CLS 64

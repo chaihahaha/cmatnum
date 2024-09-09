@@ -53,6 +53,8 @@ float_cmat slice_float_matrix(float_cmat mat, int slice0[2], int slice1[2]);
 
 double_cmat slice_double_matrix(double_cmat mat, int slice0[2], int slice1[2]);
 
+int create_double_contiguous_from_slice(double_cmat *dest, double_cmat *src);
+
 int assign_int_slice(int_cmat m1, int_cmat m2, int slice0[2], int slice1[2]);
 
 int assign_float_slice(float_cmat m1, float_cmat m2, int slice0[2], int slice1[2]);
