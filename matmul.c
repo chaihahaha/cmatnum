@@ -131,15 +131,9 @@ int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, double_c
     double_cmat C12 = slice_double_matrix(matC, pairint {0,I}, pairint {I,N});
     double_cmat C21 = slice_double_matrix(matC, pairint {I,N}, pairint {0,I});
     double_cmat C22 = slice_double_matrix(matC, pairint {I,N}, pairint {I,N});
-    double_cmat S1, S2, S3, S4, T1, T2, T3, T4, M1, M2, M3, M4, M5, M6, M7, U1, U2, U3, U4, U5, U6, U7;
+    double_cmat S1, T1, M1, M2, M3, M4, M5, M6, M7;
     create_double_matrix(pairint {I,I}, &S1);
-    create_double_matrix(pairint {I,I}, &S2);
-    create_double_matrix(pairint {I,I}, &S3);
-    create_double_matrix(pairint {I,I}, &S4);
     create_double_matrix(pairint {I,I}, &T1);
-    create_double_matrix(pairint {I,I}, &T2);
-    create_double_matrix(pairint {I,I}, &T3);
-    create_double_matrix(pairint {I,I}, &T4);
     create_double_matrix(pairint {I,I}, &M1);
     create_double_matrix(pairint {I,I}, &M2);
     create_double_matrix(pairint {I,I}, &M3);
@@ -147,47 +141,35 @@ int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, double_c
     create_double_matrix(pairint {I,I}, &M5);
     create_double_matrix(pairint {I,I}, &M6);
     create_double_matrix(pairint {I,I}, &M7);
-    create_double_matrix(pairint {I,I}, &U1);
-    create_double_matrix(pairint {I,I}, &U2);
-    create_double_matrix(pairint {I,I}, &U3);
-    create_double_matrix(pairint {I,I}, &U4);
-    create_double_matrix(pairint {I,I}, &U5);
-    create_double_matrix(pairint {I,I}, &U6);
-    create_double_matrix(pairint {I,I}, &U7);
-    matadd_double(S1, A21, A22);
-    matsub_double(S2, S1,  A11);
-    matsub_double(S3, A11, A21);
-    matsub_double(S4, A12, S2 );
 
-    matsub_double(T1, B12, B11);
-    matsub_double(T2, B22, T1 );
-    matsub_double(T3, B22, B12);
-    matsub_double(T4, T2,  B21);
 
     matmul_double_strassen_winograd(M1, A11, B11);
     matmul_double_strassen_winograd(M2, A12, B21);
-    matmul_double_strassen_winograd(M3, S4 , B22);
-    matmul_double_strassen_winograd(M4, A22, T4 );
+
+    matadd_double(S1, A21, A22);
+    matsub_double(T1, B12, B11);
     matmul_double_strassen_winograd(M5, S1,  T1 );
-    matmul_double_strassen_winograd(M6, S2,  T2 );
-    matmul_double_strassen_winograd(M7, S3,  T3 );
+    matsub_double(S1, S1,  A11);
+    matsub_double(T1, B22, T1 );
+    matmul_double_strassen_winograd(M6, S1,  T1 );
+    matsub_double(T1, T1,  B21);
+    matmul_double_strassen_winograd(M4, A22, T1 );
+    matsub_double(S1, A12, S1 );
+    matmul_double_strassen_winograd(M3, S1 , B22);
+    matsub_double(S1, A11, A21);
+    matsub_double(T1, B22, B12);
+    matmul_double_strassen_winograd(M7, S1,  T1 );
 
     matadd_double(C11, M1, M2);
-    matadd_double(U2, M1, M6);
-    matadd_double(U3, U2, M7);
-    matadd_double(U4, U2, M5);
-    matadd_double(C12, U4, M3);
-    matsub_double(C21, U3, M4);
-    matadd_double(C22, U3, M5);
+    matadd_double(M2, M1, M6);
+    matadd_double(M6, M2, M5);
+    matadd_double(C12, M6, M3);
+    matadd_double(M2, M2, M7);
+    matsub_double(C21, M2, M4);
+    matadd_double(C22, M2, M5);
 
     free_double_matrix(S1);
-    free_double_matrix(S2);
-    free_double_matrix(S3);
-    free_double_matrix(S4);
     free_double_matrix(T1);
-    free_double_matrix(T2);
-    free_double_matrix(T3);
-    free_double_matrix(T4);
     free_double_matrix(M1);
     free_double_matrix(M2);
     free_double_matrix(M3);
@@ -195,9 +177,6 @@ int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, double_c
     free_double_matrix(M5);
     free_double_matrix(M6);
     free_double_matrix(M7);
-    free_double_matrix(U2);
-    free_double_matrix(U3);
-    free_double_matrix(U4);
     free_double_matrix(A11);
     free_double_matrix(A12);
     free_double_matrix(A21);
@@ -439,7 +418,7 @@ int main() {
     assign_double_clone(Ac, A);
     assign_double_clone(Bc, B);
     start = clock();
-    matmul_double_schwartz2024(C, Ac, Bc);
+    matmul_double_schwartz2024(TC, Ac, Bc);
     end = clock();
     endtime = (double) (end - start)/CLOCKS_PER_SEC;
     printf("schwartz 2024 time: %f(s)\n", endtime);
@@ -453,22 +432,22 @@ int main() {
     //printf("C:\n");
     //print_double_matrix(C);
 
-    start = clock();
-    matmul_double(TC, A, B);
-    end = clock();
-    endtime = (double) (end - start)/CLOCKS_PER_SEC;
-    printf("naive time: %f(s)\n", endtime);
+    //start = clock();
+    //matmul_double(TC, A, B);
+    //end = clock();
+    //endtime = (double) (end - start)/CLOCKS_PER_SEC;
+    //printf("naive time: %f(s)\n", endtime);
 
     //printf("TC:\n");
     //print_double_matrix(TC);
 
-    //for (int i = 0; i < N; i++) {
-    //    for (int j = 0; j < N; j++) {
-    //        if (fabs(C.data[i][j] - TC.data[i][j]) > 0.01) {
-    //            printf("wrong: %lf, true: %lf, at: %d-%d\n", C.data[i][j], TC.data[i][j], i, j);
-    //        }
-    //    }
-    //}
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            if (fabs(C.data[i][j] - TC.data[i][j]) > 0.01) {
+                printf("wrong: %lf, true: %lf, at: %d-%d\n", C.data[i][j], TC.data[i][j], i, j);
+            }
+        }
+    }
     printf("finished\n");
     return 0;
 }
