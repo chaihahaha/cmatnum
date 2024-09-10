@@ -19,7 +19,8 @@ file(GLOB_RECURSE SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/matmul.c"
 )
 add_compile_options(-std=c11)
-add_compile_options(-Ofast)
+add_compile_options(-O2)
+add_compile_options(-march=native)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Ofast")
 
 # Add the executable target

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "cblas.h"
 
 struct int_cmat {
     int* arena; // keep all the data in one arena

@@ -402,7 +402,7 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
 int main() {
     double_cmat A, B, C, TC;
     double_cmat Ac, Bc;
-    int N = 8192;
+    int N = 8192*2;
     create_double_matrix(pairint {N, N}, &A);
     create_double_matrix(pairint {N, N}, &B);
     create_double_matrix(pairint {N, N}, &C);
@@ -418,13 +418,14 @@ int main() {
     //printf("B:\n");
     //print_double_matrix(B);
 
-    clock_t start, end;
+    struct timespec start, end;
     double endtime;
 
-    start = clock();
+    clock_gettime(CLOCK_MONOTONIC, &start);
     matmul_double_strassen_winograd(C, A, B);
-    end = clock();
-    endtime = (double) (end - start)/CLOCKS_PER_SEC;
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    endtime = (end.tv_sec - start.tv_sec) +
+                          (end.tv_nsec - start.tv_nsec) / 1e9;
     printf("strassen winograd time: %f(s)\n", endtime);
 
     //create_double_matrix(pairint {N, N}, &Ac);
@@ -446,10 +447,11 @@ int main() {
     //printf("C:\n");
     //print_double_matrix(C);
 
-    start = clock();
+    clock_gettime(CLOCK_MONOTONIC, &start);
     matmul_double_blas(TC, A, B);
-    end = clock();
-    endtime = (double) (end - start)/CLOCKS_PER_SEC;
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    endtime = (end.tv_sec - start.tv_sec) +
+                          (end.tv_nsec - start.tv_nsec) / 1e9;
     printf("blas time: %f(s)\n", endtime);
 
     //printf("TC:\n");

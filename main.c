@@ -23,19 +23,21 @@ int main() {
     //printf("B:\n");
     //print_double_matrix(B);
 
-    clock_t start, end;
+    struct timespec start, end;
     double endtime;
 
-    start = clock();
+    clock_gettime(CLOCK_MONOTONIC, &start);
     fmm_32x32(C, A, B);
-    end = clock();
-    endtime = (double) (end - start)/CLOCKS_PER_SEC;
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    endtime = (end.tv_sec - start.tv_sec) +
+                          (end.tv_nsec - start.tv_nsec) / 1e9;
     printf("fmm 32x32 time: %f(s)\n", endtime);
 
-    start = clock();
+    clock_gettime(CLOCK_MONOTONIC, &start);
     matmul_double_blas(TC, A, B);
-    end = clock();
-    endtime = (double) (end - start)/CLOCKS_PER_SEC;
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    endtime = (end.tv_sec - start.tv_sec) +
+                          (end.tv_nsec - start.tv_nsec) / 1e9;
     printf("blas time: %f(s)\n", endtime);
 
     //start = clock();
