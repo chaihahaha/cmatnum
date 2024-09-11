@@ -428,15 +428,16 @@ int main() {
                           (end.tv_nsec - start.tv_nsec) / 1e9;
     printf("strassen winograd time: %f(s)\n", endtime);
 
-    //create_double_matrix(pairint {N, N}, &Ac);
-    //create_double_matrix(pairint {N, N}, &Bc);
-    //assign_double_clone(Ac, A);
-    //assign_double_clone(Bc, B);
-    //start = clock();
-    //matmul_double_schwartz2024(TC, Ac, Bc);
-    //end = clock();
-    //endtime = (double) (end - start)/CLOCKS_PER_SEC;
-    //printf("schwartz 2024 time: %f(s)\n", endtime);
+    create_double_matrix(pairint {N, N}, &Ac);
+    create_double_matrix(pairint {N, N}, &Bc);
+    assign_double_clone(Ac, A);
+    assign_double_clone(Bc, B);
+    clock_gettime(CLOCK_MONOTONIC, &start);
+    matmul_double_schwartz2024(TC, Ac, Bc);
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    endtime = (end.tv_sec - start.tv_sec) +
+                          (end.tv_nsec - start.tv_nsec) / 1e9;
+    printf("schwartz 2024 time: %f(s)\n", endtime);
 
     //start = clock();
     //matmul_double_sse2(C, A, B);

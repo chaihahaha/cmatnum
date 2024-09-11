@@ -32,10 +32,9 @@ target_include_directories(fmm32x32 PRIVATE
 target_precompile_headers(fmm32x32 PRIVATE stdafx.h)
 
 find_package(BLAS REQUIRED)
-find_package(BLAS REQUIRED)
 
 if(BLAS_FOUND)
-    target_link_libraries(fmm32x32 PRIVATE blas)
+    target_link_libraries(fmm32x32 PRIVATE openblas)
 endif()
 
 #find_package(OpenMP REQUIRED)
