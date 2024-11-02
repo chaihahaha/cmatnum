@@ -2,6 +2,13 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+int is_contiguous_double(double_cmat m) {
+    if (m.offset[1] == 0 && m.arena_shape[1] == m.shape[1]) {
+        return 1;
+    }
+    return 0;
+}
+
 int create_int_matrix(int shape[2], int_cmat* p_new_mat) {
     // create a matrix with 0 in shape [shape[0], shape[1]]
     int N = shape[0] * shape[1];
@@ -236,7 +243,31 @@ double_cmat slice_double_matrix(double_cmat mat, int slice0[2], int slice1[2]) {
     return new_mat;
 }
 
+int create_slice_double_matrix_contiguous(double_cmat *dst, double_cmat mat, int slice0[2], int slice1[2]) {
+    // dst = mat[slice0, slice1]
+    if (slice0[1] < 0) {
+        slice0[1] += mat.shape[0];
+    }
+    if (slice1[1] < 0) {
+        slice1[1] += mat.shape[1];
+    }
+    if (slice0[0] >= slice0[1] || slice1[0] >= slice1[1]) {
+        return -1;
+    }
+    slice0[1] = MIN(slice0[1], mat.shape[0]);
+    slice1[1] = MIN(slice1[1], mat.shape[1]);
+    int shape[2] = {slice0[1] - slice0[0], slice1[1] - slice1[0]};
+    create_double_matrix(shape, dst);
+    int dsti = 0;
+    for (int i = slice0[0]; i < slice0[1]; i++) {
+        cblas_dcopy(shape[1], &mat.data[i][slice1[0]], 1, dst->data[dsti], 1);
+        dsti += 1;
+    }
+    return 0;
+}
+
 int create_double_contiguous_from_slice(double_cmat *dest, double_cmat *src) {
+    // dest = src.contiguous().copy()
     int i, j;
     int rows = src->shape[0];
     int cols = src->shape[1];
@@ -302,6 +333,8 @@ int assign_float_slice(float_cmat m1, float_cmat m2, int slice0[2], int slice1[2
 }
 
 int assign_double_slice(double_cmat m1, double_cmat m2, int slice0[2], int slice1[2]) {
+    // assign m2 to a slice of m1 defined by slice0(x) and slice1(y)
+    // m1[slice0, slice1] = m2
     if (slice0[1] < 0) {
         slice0[1] += m1.shape[0];
     }
@@ -322,6 +355,7 @@ int assign_double_slice(double_cmat m1, double_cmat m2, int slice0[2], int slice
 }
 
 int assign_double_clone(double_cmat m1, double_cmat m2) {
+    // m1 = m2.copy()
     if (!(m1.shape[0] == m2.shape[0] && m1.shape[1] == m2.shape[1])) {
         return -1;
     }
@@ -363,6 +397,7 @@ int matadd_float(float_cmat m3, float_cmat m1, float_cmat m2) {
 }
 
 int matadd_double(double_cmat m3, double_cmat m1, double_cmat m2) {
+    // m3 = m1 + m2
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }
@@ -424,6 +459,7 @@ int matsub_float(float_cmat m3, float_cmat m1, float_cmat m2) {
 }
 
 int matsub_double(double_cmat m3, double_cmat m1, double_cmat m2) {
+    // m3 = m1 - m2
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;
     }

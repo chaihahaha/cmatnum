@@ -176,11 +176,19 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
 """
 
     content += ("pack_mats_32x32 bmats;\n")
+    for j in range(1,33):
+        content += (f"    double_cmat A_x_{j};\n")
+        content += (f"    double_cmat B_x_{j};\n")
+        content += (f"    double_cmat C_x_{j};\n")
+    for j in range(1,33):
+        content += (f"    create_slice_double_matrix_contiguous(&A_x_{j}, A, pairint {{ 0, N }}, pairint {{ {(j-1)}*BL, {j}*BL }});\n")
+        content += (f"    create_slice_double_matrix_contiguous(&B_x_{j}, B, pairint {{ 0, N }}, pairint {{ {(j-1)}*BL, {j}*BL }});\n")
+        content += (f"    create_double_matrix(pairint {{ N, BL }}, &C_x_{j});\n")
     for i in range(1,33):
         for j in range(1,33):
-            content += (f"    bmats.A_{i}_{j} = slice_double_matrix(A, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{{(j-1)}*BL, {j}*BL}});\n")
-            content += (f"    bmats.B_{i}_{j} = slice_double_matrix(B, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{{(j-1)}*BL, {j}*BL}});\n")
-            content += (f"    bmats.C_{i}_{j} = slice_double_matrix(C, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{{(j-1)}*BL, {j}*BL}});\n")
+            content += (f"    bmats.A_{i}_{j} = slice_double_matrix(A_x_{j}, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{0, BL}});\n")
+            content += (f"    bmats.B_{i}_{j} = slice_double_matrix(B_x_{j}, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{0, BL}});\n")
+            content += (f"    bmats.C_{i}_{j} = slice_double_matrix(C_x_{j}, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{0, BL}});\n")
 
     with open("A_replacements.pickle", "rb") as f:
         A_replacements = pickle.load(f)
@@ -204,11 +212,19 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     for i in range(1, 15137):
         content += f"    fm_{i}(m, bmats);\n"
 
+    # copy C_x_j to C[:][j]
+    for j in range(1,33):
+        content += f"    assign_double_slice(C, C_x_{j}, pairint {{0, N}}, pairint {{ {(j-1)}*BL, {j}*BL }});\n"
+
     for i in range(1,33):
         for j in range(1,33):
             content += (f"    free_double_matrix(bmats.A_{i}_{j});\n")
             content += (f"    free_double_matrix(bmats.B_{i}_{j});\n")
             content += (f"    free_double_matrix(bmats.C_{i}_{j});\n")
+    for j in range(1,33):
+        content += (f"    free_double_matrix(A_x_{j});\n")
+        content += (f"    free_double_matrix(B_x_{j});\n")
+        content += (f"    free_double_matrix(C_x_{j});\n")
     for i,j in A_replacements:
         content+=f"    free_double_matrix(bmats.{i});\n"
     for i,j in B_replacements:

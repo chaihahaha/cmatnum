@@ -88,20 +88,32 @@ int matmul_double_blas(double_cmat C, double_cmat A_slice, double_cmat B_slice) 
         fprintf(stderr, "Matrix dimensions do not match for multiplication.\n");
         return -1;
     }
-    double_cmat A,B,CC;
-    create_double_contiguous_from_slice(&A, &A_slice);
-    create_double_contiguous_from_slice(&B, &B_slice);
+    double_cmat CC;
     create_double_matrix(pairint {C.shape[0], C.shape[1]}, &CC);
 
-    // Call dgemm
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                C.shape[0], C.shape[1], A.shape[1],
-                1.0, A.arena, A.arena_shape[1],
-                B.arena, B.arena_shape[1],
-                0.0, CC.arena, CC.arena_shape[1]);
+    if (is_contiguous_double(A_slice) && is_contiguous_double(B_slice)) {
+        // Call dgemm
+        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                    C.shape[0], C.shape[1], A_slice.shape[1],
+                    1.0, A_slice.data[0], A_slice.arena_shape[1],
+                    B_slice.data[0], B_slice.arena_shape[1],
+                    0.0, CC.arena, CC.arena_shape[1]);
+    }
+    else {
+        double_cmat A,B;
+        create_double_contiguous_from_slice(&A, &A_slice);
+        create_double_contiguous_from_slice(&B, &B_slice);
+
+        // Call dgemm
+        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                    C.shape[0], C.shape[1], A.shape[1],
+                    1.0, A.arena, A.arena_shape[1],
+                    B.arena, B.arena_shape[1],
+                    0.0, CC.arena, CC.arena_shape[1]);
+        free_double_matrix(A);
+        free_double_matrix(B);
+    }
     assign_double_clone(C, CC);
-    free_double_matrix(A);
-    free_double_matrix(B);
     free_double_matrix(CC);
     return 0;
 }

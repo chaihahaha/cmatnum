@@ -36,6 +36,8 @@ typedef struct float_cmat float_cmat;
 typedef struct double_cmat double_cmat;
 #define pairint (int[2])
 
+int is_contiguous_double(double_cmat m);
+
 int create_int_matrix(int shape[2], int_cmat* p_new_mat);
 
 int create_float_matrix(int shape[2], float_cmat* p_new_mat);
@@ -53,6 +55,8 @@ int_cmat slice_int_matrix(int_cmat mat, int slice0[2], int slice1[2]);
 float_cmat slice_float_matrix(float_cmat mat, int slice0[2], int slice1[2]);
 
 double_cmat slice_double_matrix(double_cmat mat, int slice0[2], int slice1[2]);
+
+int create_slice_double_matrix_contiguous(double_cmat *dst, double_cmat mat, int slice0[2], int slice1[2]);
 
 int create_double_contiguous_from_slice(double_cmat *dest, double_cmat *src);
 
