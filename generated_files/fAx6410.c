@@ -2,10 +2,10 @@
 
 inline int fAx6410(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-            bmats.Ax6410.data[i][j] = -bmats.A_22_18.data[i][j] - bmats.A_22_20.data[i][j] - bmats.A_22_21.data[i][j] - bmats.A_22_23.data[i][j] - bmats.A_22_24.data[i][j] - bmats.A_22_25.data[i][j] - bmats.A_22_26.data[i][j] - bmats.A_22_27.data[i][j] - bmats.A_22_28.data[i][j] - bmats.A_22_29.data[i][j] - bmats.A_22_30.data[i][j] - bmats.A_22_31.data[i][j] - bmats.A_22_32.data[i][j];
-        }
-    }
+    int n_A_mats = 13;
+    double_cmat A_mats[13] = {bmats.A_22_18, bmats.A_22_20, bmats.A_22_21, bmats.A_22_23, bmats.A_22_24, bmats.A_22_25, bmats.A_22_26, bmats.A_22_27, bmats.A_22_28, bmats.A_22_29, bmats.A_22_30, bmats.A_22_31, bmats.A_22_32, };
+    double A_coeffs[13] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
+    matlincomb_double_contiguous(bmats.Ax6410, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
+
     return 0;
 }

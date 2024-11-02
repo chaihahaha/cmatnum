@@ -1,11 +1,11 @@
 #include "fBx12700.h"
 
 inline int fBx12700(pack_mats_32x32 bmats) {
-    int BL = bmats.A_1_1.shape[0];
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-            bmats.Bx12700.data[i][j] = bmats.B_11_2.data[i][j] + bmats.B_12_2.data[i][j] + bmats.B_13_2.data[i][j] + bmats.B_14_2.data[i][j] + bmats.B_2_2.data[i][j] + bmats.B_5_2.data[i][j] + bmats.B_8_2.data[i][j] + bmats.B_9_2.data[i][j];
-        }
-    }
+    int BL = bmats.B_1_1.shape[0];
+    int n_B_mats = 8;
+    double_cmat B_mats[8] = {bmats.B_11_2, bmats.B_12_2, bmats.B_13_2, bmats.B_14_2, bmats.B_2_2, bmats.B_5_2, bmats.B_8_2, bmats.B_9_2, };
+    double B_coeffs[8] = {1, 1, 1, 1, 1, 1, 1, 1, };
+    matlincomb_double_contiguous(bmats.Bx12700, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
+
     return 0;
 }

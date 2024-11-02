@@ -9,6 +9,33 @@ import pickle
 base_dir = "generated_files"
 os.makedirs(base_dir, exist_ok=True)
 
+
+def formula_to_matrices_coeffs_lists(formula, pattern):
+    # Regular expression to match terms with optional coefficients and matrix names
+    
+    # Lists to store extracted matrix names and coefficients
+    matrices = []
+    coefficients = []
+    
+    # Find all matches in the formula
+    matches = re.findall(pattern, formula)
+    
+    # Process each match
+    for coeff, matrix in matches:
+        # Convert the coefficient to an integer; handle cases where it's empty or just a sign
+        coeff = coeff.replace(" ", "")
+        if coeff == '' or coeff == '+':
+            coeff = 1
+        elif coeff == '-':
+            coeff = -1
+        else:
+            coeff = int(coeff)
+    
+        # Append matrix name and coefficient to lists
+        matrices.append(matrix)
+        coefficients.append(coeff)
+    return matrices, coefficients
+
 # Function to generate the header file content
 def generate_packmats_file(base_dir):
     content = """\
@@ -90,31 +117,45 @@ inline int fm_{fm_index}(double_cmat m, pack_mats_32x32 bmats) {{
 """
         
         sum_expr_A = sp.ccode(expr_A)
-        sum_expr_A = re.sub(r'([A-Zx]+\_\d+\_\d+)', r'bmats.\1.data[i][j]', sum_expr_A)
-        sum_expr_A = re.sub(r'(Ax\d+)', r'bmats.\1.data[i][j]', sum_expr_A)
+        pattern = r"([+-]?\s*\d*)\s*\*?\s*(m_\d+)" 
+        A_names, A_coeffs = formula_to_matrices_coeffs_lists(sum_expr_A,  r"([+-]?\s*\d*)\s*\*?\s*(A_\d*_\d*|Ax\d+)")
         sum_expr_B = sp.ccode(expr_B)
-        sum_expr_B = re.sub(r'([A-Zx]+\_\d+\_\d+)', r'bmats.\1.data[i][j]', sum_expr_B)
-        sum_expr_B = re.sub(r'(Bx\d+)', r'bmats.\1.data[i][j]', sum_expr_B)
+        B_names, B_coeffs = formula_to_matrices_coeffs_lists(sum_expr_B,  r"([+-]?\s*\d*)\s*\*?\s*(B_\d*_\d*|Bx\d+)")
 
-        content += f"""\
-    for (int i=0; i<BL; i++) {{
-        for (int j=0; j<BL; j++) {{
-            tmp0.data[i][j] = {sum_expr_A};
-            tmp0.data[i][j] *= dnum17;
-            tmp1.data[i][j] = {sum_expr_B};
-        }}
-    }}
+        n_A_mats = len(A_names)
+        n_B_mats = len(B_names)
+
+        content += f"    int n_A_mats = {n_A_mats};\n"
+        content += f"    double_cmat A_mats[{n_A_mats}] = {{"
+        for name in A_names:
+            content += f"bmats.{name}, "
+        content += "};\n"
+        content += f"    double A_coeffs[{n_A_mats}] = {{"
+        for c in A_coeffs:
+            content += f"{c}, "
+        content += "};\n"
+
+        content += f"    int n_B_mats = {n_B_mats};\n"
+        content += f"    double_cmat B_mats[{n_B_mats}] = {{"
+        for name in B_names:
+            content += f"bmats.{name}, "
+        content += "};\n"
+        content += f"    double B_coeffs[{n_B_mats}] = {{"
+        for c in B_coeffs:
+            content += f"{c}, "
+        content += "};\n"
+
+        content += "    matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);\n"
+        content += "    matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);\n"
+        content += "    cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);\n"
+
+        content += """\
     fmm_32x32(m, tmp0, tmp1);
-
-    for (int i=0; i<BL; i++) {{
-        for (int j=0; j<BL; j++) {{
 """
         m_term = f"m_{fm_index}"
         for Ci, coefficient in m_to_C[m_term]:
-            content += f"        bmats.{Ci}.data[i][j]+={coefficient} * m.data[i][j];\n"
+            content += f"    cblas_daxpy(BL*BL, {coefficient}, &m.data[0][0], 1, &bmats.{Ci}.data[0][0], 1);"
         content += """\
-        }
-    }
     free_double_matrix(tmp0);
     free_double_matrix(tmp1);
     return 0;
@@ -260,20 +301,32 @@ def generate_fAx_source_files(base_dir):
         idf = str(i)
         idf_upper = idf.upper()
         sum_expr = sp.ccode(j)
-        sum_expr = re.sub(r'([A-Zx]+\_\d+\_\d+)', r'bmats.\1.data[i][j]', sum_expr)
-        sum_expr = re.sub(r'(Ax\d+)', r'bmats.\1.data[i][j]', sum_expr)
         content = f"""\
 #include "f{idf}.h"
 
 inline int f{idf}(pack_mats_32x32 bmats) {{
     int BL = bmats.A_1_1.shape[0];
-    for (int i=0; i<BL; i++) {{
-        for (int j=0; j<BL; j++) {{
-            bmats.{idf}.data[i][j] = {sum_expr};
-        }}
-    }}
+"""
+        sum_expr_A = sum_expr
+        pattern = r"([+-]?\s*\d*)\s*\*?\s*(m_\d+)" 
+        A_names, A_coeffs = formula_to_matrices_coeffs_lists(sum_expr_A,  r"([+-]?\s*\d*)\s*\*?\s*(A_\d*_\d*|Ax\d+)")
+
+        n_A_mats = len(A_names)
+
+        content += f"    int n_A_mats = {n_A_mats};\n"
+        content += f"    double_cmat A_mats[{n_A_mats}] = {{"
+        for name in A_names:
+            content += f"bmats.{name}, "
+        content += "};\n"
+        content += f"    double A_coeffs[{n_A_mats}] = {{"
+        for c in A_coeffs:
+            content += f"{c}, "
+        content += "};\n"
+
+        content += f"    matlincomb_double_contiguous(bmats.{idf}, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);\n"
+        content += """
     return 0;
-}}
+}
 """
         with open(f"{base_dir}/f{idf}.c", "w") as f:
             f.write(content)
@@ -305,20 +358,32 @@ def generate_fBx_source_files(base_dir):
         idf = str(i)
         idf_upper = idf.upper()
         sum_expr = sp.ccode(j)
-        sum_expr = re.sub(r'([A-Zx]+\_\d+\_\d+)', r'bmats.\1.data[i][j]', sum_expr)
-        sum_expr = re.sub(r'(Bx\d+)', r'bmats.\1.data[i][j]', sum_expr)
         content = f"""\
 #include "f{idf}.h"
 
 inline int f{idf}(pack_mats_32x32 bmats) {{
-    int BL = bmats.A_1_1.shape[0];
-    for (int i=0; i<BL; i++) {{
-        for (int j=0; j<BL; j++) {{
-            bmats.{idf}.data[i][j] = {sum_expr};
-        }}
-    }}
+    int BL = bmats.B_1_1.shape[0];
+"""
+        sum_expr_B = sum_expr
+        pattern = r"([+-]?\s*\d*)\s*\*?\s*(m_\d+)" 
+        B_names, B_coeffs = formula_to_matrices_coeffs_lists(sum_expr_B,  r"([+-]?\s*\d*)\s*\*?\s*(B_\d*_\d*|Bx\d+)")
+
+        n_B_mats = len(B_names)
+
+        content += f"    int n_B_mats = {n_B_mats};\n"
+        content += f"    double_cmat B_mats[{n_B_mats}] = {{"
+        for name in B_names:
+            content += f"bmats.{name}, "
+        content += "};\n"
+        content += f"    double B_coeffs[{n_B_mats}] = {{"
+        for c in B_coeffs:
+            content += f"{c}, "
+        content += "};\n"
+
+        content += f"    matlincomb_double_contiguous(bmats.{idf}, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);\n"
+        content += """
     return 0;
-}}
+}
 """
         with open(f"{base_dir}/f{idf}.c", "w") as f:
             f.write(content)

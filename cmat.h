@@ -68,6 +68,8 @@ int assign_double_slice(double_cmat m1, double_cmat m2, int slice0[2], int slice
 
 int assign_double_clone(double_cmat m1, double_cmat m2);
 
+int matlincomb_double_contiguous(double_cmat res, int n_mats, double_cmat* mats, double* coeffs);
+
 int matadd_int(int_cmat m1, int_cmat m2, int_cmat m3);
 
 int matadd_float(float_cmat m1, float_cmat m2, float_cmat m3);

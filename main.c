@@ -5,7 +5,7 @@
 int main() {
     double_cmat A, B, C, TC;
     double_cmat Ac, Bc;
-    int N = 32*32*8;
+    int N = 32*32*16;
     int M = N;
     create_double_matrix(pairint {N, N}, &A);
     create_double_matrix(pairint {N, N}, &B);
@@ -68,3 +68,31 @@ int main() {
     printf("finished\n");
     return 0;
 }
+
+//int main() {
+//    double_cmat A1, A2, A3;
+//    create_double_matrix(pairint {2, 2}, &A1);
+//    create_double_matrix(pairint {2, 2}, &A2);
+//    create_double_matrix(pairint {2, 2}, &A3);
+//    A1.data[0][0] = 1;
+//    A1.data[0][1] = 2;
+//    A1.data[1][0] = 3;
+//    A1.data[1][1] = 4;
+//    A2.data[0][0] = 11;
+//    A2.data[0][1] = 22;
+//    A2.data[1][0] = 33;
+//    A2.data[1][1] = 44;
+//    A3.data[0][0] = 2;
+//    A3.data[0][1] = 3;
+//    A3.data[1][0] = 4;
+//    A3.data[1][1] = 5;
+//    double_cmat As[3] = {A1, A2, A3};
+//    double coeffs[3] = {-1, 2, 1};
+//    double_cmat R;
+//    create_double_matrix(pairint {2, 2}, &R);
+//    matlincomb_double_contiguous(R, 3, (double_cmat*)As, (double*)coeffs);
+//    for (int i=0; i<4; i++) {
+//        printf("%lf, ", R.arena[i]);
+//    }
+//    return 0;
+//}

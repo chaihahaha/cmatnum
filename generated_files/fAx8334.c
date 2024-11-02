@@ -2,10 +2,10 @@
 
 inline int fAx8334(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-            bmats.Ax8334.data[i][j] = -bmats.A_26_17.data[i][j] - bmats.A_26_21.data[i][j] - bmats.A_26_22.data[i][j] - bmats.A_26_23.data[i][j] - bmats.A_26_24.data[i][j] - bmats.A_26_25.data[i][j] - bmats.A_26_27.data[i][j] - bmats.A_26_31.data[i][j] - bmats.A_26_32.data[i][j];
-        }
-    }
+    int n_A_mats = 9;
+    double_cmat A_mats[9] = {bmats.A_26_17, bmats.A_26_21, bmats.A_26_22, bmats.A_26_23, bmats.A_26_24, bmats.A_26_25, bmats.A_26_27, bmats.A_26_31, bmats.A_26_32, };
+    double A_coeffs[9] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, };
+    matlincomb_double_contiguous(bmats.Ax8334, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
+
     return 0;
 }

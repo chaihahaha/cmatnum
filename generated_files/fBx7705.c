@@ -1,11 +1,11 @@
 #include "fBx7705.h"
 
 inline int fBx7705(pack_mats_32x32 bmats) {
-    int BL = bmats.A_1_1.shape[0];
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-            bmats.Bx7705.data[i][j] = bmats.B_26_10.data[i][j] + bmats.B_26_11.data[i][j] + bmats.B_26_12.data[i][j] + bmats.B_26_13.data[i][j] + bmats.B_26_14.data[i][j] + bmats.B_26_15.data[i][j] + bmats.B_26_16.data[i][j] + bmats.B_26_8.data[i][j] + bmats.B_26_9.data[i][j];
-        }
-    }
+    int BL = bmats.B_1_1.shape[0];
+    int n_B_mats = 9;
+    double_cmat B_mats[9] = {bmats.B_26_10, bmats.B_26_11, bmats.B_26_12, bmats.B_26_13, bmats.B_26_14, bmats.B_26_15, bmats.B_26_16, bmats.B_26_8, bmats.B_26_9, };
+    double B_coeffs[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1, };
+    matlincomb_double_contiguous(bmats.Bx7705, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
+
     return 0;
 }

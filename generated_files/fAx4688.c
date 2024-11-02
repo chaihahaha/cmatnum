@@ -2,10 +2,10 @@
 
 inline int fAx4688(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-            bmats.Ax4688.data[i][j] = bmats.A_10_17.data[i][j] - 16*bmats.A_10_18.data[i][j] + bmats.A_11_17.data[i][j] - 16*bmats.A_11_18.data[i][j] + bmats.A_12_17.data[i][j] - 16*bmats.A_12_18.data[i][j] + bmats.A_13_17.data[i][j] - 16*bmats.A_13_18.data[i][j] + bmats.A_14_17.data[i][j] - 16*bmats.A_14_18.data[i][j] + bmats.A_15_17.data[i][j] - 16*bmats.A_15_18.data[i][j] + bmats.A_16_17.data[i][j] - 16*bmats.A_16_18.data[i][j] + bmats.A_1_17.data[i][j] - 16*bmats.A_1_18.data[i][j] + bmats.A_2_17.data[i][j] - 16*bmats.A_2_18.data[i][j] + bmats.A_3_17.data[i][j] - 16*bmats.A_3_18.data[i][j] + bmats.A_4_17.data[i][j] - 16*bmats.A_4_18.data[i][j] + bmats.A_5_17.data[i][j] - 16*bmats.A_5_18.data[i][j] + bmats.A_6_17.data[i][j] - 16*bmats.A_6_18.data[i][j] + bmats.A_7_17.data[i][j] - 16*bmats.A_7_18.data[i][j] + bmats.A_8_17.data[i][j] - 16*bmats.A_8_18.data[i][j] + bmats.A_9_17.data[i][j] - 16*bmats.A_9_18.data[i][j] + bmats.Ax1766.data[i][j] + bmats.Ax2128.data[i][j] + bmats.Ax2636.data[i][j] + bmats.Ax2885.data[i][j] + bmats.Ax3111.data[i][j] + bmats.Ax3338.data[i][j] + bmats.Ax3723.data[i][j] + bmats.Ax3878.data[i][j] + bmats.Ax4084.data[i][j] + bmats.Ax4395.data[i][j] + bmats.Ax4530.data[i][j] + bmats.Ax4589.data[i][j] + bmats.Ax4680.data[i][j] + bmats.Ax4683.data[i][j] + bmats.Ax4686.data[i][j] + bmats.Ax658.data[i][j];
-        }
-    }
+    int n_A_mats = 48;
+    double_cmat A_mats[48] = {bmats.A_10_17, bmats.A_10_18, bmats.A_11_17, bmats.A_11_18, bmats.A_12_17, bmats.A_12_18, bmats.A_13_17, bmats.A_13_18, bmats.A_14_17, bmats.A_14_18, bmats.A_15_17, bmats.A_15_18, bmats.A_16_17, bmats.A_16_18, bmats.A_1_17, bmats.A_1_18, bmats.A_2_17, bmats.A_2_18, bmats.A_3_17, bmats.A_3_18, bmats.A_4_17, bmats.A_4_18, bmats.A_5_17, bmats.A_5_18, bmats.A_6_17, bmats.A_6_18, bmats.A_7_17, bmats.A_7_18, bmats.A_8_17, bmats.A_8_18, bmats.A_9_17, bmats.A_9_18, bmats.Ax1766, bmats.Ax2128, bmats.Ax2636, bmats.Ax2885, bmats.Ax3111, bmats.Ax3338, bmats.Ax3723, bmats.Ax3878, bmats.Ax4084, bmats.Ax4395, bmats.Ax4530, bmats.Ax4589, bmats.Ax4680, bmats.Ax4683, bmats.Ax4686, bmats.Ax658, };
+    double A_coeffs[48] = {1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
+    matlincomb_double_contiguous(bmats.Ax4688, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
+
     return 0;
 }

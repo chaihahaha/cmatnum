@@ -1,11 +1,11 @@
 #include "fBx13223.h"
 
 inline int fBx13223(pack_mats_32x32 bmats) {
-    int BL = bmats.A_1_1.shape[0];
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-            bmats.Bx13223.data[i][j] = bmats.B_11_15.data[i][j] - bmats.B_17_15.data[i][j] - bmats.B_18_15.data[i][j] - bmats.B_19_15.data[i][j] - bmats.B_20_15.data[i][j] - bmats.B_21_15.data[i][j] - bmats.B_22_15.data[i][j] - bmats.B_23_15.data[i][j] - bmats.B_24_15.data[i][j] - bmats.B_25_15.data[i][j] - bmats.B_26_15.data[i][j] - bmats.B_27_15.data[i][j] - bmats.B_28_15.data[i][j] - bmats.B_29_15.data[i][j] - bmats.B_30_15.data[i][j] - bmats.B_31_15.data[i][j] - bmats.B_32_15.data[i][j] + bmats.B_8_15.data[i][j] + bmats.B_9_15.data[i][j] + bmats.Bx13218.data[i][j];
-        }
-    }
+    int BL = bmats.B_1_1.shape[0];
+    int n_B_mats = 20;
+    double_cmat B_mats[20] = {bmats.B_11_15, bmats.B_17_15, bmats.B_18_15, bmats.B_19_15, bmats.B_20_15, bmats.B_21_15, bmats.B_22_15, bmats.B_23_15, bmats.B_24_15, bmats.B_25_15, bmats.B_26_15, bmats.B_27_15, bmats.B_28_15, bmats.B_29_15, bmats.B_30_15, bmats.B_31_15, bmats.B_32_15, bmats.B_8_15, bmats.B_9_15, bmats.Bx13218, };
+    double B_coeffs[20] = {1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, };
+    matlincomb_double_contiguous(bmats.Bx13223, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
+
     return 0;
 }

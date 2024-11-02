@@ -1,11 +1,11 @@
 #include "fBx8679.h"
 
 inline int fBx8679(pack_mats_32x32 bmats) {
-    int BL = bmats.A_1_1.shape[0];
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-            bmats.Bx8679.data[i][j] = bmats.B_26_1.data[i][j] + bmats.B_26_2.data[i][j] + bmats.B_26_3.data[i][j] + bmats.B_26_4.data[i][j] + bmats.B_26_5.data[i][j] + bmats.B_26_6.data[i][j] + bmats.B_26_7.data[i][j];
-        }
-    }
+    int BL = bmats.B_1_1.shape[0];
+    int n_B_mats = 7;
+    double_cmat B_mats[7] = {bmats.B_26_1, bmats.B_26_2, bmats.B_26_3, bmats.B_26_4, bmats.B_26_5, bmats.B_26_6, bmats.B_26_7, };
+    double B_coeffs[7] = {1, 1, 1, 1, 1, 1, 1, };
+    matlincomb_double_contiguous(bmats.Bx8679, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
+
     return 0;
 }

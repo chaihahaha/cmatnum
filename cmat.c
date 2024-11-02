@@ -366,6 +366,18 @@ int assign_double_clone(double_cmat m1, double_cmat m2) {
     return 0;
 }
 
+int matlincomb_double_contiguous(double_cmat res, int n_mats, double_cmat* mats, double* coeffs) {
+    // res = coeffs[0] * mats[0] + ... + coeffs[n_mats-1] * mats[n_mats-1]
+    if (n_mats <= 0) {
+        return -1;
+    }
+    int n_elems = mats[0].shape[0] * mats[0].shape[1];
+    for (int i = 0; i < n_mats; i++) {
+        cblas_daxpy(n_elems, coeffs[i], &mats[i].data[0][0], 1, &res.data[0][0], 1);
+    }
+    return 0;
+}
+
 int matadd_int(int_cmat m3, int_cmat m1, int_cmat m2) {
     if (m1.shape[0] != m2.shape[0] || m1.shape[1] != m2.shape[1]) {
         return -1;

@@ -6,23 +6,17 @@ inline int fm_12063(double_cmat m, pack_mats_32x32 bmats) {
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-            tmp0.data[i][j] = 16*bmats.A_13_17.data[i][j] - bmats.A_13_18.data[i][j] - bmats.A_17_15.data[i][j] + 16*bmats.A_17_16.data[i][j] + bmats.A_32_19.data[i][j] + bmats.A_32_28.data[i][j] - 16*bmats.A_32_29.data[i][j] + bmats.A_32_32.data[i][j] - bmats.Ax2128.data[i][j] - bmats.Ax5992.data[i][j] - bmats.Ax660.data[i][j];
-            tmp0.data[i][j] *= dnum17;
-            tmp1.data[i][j] = bmats.B_16_29.data[i][j] + bmats.B_17_32.data[i][j] + bmats.B_29_1.data[i][j];
-        }
-    }
+    int n_A_mats = 11;
+    double_cmat A_mats[11] = {bmats.A_13_17, bmats.A_13_18, bmats.A_17_15, bmats.A_17_16, bmats.A_32_19, bmats.A_32_28, bmats.A_32_29, bmats.A_32_32, bmats.Ax2128, bmats.Ax5992, bmats.Ax660, };
+    double A_coeffs[11] = {16, -1, -1, 16, 1, 1, -16, 1, -1, -1, -1, };
+    int n_B_mats = 3;
+    double_cmat B_mats[3] = {bmats.B_16_29, bmats.B_17_32, bmats.B_29_1, };
+    double B_coeffs[3] = {1, 1, 1, };
+    matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
+    matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
+    cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);
     fmm_32x32(m, tmp0, tmp1);
-
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-        bmats.C_32_1.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_17_29.data[i][j]+=1 * m.data[i][j];
-        bmats.C_13_32.data[i][j]+=1 * m.data[i][j];
-        }
-    }
-    free_double_matrix(tmp0);
+    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_32_1.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_17_29.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_13_32.data[0][0], 1);    free_double_matrix(tmp0);
     free_double_matrix(tmp1);
     return 0;
 }

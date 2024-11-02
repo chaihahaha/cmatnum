@@ -1,11 +1,11 @@
 #include "fBx11440.h"
 
 inline int fBx11440(pack_mats_32x32 bmats) {
-    int BL = bmats.A_1_1.shape[0];
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-            bmats.Bx11440.data[i][j] = bmats.B_10_21.data[i][j] + bmats.B_11_21.data[i][j] + bmats.B_12_21.data[i][j] + bmats.B_13_21.data[i][j] + bmats.B_14_21.data[i][j] + bmats.B_6_21.data[i][j] + bmats.B_8_21.data[i][j];
-        }
-    }
+    int BL = bmats.B_1_1.shape[0];
+    int n_B_mats = 7;
+    double_cmat B_mats[7] = {bmats.B_10_21, bmats.B_11_21, bmats.B_12_21, bmats.B_13_21, bmats.B_14_21, bmats.B_6_21, bmats.B_8_21, };
+    double B_coeffs[7] = {1, 1, 1, 1, 1, 1, 1, };
+    matlincomb_double_contiguous(bmats.Bx11440, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
+
     return 0;
 }

@@ -2,10 +2,10 @@
 
 inline int fAx4094(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-            bmats.Ax4094.data[i][j] = bmats.A_17_21.data[i][j] - 16*bmats.A_17_22.data[i][j] + bmats.A_18_21.data[i][j] - 16*bmats.A_18_22.data[i][j] + bmats.A_21_21.data[i][j] - 16*bmats.A_21_22.data[i][j] - 17*bmats.A_22_22.data[i][j] + bmats.A_23_21.data[i][j] - 16*bmats.A_23_22.data[i][j] + bmats.A_24_21.data[i][j] - 16*bmats.A_24_22.data[i][j] + bmats.A_25_21.data[i][j] - 16*bmats.A_25_22.data[i][j] + bmats.A_26_21.data[i][j] - 16*bmats.A_26_22.data[i][j] + bmats.A_27_21.data[i][j] - 16*bmats.A_27_22.data[i][j] + bmats.A_28_21.data[i][j] - 16*bmats.A_28_22.data[i][j] + bmats.A_29_21.data[i][j] - 16*bmats.A_29_22.data[i][j] + bmats.A_30_21.data[i][j] - 16*bmats.A_30_22.data[i][j] + bmats.A_31_21.data[i][j] - 16*bmats.A_31_22.data[i][j] + bmats.A_32_21.data[i][j] - 16*bmats.A_32_22.data[i][j] + bmats.Ax110.data[i][j] + bmats.Ax128.data[i][j] + bmats.Ax1635.data[i][j] + bmats.Ax179.data[i][j] + bmats.Ax2083.data[i][j] + bmats.Ax3930.data[i][j] + bmats.Ax3934.data[i][j] + bmats.Ax3937.data[i][j] + bmats.Ax3940.data[i][j] + bmats.Ax3943.data[i][j] + bmats.Ax42.data[i][j] + bmats.Ax74.data[i][j] + bmats.Ax93.data[i][j];
-        }
-    }
+    int n_A_mats = 40;
+    double_cmat A_mats[40] = {bmats.A_17_21, bmats.A_17_22, bmats.A_18_21, bmats.A_18_22, bmats.A_21_21, bmats.A_21_22, bmats.A_22_22, bmats.A_23_21, bmats.A_23_22, bmats.A_24_21, bmats.A_24_22, bmats.A_25_21, bmats.A_25_22, bmats.A_26_21, bmats.A_26_22, bmats.A_27_21, bmats.A_27_22, bmats.A_28_21, bmats.A_28_22, bmats.A_29_21, bmats.A_29_22, bmats.A_30_21, bmats.A_30_22, bmats.A_31_21, bmats.A_31_22, bmats.A_32_21, bmats.A_32_22, bmats.Ax110, bmats.Ax128, bmats.Ax1635, bmats.Ax179, bmats.Ax2083, bmats.Ax3930, bmats.Ax3934, bmats.Ax3937, bmats.Ax3940, bmats.Ax3943, bmats.Ax42, bmats.Ax74, bmats.Ax93, };
+    double A_coeffs[40] = {1, -16, 1, -16, 1, -16, -17, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, -16, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
+    matlincomb_double_contiguous(bmats.Ax4094, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
+
     return 0;
 }

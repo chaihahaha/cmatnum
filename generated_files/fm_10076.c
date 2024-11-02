@@ -6,53 +6,17 @@ inline int fm_10076(double_cmat m, pack_mats_32x32 bmats) {
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-            tmp0.data[i][j] = bmats.A_28_13.data[i][j] - 16*bmats.A_28_14.data[i][j] + bmats.Ax491.data[i][j];
-            tmp0.data[i][j] *= dnum17;
-            tmp1.data[i][j] = bmats.B_12_30.data[i][j];
-        }
-    }
+    int n_A_mats = 3;
+    double_cmat A_mats[3] = {bmats.A_28_13, bmats.A_28_14, bmats.Ax491, };
+    double A_coeffs[3] = {1, -16, 1, };
+    int n_B_mats = 1;
+    double_cmat B_mats[1] = {bmats.B_12_30, };
+    double B_coeffs[1] = {1, };
+    matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
+    matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
+    cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);
     fmm_32x32(m, tmp0, tmp1);
-
-    for (int i=0; i<BL; i++) {
-        for (int j=0; j<BL; j++) {
-        bmats.C_28_1.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_2.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_3.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_4.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_5.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_6.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_7.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_8.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_9.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_10.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_11.data[i][j]+=1 * m.data[i][j];
-        bmats.C_14_12.data[i][j]+=17 * m.data[i][j];
-        bmats.C_28_12.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_13.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_14.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_15.data[i][j]+=1 * m.data[i][j];
-        bmats.C_28_16.data[i][j]+=1 * m.data[i][j];
-        bmats.C_1_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_2_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_3_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_4_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_5_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_6_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_7_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_8_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_9_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_10_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_11_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_12_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_13_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_14_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_15_30.data[i][j]+=-1 * m.data[i][j];
-        bmats.C_16_30.data[i][j]+=-1 * m.data[i][j];
-        }
-    }
-    free_double_matrix(tmp0);
+    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_1.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_2.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_3.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_4.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_5.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_6.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_7.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_8.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_9.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_10.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_11.data[0][0], 1);    cblas_daxpy(BL*BL, 17, &m.data[0][0], 1, &bmats.C_14_12.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_12.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_13.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_14.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_15.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_28_16.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_1_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_2_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_3_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_4_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_5_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_6_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_7_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_8_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_9_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_10_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_11_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_12_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_13_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_14_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_15_30.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_16_30.data[0][0], 1);    free_double_matrix(tmp0);
     free_double_matrix(tmp1);
     return 0;
 }

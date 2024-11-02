@@ -21,7 +21,6 @@ file(GLOB_RECURSE SOURCE_FILES
 add_compile_options(-std=c11)
 add_compile_options(-O2)
 add_compile_options(-march=native)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Ofast")
 
 # Add the executable target
 add_executable(fmm32x32 ${SOURCE_FILES})
@@ -30,6 +29,7 @@ target_include_directories(fmm32x32 PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/generated_files"
 )
 target_precompile_headers(fmm32x32 PRIVATE stdafx.h)
+set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/fmm_32x32.c" PROPERTIES COMPILE_FLAGS "-O1")
 
 find_package(BLAS REQUIRED)
 
