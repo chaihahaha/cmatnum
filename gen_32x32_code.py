@@ -217,7 +217,7 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     create_double_matrix(pairint {BL, BL}, &m);
 """
 
-    content += ("pack_mats_32x32 bmats;\n")
+    content += ("    pack_mats_32x32 bmats;\n")
     for j in range(1,33):
         content += (f"    double_cmat A_x_{j};\n")
         content += (f"    double_cmat B_x_{j};\n")
