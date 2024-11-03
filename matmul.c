@@ -38,50 +38,6 @@ int matmul_double(double_cmat matC, double_cmat matA, double_cmat matB){
     return 0;
 }
 
-int matmul_double_sse2(double_cmat matC, double_cmat matA, double_cmat matB){
-    if (matA.shape[1] != matB.shape[0]) {
-        return -1;
-    }
-    int M = matA.shape[0];
-    int N = matB.shape[1];
-    int K = matB.shape[0];
-    //if (M % 8 != 0 || N % 8 != 0 || K % 8 != 0) {
-    //    return matmul_double(matC, matA, matB);
-    //}
-    int i, j, k, i2, j2, k2;
-    double *restrict rC;
-    double *restrict rA;
-    double *restrict rB;
-    for(i = 0; i < M; i+=SM) {
-        for(j = 0; j < N; j+=SM) {
-            for(k = 0; k < K; k+=SM) {
-                for (i2 = 0, rC = &matC.data[i][j], rA = &matA.data[i][k]; i2 < SM; i2++, rC = &matC.data[i+i2][j], rA = &matA.data[i+i2][k])
-                {
-                    //printf("Processing row %d == ", i + i2); // Debug print
-                    _mm_prefetch(&rA[8], _MM_HINT_NTA);
-                    for (k2 = 0, rB = &matB.data[k][j]; k2 < SM; k2++, rB = &matB.data[k+k2][j])
-                    {
-                        __m128d mAd = _mm_load_sd(&rA[k2]);
-                        mAd = _mm_unpacklo_pd(mAd, mAd);
-                        for (j2 = 0; j2 < SM; j2 += 2)
-                        {
-                            __m128d mB = _mm_load_pd(&rB[j2]);
-                            __m128d mC = _mm_load_pd(&rC[j2]);
-                            _mm_store_pd(&rC[j2], _mm_add_pd(_mm_mul_pd(mB, mAd), mC));
-
-                            __m128d mResult = _mm_add_pd(_mm_mul_pd(mB, mAd), mC);
-                            //printf("Row %d, Col %d-%d: %lf %lf || ", i + i2, j + j2, j + j2 + 1, ((double*)&mResult)[0], ((double*)&mResult)[1]); // Debug print
-                            //printf(" (%lf*%lf *%lf) ||", rA[k2], rB[j2], rB[j2+1]);
-                        }
-                    }
-                    //printf("\n");
-                }
-            }
-        }
-    }
-    return 0;
-}
-
 int matmul_double_blas(double_cmat C, double_cmat A_slice, double_cmat B_slice) {
     // Check dimensions for compatibility
     if (A_slice.shape[1] != B_slice.shape[0] || A_slice.shape[0] != C.shape[0] || B_slice.shape[1] != C.shape[1]) {
