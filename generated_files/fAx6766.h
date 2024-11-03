@@ -1,7 +1,5 @@
 #ifndef FAX6766_H
 #define FAX6766_H
 
-#include "stdafx.h"
-
 int fAx6766(pack_mats_32x32 bmats);
 #endif

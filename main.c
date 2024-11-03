@@ -1,4 +1,5 @@
 #include "fmm_32x32.h"
+#include "matmul.h"
 #include <time.h>
 #include <stdio.h>
 

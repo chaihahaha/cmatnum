@@ -1,4 +1,5 @@
 #include "fm_8634.h"
+#include "stdafx.h"
 
 inline int fm_8634(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;

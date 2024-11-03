@@ -1,4 +1,5 @@
 #include "fAx5735.h"
+#include "stdafx.h"
 
 inline int fAx5735(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];

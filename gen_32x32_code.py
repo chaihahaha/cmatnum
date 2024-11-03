@@ -75,7 +75,6 @@ def generate_fm_header_files(base_dir):
 #ifndef FM_{fm_index}_H
 #define FM_{fm_index}_H
 
-#include "stdafx.h"
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B);
 
 int fm_{fm_index}(double_cmat m, pack_mats_32x32 bmats);
@@ -107,6 +106,7 @@ def generate_fm_source_files(base_dir):
 
         content = f"""\
 #include "fm_{fm_index}.h"
+#include "stdafx.h"
 
 inline int fm_{fm_index}(double_cmat m, pack_mats_32x32 bmats) {{
     double dnum17 = 1/17.0;
@@ -173,18 +173,7 @@ def generate_fmm_32x32_header():
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "stdafx.h"
-#include "matmul.h"
 """
-    for fm_index in range(1, 15137):
-        content += (f"#include \"fm_{fm_index}.h\"\n")
-    with open("A_replacements.pickle", "rb") as f:
-        A_replacements = pickle.load(f)
-    with open("B_replacements.pickle", "rb") as f:
-        B_replacements = pickle.load(f)
-    for i,j in A_replacements+B_replacements:
-        idf = str(i)
-        content += (f"#include \"f{idf}.h\"\n")
     content += """\
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B);
 
@@ -195,13 +184,25 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B);
     return
 
 def generate_fmm_32x32_source():
-    content = """\
+    content = ""
+    for fm_index in range(1, 15137):
+        content += (f"#include \"fm_{fm_index}.h\"\n")
+    with open("A_replacements.pickle", "rb") as f:
+        A_replacements = pickle.load(f)
+    with open("B_replacements.pickle", "rb") as f:
+        B_replacements = pickle.load(f)
+    for i,j in A_replacements+B_replacements:
+        idf = str(i)
+        content += (f"#include \"f{idf}.h\"\n")
+    content += """\
+#include "stdafx.h"
+#include "matmul.h"
 #include "fmm_32x32.h"
 
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     int height = A.shape[0];
     int width = A.shape[1];
-    if (height <= 4096 || width <= 4096) {
+    if (height <= 1024 || width <= 1024) {
         matmul_double_blas(C, A, B);
         return 0;
     }
@@ -231,10 +232,6 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
             content += (f"    bmats.B_{i}_{j} = slice_double_matrix(B_x_{j}, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{0, BL}});\n")
             content += (f"    bmats.C_{i}_{j} = slice_double_matrix(C_x_{j}, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{0, BL}});\n")
 
-    with open("A_replacements.pickle", "rb") as f:
-        A_replacements = pickle.load(f)
-    with open("B_replacements.pickle", "rb") as f:
-        B_replacements = pickle.load(f)
     for i,j in A_replacements:
         content+=f"    create_double_matrix(pairint {{BL, BL}}, &bmats.{i});\n"
     for i,j in B_replacements:
@@ -303,6 +300,7 @@ def generate_fAx_source_files(base_dir):
         sum_expr = sp.ccode(j)
         content = f"""\
 #include "f{idf}.h"
+#include "stdafx.h"
 
 inline int f{idf}(pack_mats_32x32 bmats) {{
     int BL = bmats.A_1_1.shape[0];
@@ -342,8 +340,6 @@ def generate_fAx_header_files(base_dir):
 #ifndef F{idf_upper}_H
 #define F{idf_upper}_H
 
-#include "stdafx.h"
-
 int f{idf}(pack_mats_32x32 bmats);
 #endif
 """
@@ -360,6 +356,7 @@ def generate_fBx_source_files(base_dir):
         sum_expr = sp.ccode(j)
         content = f"""\
 #include "f{idf}.h"
+#include "stdafx.h"
 
 inline int f{idf}(pack_mats_32x32 bmats) {{
     int BL = bmats.B_1_1.shape[0];
@@ -398,8 +395,6 @@ def generate_fBx_header_files(base_dir):
         content = f"""\
 #ifndef F{idf_upper}_H
 #define F{idf_upper}_H
-
-#include "stdafx.h"
 
 int f{idf}(pack_mats_32x32 bmats);
 #endif

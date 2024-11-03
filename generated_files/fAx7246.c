@@ -1,4 +1,5 @@
 #include "fAx7246.h"
+#include "stdafx.h"
 
 inline int fAx7246(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];

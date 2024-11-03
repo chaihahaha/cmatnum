@@ -1,4 +1,5 @@
 #include "fBx5962.h"
+#include "stdafx.h"
 
 inline int fBx5962(pack_mats_32x32 bmats) {
     int BL = bmats.B_1_1.shape[0];

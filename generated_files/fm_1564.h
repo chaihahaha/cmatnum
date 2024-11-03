@@ -1,7 +1,6 @@
 #ifndef FM_1564_H
 #define FM_1564_H
 
-#include "stdafx.h"
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B);
 
 int fm_1564(double_cmat m, pack_mats_32x32 bmats);

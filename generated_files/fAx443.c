@@ -1,4 +1,5 @@
 #include "fAx443.h"
+#include "stdafx.h"
 
 inline int fAx443(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
