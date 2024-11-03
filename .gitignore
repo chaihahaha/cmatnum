@@ -51,11 +51,8 @@ Module.symvers
 Mkfile.old
 dkms.conf
 *.pdf
-*.txt
 !CMakeLists.txt
-*.mpl
 build/
 .ninja_deps
 *.bz2
 .ninja_log
-*.pickle
