@@ -173,6 +173,7 @@ def generate_fmm_32x32_header():
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "cmat.h"
 """
     content += """\
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B);
