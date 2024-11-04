@@ -1,7 +1,7 @@
-#include "fAx2442.h"
 #include "stdafx.h"
+#include "fAx2442.h"
 
-inline int fAx2442(pack_mats_32x32 bmats) {
+int fAx2442(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
     int n_A_mats = 14;
     double_cmat A_mats[14] = {bmats.A_12_17, bmats.A_12_18, bmats.A_12_19, bmats.A_12_20, bmats.A_12_23, bmats.A_12_24, bmats.A_12_25, bmats.A_12_26, bmats.A_12_27, bmats.A_12_28, bmats.A_12_29, bmats.A_12_30, bmats.A_12_31, bmats.A_12_32, };

@@ -1,7 +1,7 @@
-#include "fAx2285.h"
 #include "stdafx.h"
+#include "fAx2285.h"
 
-inline int fAx2285(pack_mats_32x32 bmats) {
+int fAx2285(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
     int n_A_mats = 14;
     double_cmat A_mats[14] = {bmats.A_9_17, bmats.A_9_18, bmats.A_9_19, bmats.A_9_20, bmats.A_9_21, bmats.A_9_22, bmats.A_9_23, bmats.A_9_24, bmats.A_9_25, bmats.A_9_26, bmats.A_9_29, bmats.A_9_30, bmats.A_9_31, bmats.A_9_32, };

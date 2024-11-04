@@ -1,7 +1,7 @@
-#include "fBx11903.h"
 #include "stdafx.h"
+#include "fBx11903.h"
 
-inline int fBx11903(pack_mats_32x32 bmats) {
+int fBx11903(pack_mats_32x32 bmats) {
     int BL = bmats.B_1_1.shape[0];
     int n_B_mats = 6;
     double_cmat B_mats[6] = {bmats.B_10_4, bmats.B_11_4, bmats.B_12_4, bmats.B_4_4, bmats.B_7_4, bmats.B_8_4, };

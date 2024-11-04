@@ -1,7 +1,7 @@
-#include "fBx4622.h"
 #include "stdafx.h"
+#include "fBx4622.h"
 
-inline int fBx4622(pack_mats_32x32 bmats) {
+int fBx4622(pack_mats_32x32 bmats) {
     int BL = bmats.B_1_1.shape[0];
     int n_B_mats = 10;
     double_cmat B_mats[10] = {bmats.B_29_17, bmats.B_29_18, bmats.B_29_19, bmats.B_29_20, bmats.B_29_21, bmats.B_29_22, bmats.B_29_23, bmats.B_29_24, bmats.B_29_25, bmats.B_29_26, };

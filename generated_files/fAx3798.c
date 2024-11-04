@@ -1,7 +1,7 @@
-#include "fAx3798.h"
 #include "stdafx.h"
+#include "fAx3798.h"
 
-inline int fAx3798(pack_mats_32x32 bmats) {
+int fAx3798(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
     int n_A_mats = 40;
     double_cmat A_mats[40] = {bmats.A_10_7, bmats.A_10_8, bmats.A_11_7, bmats.A_11_8, bmats.A_12_7, bmats.A_12_8, bmats.A_13_7, bmats.A_13_8, bmats.A_14_7, bmats.A_14_8, bmats.A_15_7, bmats.A_15_8, bmats.A_16_7, bmats.A_16_8, bmats.A_1_7, bmats.A_1_8, bmats.A_2_7, bmats.A_2_8, bmats.A_3_7, bmats.A_3_8, bmats.A_5_7, bmats.A_5_8, bmats.A_6_7, bmats.A_6_8, bmats.A_7_7, bmats.A_8_7, bmats.A_8_8, bmats.Ax1391, bmats.Ax2034, bmats.Ax2460, bmats.Ax2732, bmats.Ax2989, bmats.Ax3455, bmats.Ax3461, bmats.Ax3467, bmats.Ax3470, bmats.Ax3473, bmats.Ax3476, bmats.Ax3486, bmats.Ax3489, };

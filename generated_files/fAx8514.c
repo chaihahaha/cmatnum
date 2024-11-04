@@ -1,7 +1,7 @@
-#include "fAx8514.h"
 #include "stdafx.h"
+#include "fAx8514.h"
 
-inline int fAx8514(pack_mats_32x32 bmats) {
+int fAx8514(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
     int n_A_mats = 40;
     double_cmat A_mats[40] = {bmats.A_12_15, bmats.A_12_16, bmats.A_13_15, bmats.A_13_16, bmats.A_14_15, bmats.A_14_16, bmats.A_15_15, bmats.A_15_16, bmats.A_16_16, bmats.A_1_15, bmats.A_1_16, bmats.A_2_15, bmats.A_2_16, bmats.A_3_15, bmats.A_3_16, bmats.A_4_15, bmats.A_4_16, bmats.A_5_15, bmats.A_5_16, bmats.A_6_15, bmats.A_6_16, bmats.A_7_15, bmats.A_7_16, bmats.A_8_15, bmats.A_8_16, bmats.A_9_15, bmats.A_9_16, bmats.Ax392, bmats.Ax556, bmats.Ax565, bmats.Ax568, bmats.Ax573, bmats.Ax576, bmats.Ax579, bmats.Ax585, bmats.Ax588, bmats.Ax591, bmats.Ax594, bmats.Ax649, bmats.Ax652, };

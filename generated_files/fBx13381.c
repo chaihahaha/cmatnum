@@ -1,7 +1,7 @@
-#include "fBx13381.h"
 #include "stdafx.h"
+#include "fBx13381.h"
 
-inline int fBx13381(pack_mats_32x32 bmats) {
+int fBx13381(pack_mats_32x32 bmats) {
     int BL = bmats.B_1_1.shape[0];
     int n_B_mats = 8;
     double_cmat B_mats[8] = {bmats.B_17_32, bmats.B_18_32, bmats.B_19_32, bmats.B_25_32, bmats.B_26_32, bmats.B_28_32, bmats.B_30_32, bmats.B_32_32, };

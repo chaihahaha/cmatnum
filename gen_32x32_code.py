@@ -75,8 +75,6 @@ def generate_fm_header_files(base_dir):
 #ifndef FM_{fm_index}_H
 #define FM_{fm_index}_H
 
-int fmm_32x32(double_cmat C, double_cmat A, double_cmat B);
-
 int fm_{fm_index}(double_cmat m, pack_mats_32x32 bmats);
 #endif
 """
@@ -105,10 +103,10 @@ def generate_fm_source_files(base_dir):
         expr_B = B_reduced_exprs[fm_index_1]
 
         content = f"""\
-#include "fm_{fm_index}.h"
 #include "stdafx.h"
+#include "fm_{fm_index}.h"
 
-inline int fm_{fm_index}(double_cmat m, pack_mats_32x32 bmats) {{
+int fm_{fm_index}(double_cmat m, pack_mats_32x32 bmats) {{
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
@@ -150,11 +148,11 @@ inline int fm_{fm_index}(double_cmat m, pack_mats_32x32 bmats) {{
         content += "    cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);\n"
 
         content += """\
-    fmm_32x32(m, tmp0, tmp1);
+    matmul_double_blas(m, tmp0, tmp1);
 """
         m_term = f"m_{fm_index}"
         for Ci, coefficient in m_to_C[m_term]:
-            content += f"    cblas_daxpy(BL*BL, {coefficient}, &m.data[0][0], 1, &bmats.{Ci}.data[0][0], 1);"
+            content += f"    cblas_daxpy(BL*BL, {coefficient}, &m.data[0][0], 1, &bmats.{Ci}.data[0][0], 1);\n"
         content += """\
     free_double_matrix(tmp0);
     free_double_matrix(tmp1);
@@ -174,6 +172,7 @@ def generate_fmm_32x32_header():
 #include <stdio.h>
 #include <stdlib.h>
 #include "cmat.h"
+#include "matmul.h"
 """
     content += """\
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B);
@@ -300,10 +299,10 @@ def generate_fAx_source_files(base_dir):
         idf_upper = idf.upper()
         sum_expr = sp.ccode(j)
         content = f"""\
-#include "f{idf}.h"
 #include "stdafx.h"
+#include "f{idf}.h"
 
-inline int f{idf}(pack_mats_32x32 bmats) {{
+int f{idf}(pack_mats_32x32 bmats) {{
     int BL = bmats.A_1_1.shape[0];
 """
         sum_expr_A = sum_expr
@@ -356,10 +355,10 @@ def generate_fBx_source_files(base_dir):
         idf_upper = idf.upper()
         sum_expr = sp.ccode(j)
         content = f"""\
-#include "f{idf}.h"
 #include "stdafx.h"
+#include "f{idf}.h"
 
-inline int f{idf}(pack_mats_32x32 bmats) {{
+int f{idf}(pack_mats_32x32 bmats) {{
     int BL = bmats.B_1_1.shape[0];
 """
         sum_expr_B = sum_expr

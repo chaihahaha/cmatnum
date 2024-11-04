@@ -16836,7 +16836,7 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     int NS = BL*BL;
     double_cmat m;
     create_double_matrix(pairint {BL, BL}, &m);
-pack_mats_32x32 bmats;
+    pack_mats_32x32 bmats;
     double_cmat A_x_1;
     double_cmat B_x_1;
     double_cmat C_x_1;

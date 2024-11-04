@@ -19,7 +19,7 @@ file(GLOB_RECURSE SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/matmul.c"
 )
 add_compile_options(-std=c11)
-add_compile_options(-O3)
+add_compile_options(-O2)
 add_compile_options(-march=native)
 
 # Add the executable target
@@ -29,7 +29,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/generated_files"
 )
 target_precompile_headers(${PROJECT_NAME} PRIVATE stdafx.h)
-set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/fmm_32x32.c" "${CMAKE_CURRENT_SOURCE_DIR}/main.c" PROPERTIES COMPILE_FLAGS "-O1")
+set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/main.c" PROPERTIES COMPILE_FLAGS "-O1")
 
 include(FindBLAS)
 

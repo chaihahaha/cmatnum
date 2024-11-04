@@ -1,7 +1,7 @@
-#include "fBx9525.h"
 #include "stdafx.h"
+#include "fBx9525.h"
 
-inline int fBx9525(pack_mats_32x32 bmats) {
+int fBx9525(pack_mats_32x32 bmats) {
     int BL = bmats.B_1_1.shape[0];
     int n_B_mats = 8;
     double_cmat B_mats[8] = {bmats.B_25_1, bmats.B_25_2, bmats.B_25_3, bmats.B_25_4, bmats.B_25_5, bmats.B_25_6, bmats.B_25_7, bmats.B_25_8, };

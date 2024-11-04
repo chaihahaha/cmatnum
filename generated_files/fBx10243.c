@@ -1,7 +1,7 @@
-#include "fBx10243.h"
 #include "stdafx.h"
+#include "fBx10243.h"
 
-inline int fBx10243(pack_mats_32x32 bmats) {
+int fBx10243(pack_mats_32x32 bmats) {
     int BL = bmats.B_1_1.shape[0];
     int n_B_mats = 6;
     double_cmat B_mats[6] = {bmats.B_10_23, bmats.B_11_23, bmats.B_14_23, bmats.B_7_23, bmats.B_8_23, bmats.B_9_23, };

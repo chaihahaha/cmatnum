@@ -1,7 +1,7 @@
-#include "fm_6055.h"
 #include "stdafx.h"
+#include "fm_6055.h"
 
-inline int fm_6055(double_cmat m, pack_mats_32x32 bmats) {
+int fm_6055(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
@@ -16,8 +16,11 @@ inline int fm_6055(double_cmat m, pack_mats_32x32 bmats) {
     matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
     matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
     cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);
-    fmm_32x32(m, tmp0, tmp1);
-    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_16_1.data[0][0], 1);    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_17_5.data[0][0], 1);    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_5_32.data[0][0], 1);    free_double_matrix(tmp0);
+    matmul_double_blas(m, tmp0, tmp1);
+    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_16_1.data[0][0], 1);
+    cblas_daxpy(BL*BL, 1, &m.data[0][0], 1, &bmats.C_17_5.data[0][0], 1);
+    cblas_daxpy(BL*BL, -1, &m.data[0][0], 1, &bmats.C_5_32.data[0][0], 1);
+    free_double_matrix(tmp0);
     free_double_matrix(tmp1);
     return 0;
 }

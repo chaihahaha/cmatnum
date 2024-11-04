@@ -1,7 +1,7 @@
-#include "fAx8387.h"
 #include "stdafx.h"
+#include "fAx8387.h"
 
-inline int fAx8387(pack_mats_32x32 bmats) {
+int fAx8387(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
     int n_A_mats = 14;
     double_cmat A_mats[14] = {bmats.A_6_10, bmats.A_6_11, bmats.A_6_12, bmats.A_6_13, bmats.A_6_14, bmats.A_6_15, bmats.A_6_16, bmats.A_6_3, bmats.A_6_4, bmats.A_6_5, bmats.A_6_6, bmats.A_6_7, bmats.A_6_8, bmats.A_6_9, };

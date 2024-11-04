@@ -1,7 +1,7 @@
-#include "fAx6624.h"
 #include "stdafx.h"
+#include "fAx6624.h"
 
-inline int fAx6624(pack_mats_32x32 bmats) {
+int fAx6624(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
     int n_A_mats = 8;
     double_cmat A_mats[8] = {bmats.A_17_18, bmats.A_17_20, bmats.A_17_21, bmats.A_17_22, bmats.A_17_23, bmats.A_17_24, bmats.A_17_25, bmats.A_17_26, };

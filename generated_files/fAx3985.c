@@ -1,7 +1,7 @@
-#include "fAx3985.h"
 #include "stdafx.h"
+#include "fAx3985.h"
 
-inline int fAx3985(pack_mats_32x32 bmats) {
+int fAx3985(pack_mats_32x32 bmats) {
     int BL = bmats.A_1_1.shape[0];
     int n_A_mats = 14;
     double_cmat A_mats[14] = {bmats.A_20_1, bmats.A_20_10, bmats.A_20_11, bmats.A_20_12, bmats.A_20_13, bmats.A_20_14, bmats.A_20_15, bmats.A_20_16, bmats.A_20_2, bmats.A_20_3, bmats.A_20_4, bmats.A_20_7, bmats.A_20_8, bmats.A_20_9, };
