@@ -23,19 +23,20 @@ add_compile_options(-O3)
 add_compile_options(-march=native)
 
 # Add the executable target
-add_executable(fmm32x32 ${SOURCE_FILES})
-target_include_directories(fmm32x32 PRIVATE
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+target_include_directories(${PROJECT_NAME} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/generated_files"
 )
-target_precompile_headers(fmm32x32 PRIVATE stdafx.h)
+target_precompile_headers(${PROJECT_NAME} PRIVATE stdafx.h)
 set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/fmm_32x32.c" "${CMAKE_CURRENT_SOURCE_DIR}/main.c" PROPERTIES COMPILE_FLAGS "-O1")
 
-find_package(BLAS REQUIRED)
+include(FindBLAS)
 
-if(BLAS_FOUND)
-    target_link_libraries(fmm32x32 PRIVATE openblas)
-endif()
+if (BLAS_FOUND)
+    target_compile_options(${PROJECT_NAME} PRIVATE ${BLAS_LINKER_FLAGS})
+    target_link_libraries(${PROJECT_NAME} ${BLAS_LIBRARIES})
+endif ()
 
 #find_package(OpenMP REQUIRED)
 #find_package(OpenMP REQUIRED)
