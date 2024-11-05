@@ -21,6 +21,7 @@ file(GLOB_RECURSE SOURCE_FILES
 add_compile_options(-std=c11)
 add_compile_options(-O2)
 add_compile_options(-march=native)
+add_compile_options(-D_POSIX_C_SOURCE=200809L)
 
 # Add the executable target
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
