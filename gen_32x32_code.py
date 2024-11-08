@@ -106,7 +106,7 @@ def generate_fm_source_files(base_dir):
 #include "stdafx.h"
 #include "fm_{fm_index}.h"
 
-int fm_{fm_index}(double_cmat m, pack_mats_32x32 bmats) {{
+inline int fm_{fm_index}(double_cmat m, pack_mats_32x32 bmats) {{
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
@@ -302,7 +302,7 @@ def generate_fAx_source_files(base_dir):
 #include "stdafx.h"
 #include "f{idf}.h"
 
-int f{idf}(pack_mats_32x32 bmats) {{
+inline int f{idf}(pack_mats_32x32 bmats) {{
     int BL = bmats.A_1_1.shape[0];
 """
         sum_expr_A = sum_expr
@@ -358,7 +358,7 @@ def generate_fBx_source_files(base_dir):
 #include "stdafx.h"
 #include "f{idf}.h"
 
-int f{idf}(pack_mats_32x32 bmats) {{
+inline int f{idf}(pack_mats_32x32 bmats) {{
     int BL = bmats.B_1_1.shape[0];
 """
         sum_expr_B = sum_expr
