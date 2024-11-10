@@ -126,7 +126,6 @@ def compute_min_intermediates_eval_order(dep_graph, inputs, outputs, tmp_prefix=
         # Update max temps in use
         max_temps_in_use = max(max_temps_in_use, len(active_temps))
 
-    
     eval_order = [(tmp_replaced_graph.nodes[i]['name'], tmp_replaced_graph.nodes[i]['expr']) for i in opt_sorted if str(i) not in inputs]
     print('max temp variables used:', max_temps_in_use)
     expr_of = dict()
@@ -190,12 +189,16 @@ for line in s.split("\n"):
 
 B_expr_list = [sp.parsing.sympy_parser.parse_expr(s) for s in B_expr_str_list]
 
-B_eval_order, B_expr_of = parse_cse_gen_assignments(B_expr_list, 'B_replacements.pickle', global_tmp_prefix='Bx', tmp_replace_prefix='Bxx', fm_tmp_prefix='mB', inputs_prefix='B_')
+#inputs = [f'B_{i+1}_{j+1}' for i in range(32) for j in range(32)]
+#outputs = [f'mB{i}' for i in range(15137)]
 
-with open("B_eval_order.pickle", "wb") as f:
-    pickle.dump(B_eval_order,f)
-with open("B_expr_of.pickle", "wb") as f:
-    pickle.dump(B_expr_of,f)
+symbol_generator = (sp.Symbol(f'Bx{i}') for i in count())
+replacements, reduced_exprs = limited_cse(B_expr_list, 10, symbol_generator)
+with open('B_replacements.pickle', 'wb') as f:
+    pickle.dump(replacements, f)
+with open('B_reduced_exprs.pickle', 'wb') as f:
+    pickle.dump(reduced_exprs, f)
+
 
 A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*17 for s in A_expr_str_list]
 
