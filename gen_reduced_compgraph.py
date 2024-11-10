@@ -126,14 +126,10 @@ def compute_min_intermediates_eval_order(dep_graph, inputs, outputs, tmp_prefix=
         # Update max temps in use
         max_temps_in_use = max(max_temps_in_use, len(active_temps))
 
-    eval_order = [(tmp_replaced_graph.nodes[i]['name'], tmp_replaced_graph.nodes[i]['expr']) for i in opt_sorted if str(i) not in inputs]
+    tmp_name_eval_order = [(tmp_replaced_graph.nodes[i]['name'], tmp_replaced_graph.nodes[i]['expr']) for i in opt_sorted if str(i) not in inputs]
     print('max temp variables used:', max_temps_in_use)
-    expr_of = dict()
-    for i in opt_sorted:
-        if i in outputs:
-            assert i not in expr_of.keys()
-            expr_of[i] = tmp_replaced_graph.nodes[i]['expr']
-    return eval_order, expr_of
+    reduced_exprs = [tmp_replaced_graph.nodes[sp.Symbol(i)]['expr'] for i in outputs]
+    return tmp_name_eval_order, reduced_exprs
 
 def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_'):
     inputs = [f'{inputs_prefix}{i+1}_{j+1}' for i in range(32) for j in range(32)]
@@ -162,8 +158,8 @@ def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', t
             if nj not in dep_graph.nodes:
                 dep_graph.add_node(nj, expr=None, name=nj_name)
             dep_graph.add_edge(nj, i)
-    eval_order, expr_of = compute_min_intermediates_eval_order(dep_graph, inputs, outputs, tmp_prefix=tmp_replace_prefix)
-    return eval_order, expr_of
+    eval_order, reduced_exprs = compute_min_intermediates_eval_order(dep_graph, inputs, outputs, tmp_prefix=tmp_replace_prefix)
+    return eval_order, reduced_exprs
 
 #a, b, c, d, e, f, g, h, x, y, z = sp.symbols('a b c d e f g h x y z')
 #expressions = [(f, a+17*c+e), (g, f+2*b), (h, g+d), (x, g+f+a), (y, f+h+e), (z, h+c+d)]
@@ -202,9 +198,9 @@ with open('B_reduced_exprs.pickle', 'wb') as f:
 
 A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*17 for s in A_expr_str_list]
 
-A_eval_order, A_expr_of = parse_cse_gen_assignments(A_expr_list, 'A_replacements.pickle', global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_')
+A_eval_order, A_reduced_exprs = parse_cse_gen_assignments(A_expr_list, 'A_replacements.pickle', global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_')
 
 with open("A_eval_order.pickle", "wb") as f:
     pickle.dump(A_eval_order,f)
-with open("A_expr_of.pickle", "wb") as f:
-    pickle.dump(A_expr_of,f)
+with open("A_reduced_exprs.pickle", "wb") as f:
+    pickle.dump(A_reduced_exprs,f)
