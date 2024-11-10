@@ -4,28 +4,7 @@ import pickle
 from collections import defaultdict, deque
 from itertools import count
 import networkx as nx
-
-def dependency_resolution(assignments):
-    # Step 1: Create a directed graph where each symbol points to its dependencies
-    G = nx.DiGraph()
-    
-    # Add nodes and edges based on dependencies in the assignments
-    for lhs, rhs in assignments:
-        G.add_node(lhs)
-        for symbol in rhs.free_symbols:
-            # Add an edge if rhs has a dependency on another assignment's lhs
-            if symbol != lhs:  # Prevent self-loops
-                G.add_edge(lhs, symbol)
-    
-    # Step 2: Topologically sort the nodes (i.e., order assignments for valid evaluation)
-    try:
-        sorted_lhs = list(nx.topological_sort(G))
-    except nx.NetworkXUnfeasible:
-        raise ValueError("The assignments contain circular dependencies and cannot be evaluated in order.")
-    
-    # Step 3: Sort the original list of assignments based on the topological order
-    sorted_assignments = sorted(assignments, key=lambda x: sorted_lhs.index(x[0]), reverse=True)
-    return sorted_assignments
+import os
 
 def limited_cse(expressions, min_terms, symbol_generator):
     replacements, reduced_exprs = sp.cse(expressions, symbols=symbol_generator)
@@ -69,15 +48,19 @@ def compute_optimized_order(dep_graph, inputs, outputs):
     for node in topo_sorted:
         for dep in dep_graph.predecessors(node):
             last_use[dep] = node  # update last use for each dependency
+
+    is_output = {n:n in outputs for n in dep_graph.nodes}
+    indexof_lastuse = {n:topo_sorted.index(last_use.get(n, n)) for n in dep_graph.nodes}
     
     while ready_nodes:
+        print('#ready_nodes', len(ready_nodes))
         # Sort ready nodes by a priority metric:
         # - prioritize by 'last use' closeness (nodes that can free resources sooner)
         # - prioritize outputs directly if possible
         ready_nodes.sort(
             key=lambda n: (
-                n in outputs,                            # outputs have higher priority
-                topo_sorted.index(last_use.get(n, n)),   # nodes closer to last use
+                is_output[n],                            # outputs have higher priority
+                indexof_lastuse[n],   # nodes closer to last use
                 dep_graph.out_degree(n)                  # fewer dependencies get higher priority
             ),
             reverse=True
@@ -94,14 +77,15 @@ def compute_optimized_order(dep_graph, inputs, outputs):
                 ready_nodes.append(succ)
         
         # Track usage of temporary symbols
-        if current not in inputs and current not in outputs:
+        current_symbol_name = str(current)
+        if current_symbol_name not in inputs and current_symbol_name not in outputs:
             used_temps.add(current)
             if last_use[current] == current:  # last time this temp is used
                 used_temps.remove(current)
     
     return eval_order
 
-def compute_min_intermediates_evaluation_scheme(dep_graph, inputs, outputs):
+def compute_min_intermediates_eval_order(dep_graph, inputs, outputs, tmp_prefix='tmp'):
     # return the evaluation scheme that has least tmp variables used
     opt_sorted = compute_optimized_order(dep_graph.copy(), inputs, outputs)
     
@@ -110,7 +94,6 @@ def compute_min_intermediates_evaluation_scheme(dep_graph, inputs, outputs):
     for node in opt_sorted:
         for dep in dep_graph.predecessors(node):
             last_use[dep] = node  # update last use for each dependency
-    print(last_use)
     
     # Pool of available temporary symbols
     temp_pool = set()
@@ -123,16 +106,17 @@ def compute_min_intermediates_evaluation_scheme(dep_graph, inputs, outputs):
     for node in opt_sorted:
         # If an expression's dependencies are no longer needed, release temps
         for dep in dep_graph.predecessors(node):
-            if dep in last_use and last_use[dep] == node and dep not in inputs:
+            if dep in last_use and last_use[dep] == node and str(dep) not in inputs:
                 temp_pool.add(active_temps[dep])
                 del active_temps[dep]
         
         # Assign a temporary symbol for this node's result
-        if node not in inputs and node not in outputs:
+        node_symbol_name = str(node)
+        if node_symbol_name not in inputs and node_symbol_name not in outputs:
             if temp_pool:
                 temp = temp_pool.pop()
             else:
-                temp = f'temp{len(active_temps) + 1}'
+                temp = f'{tmp_prefix}{len(active_temps) + 1}'
             active_temps[node] = temp
             tmp_replaced_graph.nodes[node]['name'] = temp
             for showing_exprs in dep_graph.successors(node):
@@ -142,26 +126,50 @@ def compute_min_intermediates_evaluation_scheme(dep_graph, inputs, outputs):
         # Update max temps in use
         max_temps_in_use = max(max_temps_in_use, len(active_temps))
 
-        #print('node', node)
-        #print('succ', list(dep_graph.successors(node)))
     
-    evaluation_scheme = [(tmp_replaced_graph.nodes[i]['name'], tmp_replaced_graph.nodes[i]['expr']) for i in opt_sorted if i not in inputs]
+    eval_order = [(tmp_replaced_graph.nodes[i]['name'], tmp_replaced_graph.nodes[i]['expr']) for i in opt_sorted if str(i) not in inputs]
     print('max temp variables used:', max_temps_in_use)
-    return evaluation_scheme
+    expr_of = dict()
+    for i in opt_sorted:
+        if i in outputs:
+            assert i not in expr_of.keys()
+            expr_of[i] = tmp_replaced_graph.nodes[i]['expr']
+    return eval_order, expr_of
+
+def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_'):
+    inputs = [f'{inputs_prefix}{i+1}_{j+1}' for i in range(32) for j in range(32)]
+    outputs = [f'{fm_tmp_prefix}{i}' for i in range(15137)]
+    if os.path.isfile(rep_filename):
+        with open(rep_filename, 'rb') as f:
+            replacements = pickle.load(f)
+    else:
+        symbol_generator = (sp.Symbol(f'{global_tmp_prefix}{i}') for i in count())
+        replacements, reduced_exprs = limited_cse(expr_list, 10, symbol_generator)
+        rep_lhs = [i[0] for i in replacements]
+        rep_rhs = [i[1] for i in replacements]
+        rhs_replacements, rhs_reduced_exprs = limited_cse(rep_rhs, 4, symbol_generator)
+        replacements = rhs_replacements + list(zip(rep_lhs, rhs_reduced_exprs)) + list(zip(outputs,reduced_exprs))
+        with open(rep_filename, 'wb') as f:
+            pickle.dump(replacements, f)
+
+    dep_graph = nx.DiGraph()
+    for i,j in replacements:
+        if i not in dep_graph.nodes:
+            dep_graph.add_node(i, expr=j, name=str(i))
+        else:
+            dep_graph.nodes[i]['expr'] = j
+        for nj in j.free_symbols:
+            nj_name = str(nj)
+            if nj not in dep_graph.nodes:
+                dep_graph.add_node(nj, expr=None, name=nj_name)
+            dep_graph.add_edge(nj, i)
+    eval_order, expr_of = compute_min_intermediates_eval_order(dep_graph, inputs, outputs, tmp_prefix=tmp_replace_prefix)
+    return eval_order, expr_of
 
 #a, b, c, d, e, f, g, h, x, y, z = sp.symbols('a b c d e f g h x y z')
 #expressions = [(f, a+17*c+e), (g, f+2*b), (h, g+d), (x, g+f+a), (y, f+h+e), (z, h+c+d)]
 #inputs = [a, b, c, d, e]
 #outputs = [x, y, z]
-#dep_graph = nx.DiGraph()
-#for i,j in expressions:
-#    if i not in dep_graph.nodes:
-#        dep_graph.add_node(i, expr=j, name=str(i))
-#    for nj in j.free_symbols:
-#        if nj not in dep_graph.nodes:
-#            dep_graph.add_node(nj, expr=None, name=str(nj))
-#        dep_graph.add_edge(nj, i)
-#eval_scheme = compute_min_intermediates_evaluation_scheme(dep_graph, inputs, outputs)
 #print(eval_scheme)
 
 with open('m.txt','r') as f:
@@ -179,53 +187,21 @@ for line in s.split("\n"):
         B_expre = re.match(B_pattern, terms[1])
         A_expr_str_list.append(A_expre.string)
         B_expr_str_list.append(B_expre.string)
-A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*17 for s in A_expr_str_list]
+
 B_expr_list = [sp.parsing.sympy_parser.parse_expr(s) for s in B_expr_str_list]
-symbol_generator_A = (sp.Symbol(f'Ax{i}') for i in count())
-symbol_generator_B = (sp.Symbol(f'Bx{i}') for i in count())
-A_replacements, A_reduced_exprs = limited_cse(A_expr_list, 10, symbol_generator_A)
-A_rep_lhs = [i[0] for i in A_replacements]
-A_rep_rhs = [i[1] for i in A_replacements]
-A_rhs_replacements, A_rhs_reduced_exprs = limited_cse(A_rep_rhs, 4, symbol_generator_A)
-A_replacements = A_rhs_replacements + list(zip(A_rep_lhs, A_rhs_reduced_exprs)) # wrong order, should be topo sorted
-A_replacements = dependency_resolution(A_replacements)
-print(A_replacements, A_reduced_exprs)
 
-B_replacements, B_reduced_exprs = limited_cse(B_expr_list, 10, symbol_generator_B)
-B_rep_lhs = [i[0] for i in B_replacements]
-B_rep_rhs = [i[1] for i in B_replacements]
-B_rhs_replacements, B_rhs_reduced_exprs = limited_cse(B_rep_rhs, 4, symbol_generator_B)
-B_replacements = B_rhs_replacements + list(zip(B_rep_lhs, B_rhs_reduced_exprs))
-B_replacements = dependency_resolution(B_replacements)
-print(B_replacements, B_reduced_exprs)
+B_eval_order, B_expr_of = parse_cse_gen_assignments(B_expr_list, 'B_replacements.pickle', global_tmp_prefix='Bx', tmp_replace_prefix='Bxx', fm_tmp_prefix='mB', inputs_prefix='B_')
 
-#print('A_replacements:', A_replacements)
-#print('A_reduced_exprs:', A_reduced_exprs)
-#print('B_replacements:', B_replacements)
-#print('B_reduced_exprs:', B_reduced_exprs)
+with open("B_eval_order.pickle", "wb") as f:
+    pickle.dump(B_eval_order,f)
+with open("B_expr_of.pickle", "wb") as f:
+    pickle.dump(B_expr_of,f)
 
-with open("A_replacements.pickle", "wb") as f:
-    pickle.dump(A_replacements,f)
-with open("A_reduced_exprs.pickle", "wb") as f:
-    pickle.dump(A_reduced_exprs,f)
-with open("B_replacements.pickle", "wb") as f:
-    pickle.dump(B_replacements,f)
-with open("B_reduced_exprs.pickle", "wb") as f:
-    pickle.dump(B_reduced_exprs,f)
+A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*17 for s in A_expr_str_list]
 
-lefts = {str(i) for i,j in A_replacements}
-rights = {str(k) for i,j in A_replacements for k in j.free_symbols}
-for i in rights:
-    if 'x' in i:
-        if i not in lefts:
-            print(i, lefts)
-        assert i in lefts
+A_eval_order, A_expr_of = parse_cse_gen_assignments(A_expr_list, 'A_replacements.pickle', global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_')
 
-lefts = {str(i) for i,j in B_replacements}
-rights = {str(k) for i,j in B_replacements for k in j.free_symbols}
-for i in rights:
-    if 'x' in i:
-        if i not in lefts:
-            print(i, lefts)
-        assert i in lefts
-
+with open("A_eval_order.pickle", "wb") as f:
+    pickle.dump(A_eval_order,f)
+with open("A_expr_of.pickle", "wb") as f:
+    pickle.dump(A_expr_of,f)
