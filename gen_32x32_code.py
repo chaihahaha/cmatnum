@@ -50,11 +50,15 @@ struct pack_mats_32x32 {
             content+=f"    double_cmat B_{i}_{j};\n"
             content+=f"    double_cmat C_{i}_{j};\n"
 
-    with open("A_replacements.pickle", "rb") as f:
-        A_replacements = pickle.load(f)
+    with open("A_eval_order.pickle", "rb") as f:
+        A_eval_order = pickle.load(f)
+    Axx_eval = [i for i in A_eval_order if 'Axx' in i[0]]
+    Axx_names = list(set([i[0] for i in Axx_eval]))
+    N_Axx_eval = len(Axx_eval)
+
     with open("B_replacements.pickle", "rb") as f:
         B_replacements = pickle.load(f)
-    for i,j in A_replacements:
+    for i in Axx_names:
         content+=f"    double_cmat {i};\n"
     for i,j in B_replacements:
         content+=f"    double_cmat {i};\n"
@@ -116,7 +120,7 @@ inline int fm_{fm_index}(double_cmat m, pack_mats_32x32 bmats) {{
         
         sum_expr_A = sp.ccode(expr_A)
         pattern = r"([+-]?\s*\d*)\s*\*?\s*(m_\d+)" 
-        A_names, A_coeffs = formula_to_matrices_coeffs_lists(sum_expr_A,  r"([+-]?\s*\d*)\s*\*?\s*(A_\d*_\d*|Ax\d+)")
+        A_names, A_coeffs = formula_to_matrices_coeffs_lists(sum_expr_A,  r"([+-]?\s*\d*)\s*\*?\s*(A_\d*_\d*|Axx\d+)")
         sum_expr_B = sp.ccode(expr_B)
         B_names, B_coeffs = formula_to_matrices_coeffs_lists(sum_expr_B,  r"([+-]?\s*\d*)\s*\*?\s*(B_\d*_\d*|Bx\d+)")
 
@@ -187,11 +191,20 @@ def generate_fmm_32x32_source():
     content = ""
     for fm_index in range(1, 15137):
         content += (f"#include \"fm_{fm_index}.h\"\n")
-    with open("A_replacements.pickle", "rb") as f:
-        A_replacements = pickle.load(f)
+    with open("A_eval_order.pickle", "rb") as f:
+        A_eval_order = pickle.load(f)
     with open("B_replacements.pickle", "rb") as f:
         B_replacements = pickle.load(f)
-    for i,j in A_replacements+B_replacements:
+
+    # extract the Axx evals that has to be called in separate functions
+    # mA123 evals are called in fm_123
+    Axx_eval = [i for i in A_eval_order if 'Axx' in i[0]]
+    Axx_names = list(set([i[0] for i in Axx_eval]))
+    N_Axx_eval = len(Axx_eval)
+    for i in range(N_Axx_eval):
+        content += (f"#include \"fAxxeval{i}.h\"\n")
+
+    for i,j in B_replacements:
         idf = str(i)
         content += (f"#include \"f{idf}.h\"\n")
     content += """\
@@ -232,23 +245,28 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
             content += (f"    bmats.B_{i}_{j} = slice_double_matrix(B_x_{j}, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{0, BL}});\n")
             content += (f"    bmats.C_{i}_{j} = slice_double_matrix(C_x_{j}, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{0, BL}});\n")
 
-    for i,j in A_replacements:
+    for i in Axx_names:
         content+=f"    create_double_matrix(pairint {{BL, BL}}, &bmats.{i});\n"
     for i,j in B_replacements:
         content+=f"    create_double_matrix(pairint {{BL, BL}}, &bmats.{i});\n"
 
     # generate func calls to fAxi, fBxi
-    with open("A_replacements.pickle", "rb") as f:
-        A_replacements = pickle.load(f)
-    with open("B_replacements.pickle", "rb") as f:
-        B_replacements = pickle.load(f)
-    for i,j in A_replacements+B_replacements:
+    for i,j in B_replacements:
         idf = str(i)
         content += f"    f{idf}(bmats);\n"
 
     # generate func calls to fm_i
-    for i in range(1, 15137):
-        content += f"    fm_{i}(m, bmats);\n"
+    cnt_Axx = 0
+    for i in A_eval_order:
+        var_name = i[0]
+        expr = i[1]
+        final_m_str = 'mA'
+        temp_str = 'Axx'
+        if final_m_str in var_name:
+            content += f"    fm_{var_name.lstrip(final_m_str)}(m, bmats);\n"
+        if temp_str in var_name:
+            content += f"    fAxxeval{cnt_Axx}(bmats);\n"
+            cnt_Axx += 1
 
     # copy C_x_j to C[:][j]
     for j in range(1,33):
@@ -263,7 +281,7 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
         content += (f"    free_double_matrix(A_x_{j});\n")
         content += (f"    free_double_matrix(B_x_{j});\n")
         content += (f"    free_double_matrix(C_x_{j});\n")
-    for i,j in A_replacements:
+    for i in Axx_names:
         content+=f"    free_double_matrix(bmats.{i});\n"
     for i,j in B_replacements:
         content+=f"    free_double_matrix(bmats.{i});\n"
@@ -291,23 +309,26 @@ def get_m_to_C_inc_mapping(C_formulas, d_mterms):
                 m_to_C[str(m_term)].append((Ci, formula.coeff(m_term)))
     return m_to_C
 
-def generate_fAx_source_files(base_dir):
-    with open("A_replacements.pickle", "rb") as f:
-        A_replacements = pickle.load(f)
-    for i,j in A_replacements:
-        idf = str(i)
-        idf_upper = idf.upper()
-        sum_expr = sp.ccode(j)
+def generate_fAxxeval_source_files(base_dir):
+    with open("A_eval_order.pickle", "rb") as f:
+        A_eval_order = pickle.load(f)
+    Axx_eval = [i for i in A_eval_order if 'Axx' in i[0]]
+    Axx_names = list(set([i[0] for i in Axx_eval]))
+    N_Axx_eval = len(Axx_eval)
+    for i in range(N_Axx_eval):
+        idf = Axx_eval[i][0]
+        expr = Axx_eval[i][1]
+        func_name = f'Axxeval{i}'
+        sum_expr = sp.ccode(expr)
         content = f"""\
 #include "stdafx.h"
-#include "f{idf}.h"
+#include "f{func_name}.h"
 
-inline int f{idf}(pack_mats_32x32 bmats) {{
+inline int f{func_name}(pack_mats_32x32 bmats) {{
     int BL = bmats.A_1_1.shape[0];
 """
         sum_expr_A = sum_expr
-        pattern = r"([+-]?\s*\d*)\s*\*?\s*(m_\d+)" 
-        A_names, A_coeffs = formula_to_matrices_coeffs_lists(sum_expr_A,  r"([+-]?\s*\d*)\s*\*?\s*(A_\d*_\d*|Ax\d+)")
+        A_names, A_coeffs = formula_to_matrices_coeffs_lists(sum_expr_A,  r"([+-]?\s*\d*)\s*\*?\s*(A_\d*_\d*|Axx\d+)")
 
         n_A_mats = len(A_names)
 
@@ -326,24 +347,29 @@ inline int f{idf}(pack_mats_32x32 bmats) {{
     return 0;
 }
 """
-        with open(f"{base_dir}/f{idf}.c", "w") as f:
+        with open(f"{base_dir}/f{func_name}.c", "w") as f:
             f.write(content)
     return
 
-def generate_fAx_header_files(base_dir):
-    with open("A_replacements.pickle", "rb") as f:
-        A_replacements = pickle.load(f)
-    for i,j in A_replacements:
-        idf = str(i)
-        idf_upper = idf.upper()
+def generate_fAxxeval_header_files(base_dir):
+    with open("A_eval_order.pickle", "rb") as f:
+        A_eval_order = pickle.load(f)
+    Axx_eval = [i for i in A_eval_order if 'Axx' in i[0]]
+    Axx_names = list(set([i[0] for i in Axx_eval]))
+    N_Axx_eval = len(Axx_eval)
+    for i in range(N_Axx_eval):
+        idf = Axx_eval[i][0]
+        expr = Axx_eval[i][1]
+        func_name = f'Axxeval{i}'
+        func_name_upper = func_name.upper()
         content = f"""\
-#ifndef F{idf_upper}_H
-#define F{idf_upper}_H
+#ifndef F{func_name_upper}_H
+#define F{func_name_upper}_H
 
-int f{idf}(pack_mats_32x32 bmats);
+int f{func_name}(pack_mats_32x32 bmats);
 #endif
 """
-        with open(f"{base_dir}/f{idf}.h", "w") as f:
+        with open(f"{base_dir}/f{func_name}.h", "w") as f:
             f.write(content)
     return
 
@@ -408,7 +434,7 @@ generate_fmm_32x32_source()
 generate_fm_source_files(base_dir)
 generate_packmats_file(base_dir)
 generate_fm_header_files(base_dir)
-generate_fAx_source_files(base_dir)
-generate_fAx_header_files(base_dir)
+generate_fAxxeval_source_files(base_dir)
+generate_fAxxeval_header_files(base_dir)
 generate_fBx_source_files(base_dir)
 generate_fBx_header_files(base_dir)

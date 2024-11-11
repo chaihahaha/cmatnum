@@ -133,7 +133,7 @@ def compute_min_intermediates_eval_order(dep_graph, inputs, outputs, tmp_prefix=
 
 def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_'):
     inputs = [f'{inputs_prefix}{i+1}_{j+1}' for i in range(32) for j in range(32)]
-    outputs = [f'{fm_tmp_prefix}{i}' for i in range(15137)]
+    outputs = [f'{fm_tmp_prefix}{i+1}' for i in range(15137)]
     if os.path.isfile(rep_filename):
         with open(rep_filename, 'rb') as f:
             replacements = pickle.load(f)
