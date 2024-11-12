@@ -140,10 +140,7 @@ def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', t
     else:
         symbol_generator = (sp.Symbol(f'{global_tmp_prefix}{i}') for i in count())
         replacements, reduced_exprs = limited_cse(expr_list, 10, symbol_generator)
-        rep_lhs = [i[0] for i in replacements]
-        rep_rhs = [i[1] for i in replacements]
-        rhs_replacements, rhs_reduced_exprs = limited_cse(rep_rhs, 4, symbol_generator)
-        replacements = rhs_replacements + list(zip(rep_lhs, rhs_reduced_exprs)) + list(zip(outputs,reduced_exprs))
+        replacements = replacements + list(zip(outputs,reduced_exprs))
         with open(rep_filename, 'wb') as f:
             pickle.dump(replacements, f)
 
@@ -183,6 +180,15 @@ for line in s.split("\n"):
         A_expr_str_list.append(A_expre.string)
         B_expr_str_list.append(B_expre.string)
 
+A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*17 for s in A_expr_str_list]
+
+A_eval_order, A_reduced_exprs = parse_cse_gen_assignments(A_expr_list, 'A_replacements.pickle', global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_')
+
+with open("A_eval_order.pickle", "wb") as f:
+    pickle.dump(A_eval_order,f)
+with open("A_reduced_exprs.pickle", "wb") as f:
+    pickle.dump(A_reduced_exprs,f)
+
 B_expr_list = [sp.parsing.sympy_parser.parse_expr(s) for s in B_expr_str_list]
 
 #inputs = [f'B_{i+1}_{j+1}' for i in range(32) for j in range(32)]
@@ -196,11 +202,3 @@ with open('B_reduced_exprs.pickle', 'wb') as f:
     pickle.dump(reduced_exprs, f)
 
 
-A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*17 for s in A_expr_str_list]
-
-A_eval_order, A_reduced_exprs = parse_cse_gen_assignments(A_expr_list, 'A_replacements.pickle', global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_')
-
-with open("A_eval_order.pickle", "wb") as f:
-    pickle.dump(A_eval_order,f)
-with open("A_reduced_exprs.pickle", "wb") as f:
-    pickle.dump(A_reduced_exprs,f)
