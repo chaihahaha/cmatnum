@@ -2,14 +2,7 @@
 #define MATMUL_H
 
 #include "cmat.h"
-#include <emmintrin.h>
 #include "cblas.h"
-
-#ifndef CLS
-#define CLS 64
-#endif
-
-#define SM (CLS / sizeof(double))
 
 int matmul_float(float_cmat matA, float_cmat matB, float_cmat matC);
 
