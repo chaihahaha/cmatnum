@@ -1,15 +1,15 @@
 #include "stdafx.h"
 #include "fm_9667.h"
 
-int fm_9667(double_cmat m, pack_mats_32x32 bmats) {
+inline int fm_9667(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    int n_A_mats = 6;
-    double_cmat A_mats[6] = {bmats.A_28_15, bmats.A_28_16, bmats.A_28_31, bmats.A_28_32, bmats.Ax612, bmats.Ax688, };
-    double A_coeffs[6] = {-1, -1, -1, -1, -1, -1, };
+    int n_A_mats = 1;
+    double_cmat A_mats[1] = {bmats.Axx795, };
+    double A_coeffs[1] = {1, };
     int n_B_mats = 1;
     double_cmat B_mats[1] = {bmats.Bx6296, };
     double B_coeffs[1] = {-1, };

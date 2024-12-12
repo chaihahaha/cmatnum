@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "fm_14852.h"
 
-int fm_14852(double_cmat m, pack_mats_32x32 bmats) {
+inline int fm_14852(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    int n_A_mats = 6;
-    double_cmat A_mats[6] = {bmats.A_15_15, bmats.A_15_16, bmats.A_15_30, bmats.A_15_31, bmats.Ax649, bmats.Ax8494, };
-    double A_coeffs[6] = {-1, -1, 1, -16, -1, -1, };
-    int n_B_mats = 33;
-    double_cmat B_mats[33] = {bmats.B_10_31, bmats.B_11_31, bmats.B_12_31, bmats.B_13_31, bmats.B_14_31, bmats.B_15_15, bmats.B_15_31, bmats.B_16_31, bmats.B_1_31, bmats.B_2_31, bmats.B_31_1, bmats.B_31_10, bmats.B_31_11, bmats.B_31_12, bmats.B_31_13, bmats.B_31_14, bmats.B_31_15, bmats.B_31_16, bmats.B_31_2, bmats.B_31_3, bmats.B_31_4, bmats.B_31_5, bmats.B_31_6, bmats.B_31_7, bmats.B_31_8, bmats.B_31_9, bmats.B_3_31, bmats.B_4_31, bmats.B_5_31, bmats.B_6_31, bmats.B_7_31, bmats.B_8_31, bmats.B_9_31, };
-    double B_coeffs[33] = {-1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
+    int n_A_mats = 4;
+    double_cmat A_mats[4] = {bmats.Axx1017, bmats.Axx1622, bmats.Axx1892, bmats.Axx2126, };
+    double A_coeffs[4] = {-1, -1, -1, -1, };
+    int n_B_mats = 17;
+    double_cmat B_mats[17] = {bmats.B_15_15, bmats.Bx12653, bmats.Bx12849, bmats.Bx13062, bmats.Bx13066, bmats.Bx13070, bmats.Bx13073, bmats.Bx13075, bmats.Bx13077, bmats.Bx13079, bmats.Bx13081, bmats.Bx13083, bmats.Bx13085, bmats.Bx13087, bmats.Bx13089, bmats.Bx13091, bmats.Bx13092, };
+    double B_coeffs[17] = {1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
     matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
     matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
     cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);

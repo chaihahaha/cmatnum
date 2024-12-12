@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "fm_360.h"
 
-int fm_360(double_cmat m, pack_mats_32x32 bmats) {
+inline int fm_360(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    int n_A_mats = 6;
-    double_cmat A_mats[6] = {bmats.A_2_30, bmats.A_30_17, bmats.A_30_18, bmats.Ax1751, bmats.Ax529, bmats.Ax878, };
-    double A_coeffs[6] = {-1, 1, -16, 1, 1, 1, };
-    int n_B_mats = 33;
-    double_cmat B_mats[33] = {bmats.B_14_18, bmats.B_17_30, bmats.B_18_1, bmats.B_18_10, bmats.B_18_11, bmats.B_18_12, bmats.B_18_13, bmats.B_18_14, bmats.B_18_15, bmats.B_18_16, bmats.B_18_2, bmats.B_18_3, bmats.B_18_30, bmats.B_18_4, bmats.B_18_5, bmats.B_18_6, bmats.B_18_7, bmats.B_18_8, bmats.B_18_9, bmats.B_19_30, bmats.B_20_30, bmats.B_21_30, bmats.B_22_30, bmats.B_23_30, bmats.B_24_30, bmats.B_25_30, bmats.B_26_30, bmats.B_27_30, bmats.B_28_30, bmats.B_29_30, bmats.B_30_30, bmats.B_31_30, bmats.B_32_30, };
-    double B_coeffs[33] = {1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
+    int n_A_mats = 3;
+    double_cmat A_mats[3] = {bmats.Axx1706, bmats.Axx3379, bmats.Axx394, };
+    double A_coeffs[3] = {1, 1, 1, };
+    int n_B_mats = 18;
+    double_cmat B_mats[18] = {bmats.B_18_14, bmats.B_30_30, bmats.Bx2210, bmats.Bx2242, bmats.Bx2243, bmats.Bx2244, bmats.Bx2245, bmats.Bx2246, bmats.Bx2247, bmats.Bx2248, bmats.Bx2249, bmats.Bx2250, bmats.Bx2251, bmats.Bx2252, bmats.Bx2253, bmats.Bx2254, bmats.Bx2255, bmats.Bx2256, };
+    double B_coeffs[18] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
     matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
     matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
     cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);

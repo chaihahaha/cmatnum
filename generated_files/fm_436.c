@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "fm_436.h"
 
-int fm_436(double_cmat m, pack_mats_32x32 bmats) {
+inline int fm_436(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    int n_A_mats = 6;
-    double_cmat A_mats[6] = {bmats.A_13_25, bmats.A_13_26, bmats.A_9_15, bmats.A_9_16, bmats.Ax2055, bmats.Ax579, };
-    double A_coeffs[6] = {-16, 1, -1, -1, -1, -1, };
-    int n_B_mats = 33;
-    double_cmat B_mats[33] = {bmats.B_10_29, bmats.B_11_29, bmats.B_12_29, bmats.B_13_29, bmats.B_13_9, bmats.B_14_29, bmats.B_15_29, bmats.B_16_29, bmats.B_1_29, bmats.B_25_1, bmats.B_25_10, bmats.B_25_11, bmats.B_25_12, bmats.B_25_13, bmats.B_25_14, bmats.B_25_15, bmats.B_25_16, bmats.B_25_2, bmats.B_25_3, bmats.B_25_4, bmats.B_25_5, bmats.B_25_6, bmats.B_25_7, bmats.B_25_8, bmats.B_25_9, bmats.B_2_29, bmats.B_3_29, bmats.B_4_29, bmats.B_5_29, bmats.B_6_29, bmats.B_7_29, bmats.B_8_29, bmats.B_9_29, };
-    double B_coeffs[33] = {-1, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
+    int n_A_mats = 4;
+    double_cmat A_mats[4] = {bmats.Axx2022, bmats.Axx2440, bmats.Axx2638, bmats.Axx2677, };
+    double A_coeffs[4] = {-1, -1, -1, -1, };
+    int n_B_mats = 17;
+    double_cmat B_mats[17] = {bmats.Bx3180, bmats.Bx3197, bmats.Bx3270, bmats.Bx3286, bmats.Bx3287, bmats.Bx3288, bmats.Bx3289, bmats.Bx3290, bmats.Bx3291, bmats.Bx3292, bmats.Bx3293, bmats.Bx3294, bmats.Bx3295, bmats.Bx3296, bmats.Bx3297, bmats.Bx3298, bmats.Bx3299, };
+    double B_coeffs[17] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
     matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
     matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
     cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);

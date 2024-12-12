@@ -1,0 +1,13 @@
+#include "stdafx.h"
+#include "fBx521.h"
+
+inline int fBx521(pack_mats_32x32 bmats) {
+    int BL = bmats.B_1_1.shape[0];
+    int n_B_mats = 2;
+    double_cmat B_mats[2] = {bmats.B_24_15, bmats.B_2_24, };
+    double B_coeffs[2] = {1, 1, };
+memset(&bmats.Bx521.data[0][0], 0, sizeof(bmats.Bx521.data[0][0])*bmats.Bx521.shape[0]*bmats.Bx521.shape[1]);
+    matlincomb_double_contiguous(bmats.Bx521, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
+
+    return 0;
+}

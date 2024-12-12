@@ -368,6 +368,7 @@ int assign_double_clone(double_cmat m1, double_cmat m2) {
 
 int matlincomb_double_contiguous(double_cmat res, int n_mats, double_cmat* mats, double* coeffs) {
     // res = coeffs[0] * mats[0] + ... + coeffs[n_mats-1] * mats[n_mats-1]
+    // memset(&res.data[0][0], 0, sizeof(res.data[0][0])*res.shape[0]*res.shape[1]); // should not reset because it could appear in RHS
     if (n_mats <= 0) {
         return -1;
     }

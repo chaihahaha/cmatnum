@@ -56,3 +56,6 @@ build/
 .ninja_deps
 *.bz2
 .ninja_log
+.DS_Store
+*.ipynb
+.ipynb_checkpoints

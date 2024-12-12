@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "fm_405.h"
 
-int fm_405(double_cmat m, pack_mats_32x32 bmats) {
+inline int fm_405(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    int n_A_mats = 6;
-    double_cmat A_mats[6] = {bmats.A_27_31, bmats.A_27_32, bmats.A_29_11, bmats.A_29_12, bmats.Ax1973, bmats.Ax609, };
-    double A_coeffs[6] = {-1, -1, -16, 1, -1, -1, };
-    int n_B_mats = 33;
-    double_cmat B_mats[33] = {bmats.B_11_17, bmats.B_11_18, bmats.B_11_19, bmats.B_11_20, bmats.B_11_21, bmats.B_11_22, bmats.B_11_23, bmats.B_11_24, bmats.B_11_25, bmats.B_11_26, bmats.B_11_27, bmats.B_11_28, bmats.B_11_29, bmats.B_11_30, bmats.B_11_31, bmats.B_11_32, bmats.B_17_13, bmats.B_18_13, bmats.B_19_13, bmats.B_20_13, bmats.B_21_13, bmats.B_22_13, bmats.B_23_13, bmats.B_24_13, bmats.B_25_13, bmats.B_26_13, bmats.B_27_13, bmats.B_28_13, bmats.B_29_13, bmats.B_29_27, bmats.B_30_13, bmats.B_31_13, bmats.B_32_13, };
-    double B_coeffs[33] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, -1, -1, -1, };
+    int n_A_mats = 4;
+    double_cmat A_mats[4] = {bmats.Axx2062, bmats.Axx2960, bmats.Axx2962, bmats.Axx673, };
+    double A_coeffs[4] = {-1, -1, -1, -1, };
+    int n_B_mats = 18;
+    double_cmat B_mats[18] = {bmats.B_11_30, bmats.B_30_13, bmats.Bx2859, bmats.Bx2860, bmats.Bx2861, bmats.Bx2862, bmats.Bx2863, bmats.Bx2864, bmats.Bx2865, bmats.Bx2866, bmats.Bx2867, bmats.Bx2868, bmats.Bx2869, bmats.Bx2870, bmats.Bx2871, bmats.Bx2872, bmats.Bx2873, bmats.Bx2874, };
+    double B_coeffs[18] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
     matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
     matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
     cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);

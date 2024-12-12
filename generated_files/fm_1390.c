@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "fm_1390.h"
 
-int fm_1390(double_cmat m, pack_mats_32x32 bmats) {
+inline int fm_1390(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    int n_A_mats = 20;
-    double_cmat A_mats[20] = {bmats.A_3_15, bmats.A_3_16, bmats.A_6_17, bmats.A_6_18, bmats.A_6_19, bmats.A_6_20, bmats.A_6_21, bmats.A_6_22, bmats.A_6_23, bmats.A_6_24, bmats.A_6_25, bmats.A_6_26, bmats.A_6_27, bmats.A_6_28, bmats.A_6_29, bmats.A_6_30, bmats.A_6_31, bmats.A_6_32, bmats.Ax3987, bmats.Ax585, };
-    double A_coeffs[20] = {-1, -1, 1, 1, -16, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, };
-    int n_B_mats = 33;
-    double_cmat B_mats[33] = {bmats.B_10_22, bmats.B_11_22, bmats.B_12_22, bmats.B_13_22, bmats.B_14_22, bmats.B_15_22, bmats.B_16_22, bmats.B_19_1, bmats.B_19_10, bmats.B_19_11, bmats.B_19_12, bmats.B_19_13, bmats.B_19_14, bmats.B_19_15, bmats.B_19_16, bmats.B_19_2, bmats.B_19_3, bmats.B_19_4, bmats.B_19_5, bmats.B_19_6, bmats.B_19_7, bmats.B_19_8, bmats.B_19_9, bmats.B_1_22, bmats.B_2_22, bmats.B_3_22, bmats.B_4_22, bmats.B_5_22, bmats.B_6_22, bmats.B_6_3, bmats.B_7_22, bmats.B_8_22, bmats.B_9_22, };
-    double B_coeffs[33] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, -1, -1, -1, };
+    int n_A_mats = 18;
+    double_cmat A_mats[18] = {bmats.Axx1011, bmats.Axx1489, bmats.Axx1526, bmats.Axx1609, bmats.Axx1778, bmats.Axx1820, bmats.Axx1935, bmats.Axx2091, bmats.Axx2166, bmats.Axx2304, bmats.Axx2854, bmats.Axx2892, bmats.Axx3356, bmats.Axx3400, bmats.Axx418, bmats.Axx475, bmats.Axx639, bmats.Axx726, };
+    double A_coeffs[18] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
+    int n_B_mats = 18;
+    double_cmat B_mats[18] = {bmats.B_12_22, bmats.B_13_22, bmats.B_7_22, bmats.B_8_22, bmats.Bx10908, bmats.Bx11258, bmats.Bx11328, bmats.Bx11374, bmats.Bx11375, bmats.Bx11376, bmats.Bx11377, bmats.Bx11378, bmats.Bx11379, bmats.Bx11380, bmats.Bx11381, bmats.Bx7153, bmats.Bx7400, bmats.Bx9819, };
+    double B_coeffs[18] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
     matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
     matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
     cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);

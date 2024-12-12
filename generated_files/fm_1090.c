@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "fm_1090.h"
 
-int fm_1090(double_cmat m, pack_mats_32x32 bmats) {
+inline int fm_1090(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    int n_A_mats = 13;
-    double_cmat A_mats[13] = {bmats.A_24_7, bmats.A_24_8, bmats.A_3_7, bmats.A_3_8, bmats.A_7_31, bmats.A_7_32, bmats.A_8_7, bmats.A_8_8, bmats.Ax3399, bmats.Ax3461, bmats.Ax3486, bmats.Ax3491, bmats.Ax763, };
-    double A_coeffs[13] = {16, -1, -1, 16, -1, -1, -1, 16, -1, -1, -1, -1, -1, };
-    int n_B_mats = 33;
-    double_cmat B_mats[33] = {bmats.B_17_8, bmats.B_18_8, bmats.B_19_8, bmats.B_20_8, bmats.B_21_8, bmats.B_22_8, bmats.B_23_8, bmats.B_24_8, bmats.B_25_8, bmats.B_26_8, bmats.B_27_8, bmats.B_28_8, bmats.B_29_8, bmats.B_30_8, bmats.B_31_8, bmats.B_32_8, bmats.B_7_1, bmats.B_7_10, bmats.B_7_11, bmats.B_7_12, bmats.B_7_13, bmats.B_7_14, bmats.B_7_15, bmats.B_7_16, bmats.B_7_2, bmats.B_7_3, bmats.B_7_4, bmats.B_7_5, bmats.B_7_6, bmats.B_7_7, bmats.B_7_8, bmats.B_7_9, bmats.B_8_23, };
-    double B_coeffs[33] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, };
+    int n_A_mats = 3;
+    double_cmat A_mats[3] = {bmats.Axx1653, bmats.Axx2769, bmats.Axx417, };
+    double A_coeffs[3] = {-1, -1, -1, };
+    int n_B_mats = 12;
+    double_cmat B_mats[12] = {bmats.Bx8851, bmats.Bx9628, bmats.Bx9629, bmats.Bx9630, bmats.Bx9631, bmats.Bx9632, bmats.Bx9633, bmats.Bx9634, bmats.Bx9635, bmats.Bx9636, bmats.Bx9637, bmats.Bx9638, };
+    double B_coeffs[12] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
     matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
     matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
     cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);

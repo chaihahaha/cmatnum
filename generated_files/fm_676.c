@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "fm_676.h"
 
-int fm_676(double_cmat m, pack_mats_32x32 bmats) {
+inline int fm_676(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    int n_A_mats = 6;
-    double_cmat A_mats[6] = {bmats.A_26_31, bmats.A_26_32, bmats.A_27_10, bmats.A_27_11, bmats.Ax2679, bmats.Ax627, };
-    double A_coeffs[6] = {-1, -1, -16, 1, -1, -1, };
-    int n_B_mats = 33;
-    double_cmat B_mats[33] = {bmats.B_10_17, bmats.B_10_18, bmats.B_10_19, bmats.B_10_20, bmats.B_10_21, bmats.B_10_22, bmats.B_10_23, bmats.B_10_24, bmats.B_10_25, bmats.B_10_26, bmats.B_10_27, bmats.B_10_28, bmats.B_10_29, bmats.B_10_30, bmats.B_10_31, bmats.B_10_32, bmats.B_17_11, bmats.B_18_11, bmats.B_19_11, bmats.B_20_11, bmats.B_21_11, bmats.B_22_11, bmats.B_23_11, bmats.B_24_11, bmats.B_25_11, bmats.B_26_11, bmats.B_27_11, bmats.B_27_26, bmats.B_28_11, bmats.B_29_11, bmats.B_30_11, bmats.B_31_11, bmats.B_32_11, };
-    double B_coeffs[33] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, };
+    int n_A_mats = 4;
+    double_cmat A_mats[4] = {bmats.Axx1081, bmats.Axx3111, bmats.Axx3117, bmats.Axx977, };
+    double A_coeffs[4] = {-1, -1, -1, -1, };
+    int n_B_mats = 16;
+    double_cmat B_mats[16] = {bmats.Bx4840, bmats.Bx5664, bmats.Bx6108, bmats.Bx6177, bmats.Bx6178, bmats.Bx6179, bmats.Bx6180, bmats.Bx6181, bmats.Bx6182, bmats.Bx6183, bmats.Bx6184, bmats.Bx6185, bmats.Bx6186, bmats.Bx6187, bmats.Bx6188, bmats.Bx6189, };
+    double B_coeffs[16] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
     matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
     matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
     cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);

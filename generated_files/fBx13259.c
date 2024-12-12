@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "fBx13259.h"
 
-int fBx13259(pack_mats_32x32 bmats) {
+inline int fBx13259(pack_mats_32x32 bmats) {
     int BL = bmats.B_1_1.shape[0];
-    int n_B_mats = 24;
-    double_cmat B_mats[24] = {bmats.B_15_20, bmats.B_16_20, bmats.B_17_20, bmats.B_18_20, bmats.B_19_20, bmats.B_1_20, bmats.B_20_20, bmats.B_21_20, bmats.B_22_20, bmats.B_23_20, bmats.B_24_20, bmats.B_25_20, bmats.B_26_20, bmats.B_27_20, bmats.B_28_20, bmats.B_29_20, bmats.B_2_20, bmats.B_30_20, bmats.B_31_20, bmats.B_32_20, bmats.B_3_20, bmats.B_4_20, bmats.B_9_20, bmats.Bx11916, };
-    double B_coeffs[24] = {-1, -1, 1, 1, 1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, 1, 1, 1, -1, -1, -1, -1, };
+    int n_B_mats = 17;
+    double_cmat B_mats[17] = {bmats.Bx10464, bmats.Bx11105, bmats.Bx11821, bmats.Bx12055, bmats.Bx12234, bmats.Bx12524, bmats.Bx12786, bmats.Bx13022, bmats.Bx13257, bmats.Bx13258, bmats.Bx1800, bmats.Bx4055, bmats.Bx5408, bmats.Bx6606, bmats.Bx7740, bmats.Bx9089, bmats.Bx9840, };
+    double B_coeffs[17] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
+memset(&bmats.Bx13259.data[0][0], 0, sizeof(bmats.Bx13259.data[0][0])*bmats.Bx13259.shape[0]*bmats.Bx13259.shape[1]);
     matlincomb_double_contiguous(bmats.Bx13259, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
 
     return 0;

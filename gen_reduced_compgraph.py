@@ -54,8 +54,8 @@ def compute_optimized_order(dep_graph, inputs, outputs):
         ready_nodes.sort(
             key=lambda n: (
                 is_output[n],                            # outputs have higher priority
-                -indexof_lastuse[n],   # nodes closer to last use
-                -dep_graph.out_degree(n)                  # fewer dependencies get higher priority
+                indexof_lastuse[n],   # nodes closer to last use
+                dep_graph.out_degree(n)                  # fewer dependencies get higher priority
             ),
             reverse=True
         )
@@ -201,7 +201,7 @@ if not (os.path.isfile('B_replacements.pickle') and os.path.isfile('B_reduced_ex
     B_expr_list = [sp.parsing.sympy_parser.parse_expr(s) for s in B_expr_str_list]
 
     symbol_generator = (sp.Symbol(f'Bx{i}') for i in count())
-    replacements, reduced_exprs = sp.cse(B_expr_list, symbols=symbol_generator)
+    replacements, reduced_exprs = sp.cse(B_expr_list, symbols=symbol_generator, optimizations='basic')
     with open('B_replacements.pickle', 'wb') as f:
         pickle.dump(replacements, f)
     with open('B_reduced_exprs.pickle', 'wb') as f:

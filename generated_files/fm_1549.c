@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "fm_1549.h"
 
-int fm_1549(double_cmat m, pack_mats_32x32 bmats) {
+inline int fm_1549(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    int n_A_mats = 6;
-    double_cmat A_mats[6] = {bmats.A_13_4, bmats.A_16_3, bmats.A_16_4, bmats.A_4_13, bmats.Ax4344, bmats.Ax4366, };
-    double A_coeffs[6] = {-17, 1, -16, 17, 1, 1, };
-    int n_B_mats = 32;
-    double_cmat B_mats[32] = {bmats.B_10_4, bmats.B_11_4, bmats.B_12_4, bmats.B_13_1, bmats.B_13_10, bmats.B_13_11, bmats.B_13_12, bmats.B_13_13, bmats.B_13_14, bmats.B_13_15, bmats.B_13_16, bmats.B_13_2, bmats.B_13_3, bmats.B_13_4, bmats.B_13_5, bmats.B_13_6, bmats.B_13_7, bmats.B_13_8, bmats.B_13_9, bmats.B_14_4, bmats.B_15_4, bmats.B_16_4, bmats.B_1_4, bmats.B_2_4, bmats.B_3_4, bmats.B_4_13, bmats.B_4_4, bmats.B_5_4, bmats.B_6_4, bmats.B_7_4, bmats.B_8_4, bmats.B_9_4, };
-    double B_coeffs[32] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1, };
+    int n_A_mats = 4;
+    double_cmat A_mats[4] = {bmats.Axx16, bmats.Axx2924, bmats.Axx512, bmats.Axx558, };
+    double A_coeffs[4] = {1, 1, 1, -1, };
+    int n_B_mats = 9;
+    double_cmat B_mats[9] = {bmats.B_13_4, bmats.B_5_4, bmats.Bx10361, bmats.Bx12069, bmats.Bx12070, bmats.Bx12072, bmats.Bx12073, bmats.Bx12077, bmats.Bx6276, };
+    double B_coeffs[9] = {-2, -1, -1, -1, -1, -1, -1, -1, -1, };
     matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
     matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
     cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);

@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "fm_481.h"
 
-int fm_481(double_cmat m, pack_mats_32x32 bmats) {
+inline int fm_481(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    int n_A_mats = 6;
-    double_cmat A_mats[6] = {bmats.A_19_29, bmats.A_20_29, bmats.A_20_30, bmats.A_29_19, bmats.Ax1112, bmats.Ax2141, };
-    double A_coeffs[6] = {-17, -16, 1, 17, 1, 1, };
-    int n_B_mats = 32;
-    double_cmat B_mats[32] = {bmats.B_17_29, bmats.B_18_29, bmats.B_19_17, bmats.B_19_18, bmats.B_19_19, bmats.B_19_20, bmats.B_19_21, bmats.B_19_22, bmats.B_19_23, bmats.B_19_24, bmats.B_19_25, bmats.B_19_26, bmats.B_19_27, bmats.B_19_28, bmats.B_19_29, bmats.B_19_30, bmats.B_19_31, bmats.B_19_32, bmats.B_20_29, bmats.B_21_29, bmats.B_22_29, bmats.B_23_29, bmats.B_24_29, bmats.B_25_29, bmats.B_26_29, bmats.B_27_29, bmats.B_28_29, bmats.B_29_19, bmats.B_29_29, bmats.B_30_29, bmats.B_31_29, bmats.B_32_29, };
-    double B_coeffs[32] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, -1, -1, -1, -1, };
+    int n_A_mats = 4;
+    double_cmat A_mats[4] = {bmats.Axx1659, bmats.Axx1937, bmats.Axx241, bmats.Axx265, };
+    double A_coeffs[4] = {1, 1, 1, -1, };
+    int n_B_mats = 17;
+    double_cmat B_mats[17] = {bmats.B_19_29, bmats.Bx2360, bmats.Bx2493, bmats.Bx3939, bmats.Bx3940, bmats.Bx3941, bmats.Bx3942, bmats.Bx3943, bmats.Bx3944, bmats.Bx3945, bmats.Bx3946, bmats.Bx3947, bmats.Bx3948, bmats.Bx3949, bmats.Bx3950, bmats.Bx3951, bmats.Bx3952, };
+    double B_coeffs[17] = {-2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, };
     matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
     matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
     cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);

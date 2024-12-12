@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "fm_8120.h"
 
-int fm_8120(double_cmat m, pack_mats_32x32 bmats) {
+inline int fm_8120(double_cmat m, pack_mats_32x32 bmats) {
     double dnum17 = 1/17.0;
     int BL = bmats.A_1_1.shape[0];
     double_cmat tmp0, tmp1;
     create_double_matrix(pairint {BL, BL}, &tmp0);
     create_double_matrix(pairint {BL, BL}, &tmp1);
-    int n_A_mats = 9;
-    double_cmat A_mats[9] = {bmats.A_16_19, bmats.A_16_20, bmats.A_19_10, bmats.A_19_9, bmats.A_25_17, bmats.A_25_32, bmats.Ax2825, bmats.Ax3290, bmats.Ax4313, };
-    double A_coeffs[9] = {16, -1, -1, 16, 1, -16, -1, -1, -1, };
-    int n_B_mats = 3;
-    double_cmat B_mats[3] = {bmats.B_19_25, bmats.B_32_3, bmats.B_9_32, };
-    double B_coeffs[3] = {1, 1, 1, };
+    int n_A_mats = 3;
+    double_cmat A_mats[3] = {bmats.Axx23, bmats.Axx2496, bmats.Axx374, };
+    double A_coeffs[3] = {-1, -1, -1, };
+    int n_B_mats = 2;
+    double_cmat B_mats[2] = {bmats.B_9_32, bmats.Bx8415, };
+    double B_coeffs[2] = {1, 1, };
     matlincomb_double_contiguous(tmp0, n_A_mats, (double_cmat*)A_mats, (double*)A_coeffs);
     matlincomb_double_contiguous(tmp1, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);
     cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);

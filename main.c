@@ -28,6 +28,7 @@ int main() {
     double endtime;
 
     clock_gettime(CLOCK_MONOTONIC, &start);
+    printf("fmm\n");
     fmm_32x32(C, A, B);
     clock_gettime(CLOCK_MONOTONIC, &end);
     endtime = (end.tv_sec - start.tv_sec) +
