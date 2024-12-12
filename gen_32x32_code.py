@@ -121,6 +121,8 @@ inline int fm_{fm_index}(double_cmat m, pack_mats_32x32 bmats) {{
         sum_expr_A = sp.ccode(expr_A)
         pattern = r"([+-]?\s*\d*)\s*\*?\s*(m_\d+)" 
         A_names, A_coeffs = formula_to_matrices_coeffs_lists(sum_expr_A,  r"([+-]?\s*\d*)\s*\*?\s*(A_\d*_\d*|Axx\d+)")
+        # TODO: should reset tmp Axx to zero
+        # TODO: should cautious tmp Axx add to itself, separate adding other vars and add to self
         sum_expr_B = sp.ccode(expr_B)
         B_names, B_coeffs = formula_to_matrices_coeffs_lists(sum_expr_B,  r"([+-]?\s*\d*)\s*\*?\s*(B_\d*_\d*|Bx\d+)")
 
@@ -215,7 +217,7 @@ def generate_fmm_32x32_source():
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     int height = A.shape[0];
     int width = A.shape[1];
-    if (height <= 1024 || width <= 1024) {
+    if (height <= 1 || width <= 1) {
         matmul_double_blas(C, A, B);
         return 0;
     }
@@ -329,6 +331,20 @@ inline int f{func_name}(pack_mats_32x32 bmats) {{
 """
         sum_expr_A = sum_expr
         A_names, A_coeffs = formula_to_matrices_coeffs_lists(sum_expr_A,  r"([+-]?\s*\d*)\s*\*?\s*(A_\d*_\d*|Axx\d+)")
+        self_inds = []
+        for i in range(len(A_names)):
+            name = A_names[i]
+            if idf == name:
+                self_inds.append(i)
+        assert len(self_inds) <=1
+        if len(self_inds)==1:
+            self_ind = self_inds[0]
+            A_names_self = A_names.pop(self_ind)
+            A_coeffs_self = A_coeffs.pop(self_ind)
+            content += f"    cblas_dscal(BL*BL, {A_coeffs_self}, &bmats.{idf}.data[0][0], 1);\n"
+        else:
+            reset_var = f"bmats.{idf}"
+            content+= f"    memset(&{reset_var}.data[0][0], 0, sizeof({reset_var}.data[0][0])*BL*BL);\n"
 
         n_A_mats = len(A_names)
 
@@ -402,6 +418,9 @@ inline int f{idf}(pack_mats_32x32 bmats) {{
         for c in B_coeffs:
             content += f"{c}, "
         content += "};\n"
+
+        reset_var = f"bmats.{idf}"
+        content+= f"memset(&{reset_var}.data[0][0], 0, sizeof({reset_var}.data[0][0])*{reset_var}.shape[0]*{reset_var}.shape[1]);\n"
 
         content += f"    matlincomb_double_contiguous(bmats.{idf}, n_B_mats, (double_cmat*)B_mats, (double*)B_coeffs);\n"
         content += """
