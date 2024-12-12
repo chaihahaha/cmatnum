@@ -129,7 +129,6 @@ def compute_min_intermediates_eval_order(dep_graph, inputs, outputs, tmp_prefix=
     tmp_name_eval_order = [(tmp_replaced_graph.nodes[i]['name'], tmp_replaced_graph.nodes[i]['expr']) for i in opt_sorted if str(i) not in inputs]
     print('max temp variables used:', max_temps_in_use)
     reduced_exprs = [tmp_replaced_graph.nodes[sp.Symbol(i)]['expr'] for i in outputs]
-    print('res:',tmp_name_eval_order, reduced_exprs)
     return tmp_name_eval_order, reduced_exprs
 
 def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_'):
@@ -172,7 +171,7 @@ def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', t
 #outputs = [x, y, z]
 #print(eval_scheme)
 
-with open('testm.txt','r') as f:
+with open('m.txt','r') as f:
     s = f.read()
 A_expr_str_list = []
 B_expr_str_list = []

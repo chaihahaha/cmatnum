@@ -217,7 +217,7 @@ def generate_fmm_32x32_source():
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     int height = A.shape[0];
     int width = A.shape[1];
-    if (height <= 1 || width <= 1) {
+    if (height <= 1024 || width <= 1024) {
         matmul_double_blas(C, A, B);
         return 0;
     }
