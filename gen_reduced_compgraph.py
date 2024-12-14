@@ -6,6 +6,33 @@ from itertools import count
 import networkx as nx
 import os
 
+def limit_cse(replacements, reduced_exprs, min_terms):
+    to_be_eliminated_idx = []
+    to_be_eliminated = []
+    rep_expanded_idx = []
+    rep_expanded = []
+    
+    for i in range(len(replacements)):
+        ri = replacements[i]
+        if len(ri[1].free_symbols) < min_terms:
+            to_be_eliminated_idx.append(i)
+            to_be_eliminated.append(ri)
+        else:
+            rep_expanded_idx.append(i)
+    for ei in to_be_eliminated_idx:
+        old, new = replacements[ei]
+        for i in range(len(replacements)):
+            sb, expr = replacements[i]
+            if old in expr.free_symbols:
+                replacements[i] = (sb, expr.subs(old, new))
+        for i in range(len(reduced_exprs)):
+            if old in reduced_exprs[i].free_symbols:
+                reduced_exprs[i] = reduced_exprs[i].subs(old, new)
+    for i in rep_expanded_idx:
+        rep_expanded.append(replacements[i])
+    
+    return rep_expanded, reduced_exprs
+
 def print_edges_with_node_info(G, infos=['name','expr']):
     def get_fs(u, infos):
         fs = f"{u}"
@@ -141,6 +168,7 @@ def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', t
     else:
         symbol_generator = (sp.Symbol(f'{global_tmp_prefix}{i}') for i in count())
         replacements, reduced_exprs = sp.cse(expr_list, symbols=symbol_generator, optimizations='basic')
+        replacements, reduced_exprs = limit_cse(replacements, reduced_exprs, 12)
         output_symbols = [sp.Symbol(i) for i in outputs]
         replacements = replacements + list(zip(output_symbols,reduced_exprs))
         #print('cse', replacements)
@@ -202,6 +230,7 @@ if not (os.path.isfile('B_replacements.pickle') and os.path.isfile('B_reduced_ex
 
     symbol_generator = (sp.Symbol(f'Bx{i}') for i in count())
     replacements, reduced_exprs = sp.cse(B_expr_list, symbols=symbol_generator, optimizations='basic')
+    replacements, reduced_exprs = limit_cse(replacements, reduced_exprs, 6)
     with open('B_replacements.pickle', 'wb') as f:
         pickle.dump(replacements, f)
     with open('B_reduced_exprs.pickle', 'wb') as f:
