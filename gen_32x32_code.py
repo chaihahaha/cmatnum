@@ -64,7 +64,7 @@ def generate_fm_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_r
         for name in A_names:
             content += f"{name}, "
         content += "};\n"
-        content += f"    double A_coeffs_{fm_index}[{n_A_mats}] = {{"
+        content += f"    int8_t A_coeffs_{fm_index}[{n_A_mats}] = {{"
         for c in A_coeffs:
             content += f"{c}, "
         content += "};\n"
@@ -73,13 +73,13 @@ def generate_fm_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_r
         for name in B_names:
             content += f"{name}, "
         content += "};\n"
-        content += f"    double B_coeffs_{fm_index}[{n_B_mats}] = {{"
+        content += f"    int8_t B_coeffs_{fm_index}[{n_B_mats}] = {{"
         for c in B_coeffs:
             content += f"{c}, "
         content += "};\n"
 
-        content += f"    matlincomb_double_contiguous(tmp0, {n_A_mats}, (double_cmat*)A_mats_{fm_index}, (double*)A_coeffs_{fm_index});\n"
-        content += f"    matlincomb_double_contiguous(tmp1, {n_B_mats}, (double_cmat*)B_mats_{fm_index}, (double*)B_coeffs_{fm_index});\n"
+        content += f"    matlincomb_double_contiguous(tmp0, {n_A_mats}, (double_cmat*)A_mats_{fm_index}, (int8_t*)A_coeffs_{fm_index});\n"
+        content += f"    matlincomb_double_contiguous(tmp1, {n_B_mats}, (double_cmat*)B_mats_{fm_index}, (int8_t*)B_coeffs_{fm_index});\n"
         content += "    cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);\n"
 
         content += """\
@@ -282,12 +282,12 @@ def generate_fAxxeval_source_files(A_eval_order, A_reduced_exprs, B_reduced_expr
         for name in A_names:
             content += f"{name}, "
         content += "};\n"
-        content += f"    double A_coeffs_{func_name}[{n_A_mats}] = {{"
+        content += f"    int8_t A_coeffs_{func_name}[{n_A_mats}] = {{"
         for c in A_coeffs:
             content += f"{c}, "
         content += "};\n"
 
-        content += f"    matlincomb_double_contiguous({idf}, {n_A_mats}, (double_cmat*)A_mats_{func_name}, (double*)A_coeffs_{func_name});\n"
+        content += f"    matlincomb_double_contiguous({idf}, {n_A_mats}, (double_cmat*)A_mats_{func_name}, (int8_t*)A_coeffs_{func_name});\n"
         Axxi2code[i] = content
     return Axxi2code
 
@@ -309,7 +309,7 @@ def generate_fBx_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_
         for name in B_names:
             content += f"{name}, "
         content += "};\n"
-        content += f"    double B_coeffs_{idf}[{n_B_mats}] = {{"
+        content += f"    int8_t B_coeffs_{idf}[{n_B_mats}] = {{"
         for c in B_coeffs:
             content += f"{c}, "
         content += "};\n"
@@ -317,7 +317,7 @@ def generate_fBx_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_
         reset_var = f"{idf}"
         content+= f"    memset(&{reset_var}.data[0][0], 0, sizeof({reset_var}.data[0][0])*{reset_var}.shape[0]*{reset_var}.shape[1]);\n"
 
-        content += f"    matlincomb_double_contiguous({idf}, {n_B_mats}, (double_cmat*)B_mats_{idf}, (double*)B_coeffs_{idf});\n"
+        content += f"    matlincomb_double_contiguous({idf}, {n_B_mats}, (double_cmat*)B_mats_{idf}, (int8_t*)B_coeffs_{idf});\n"
         Bxi2code[idf] = content
     return Bxi2code
 
