@@ -24,8 +24,8 @@ struct float_cmat {
 };
 
 struct double_cmat {
-    double* arena; // keep all the data in one arena
-    double** data; // two dim indexing
+    double* restrict arena; // keep all the data in one arena
+    double** restrict data; // two dim indexing
     int shape[2];
     int arena_shape[2]; // to record the original matrix shape for sliced matrix indexing
     int offset[2]; // to offset sliced matrix index
@@ -68,7 +68,7 @@ int assign_double_slice(double_cmat m1, double_cmat m2, int slice0[2], int slice
 
 int assign_double_clone(double_cmat m1, double_cmat m2);
 
-int matlincomb_double_contiguous(double_cmat res, int n_mats, double_cmat* mats, double* coeffs);
+int matlincomb_double_contiguous(double_cmat res, int n_mats, double_cmat* mats, int8_t* coeffs);
 
 int matadd_int(int_cmat m1, int_cmat m2, int_cmat m3);
 

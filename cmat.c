@@ -50,6 +50,8 @@ int create_float_matrix(int shape[2], float_cmat* p_new_mat) {
 }
 
 int create_double_matrix(int shape[2], double_cmat* p_new_mat) {
+    //printf("create mat\n");
+    //printf("shape %d %d\n", shape[0], shape[1]);
     // create a matrix with 0.0 in shape [shape[0], shape[1]]
     int N = shape[0] * shape[1];
     (*p_new_mat).data = (double **)malloc(shape[0] * sizeof(double *));
@@ -66,6 +68,7 @@ int create_double_matrix(int shape[2], double_cmat* p_new_mat) {
     for (int j = 0; j < N; j++) {
         (*p_new_mat).arena[j] = 0.0;
     }
+    //printf("create mat finished\n");
     return 0;
 }
 
@@ -205,6 +208,7 @@ float_cmat slice_float_matrix(float_cmat mat, int slice0[2], int slice1[2]) {
 }
 
 double_cmat slice_double_matrix(double_cmat mat, int slice0[2], int slice1[2]) {
+    //printf("slice double\n");
     double_cmat empty_mat;
     empty_mat.data = NULL;
     empty_mat.arena = NULL;
@@ -244,6 +248,7 @@ double_cmat slice_double_matrix(double_cmat mat, int slice0[2], int slice1[2]) {
 }
 
 int create_slice_double_matrix_contiguous(double_cmat *dst, double_cmat mat, int slice0[2], int slice1[2]) {
+    //printf("slice conting\n");
     // dst = mat[slice0, slice1]
     if (slice0[1] < 0) {
         slice0[1] += mat.shape[0];
@@ -267,6 +272,7 @@ int create_slice_double_matrix_contiguous(double_cmat *dst, double_cmat mat, int
 }
 
 int create_double_contiguous_from_slice(double_cmat *dest, double_cmat *src) {
+    //printf("create contig from slice\n");
     // dest = src.contiguous().copy()
     int i, j;
     int rows = src->shape[0];
@@ -333,6 +339,7 @@ int assign_float_slice(float_cmat m1, float_cmat m2, int slice0[2], int slice1[2
 }
 
 int assign_double_slice(double_cmat m1, double_cmat m2, int slice0[2], int slice1[2]) {
+    //printf("assign slice\n");
     // assign m2 to a slice of m1 defined by slice0(x) and slice1(y)
     // m1[slice0, slice1] = m2
     if (slice0[1] < 0) {
@@ -355,6 +362,7 @@ int assign_double_slice(double_cmat m1, double_cmat m2, int slice0[2], int slice
 }
 
 int assign_double_clone(double_cmat m1, double_cmat m2) {
+    //printf("assign double clone\n");
     // m1 = m2.copy()
     if (!(m1.shape[0] == m2.shape[0] && m1.shape[1] == m2.shape[1])) {
         return -1;
@@ -366,7 +374,8 @@ int assign_double_clone(double_cmat m1, double_cmat m2) {
     return 0;
 }
 
-int matlincomb_double_contiguous(double_cmat res, int n_mats, double_cmat* mats, double* coeffs) {
+int matlincomb_double_contiguous(double_cmat res, int n_mats, double_cmat* mats, int8_t* coeffs) {
+    //printf("lincomb\n");
     // res = coeffs[0] * mats[0] + ... + coeffs[n_mats-1] * mats[n_mats-1]
     // memset(&res.data[0][0], 0, sizeof(res.data[0][0])*res.shape[0]*res.shape[1]); // should not reset because it could appear in RHS
     if (n_mats <= 0) {
@@ -663,6 +672,7 @@ int free_float_matrix(float_cmat m) {
 }
 
 int free_double_matrix(double_cmat m) {
+    //printf("free\n");
     free(m.data);
     if (m.arena_shape[0] == m.shape[0] && m.arena_shape[1] == m.shape[1]) {
         free(m.arena);

@@ -39,38 +39,20 @@ int matmul_double(double_cmat matC, double_cmat matA, double_cmat matB){
 }
 
 int matmul_double_blas(double_cmat C, double_cmat A_slice, double_cmat B_slice) {
+    //printf("start matmul blas %d %d\n", A_slice.shape[0], A_slice.shape[1]);
     // Check dimensions for compatibility
     if (A_slice.shape[1] != B_slice.shape[0] || A_slice.shape[0] != C.shape[0] || B_slice.shape[1] != C.shape[1]) {
         fprintf(stderr, "Matrix dimensions do not match for multiplication.\n");
         return -1;
     }
-    double_cmat CC;
-    create_double_matrix(pairint {C.shape[0], C.shape[1]}, &CC);
-
-    if (is_contiguous_double(A_slice) && is_contiguous_double(B_slice)) {
+    //memset(&C.data[0][0], 0, sizeof(C.data[0][0])*C.shape[0]*C.shape[1]);
         // Call dgemm
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                     C.shape[0], C.shape[1], A_slice.shape[1],
                     1.0, A_slice.data[0], A_slice.arena_shape[1],
                     B_slice.data[0], B_slice.arena_shape[1],
-                    0.0, CC.arena, CC.arena_shape[1]);
-    }
-    else {
-        double_cmat A,B;
-        create_double_contiguous_from_slice(&A, &A_slice);
-        create_double_contiguous_from_slice(&B, &B_slice);
-
-        // Call dgemm
-        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                    C.shape[0], C.shape[1], A.shape[1],
-                    1.0, A.arena, A.arena_shape[1],
-                    B.arena, B.arena_shape[1],
-                    0.0, CC.arena, CC.arena_shape[1]);
-        free_double_matrix(A);
-        free_double_matrix(B);
-    }
-    assign_double_clone(C, CC);
-    free_double_matrix(CC);
+                    0.0, C.arena, C.arena_shape[1]);
+    //printf("finish matmul blas\n");
     return 0;
 }
 
