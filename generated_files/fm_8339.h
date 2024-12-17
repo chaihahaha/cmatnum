@@ -1,5 +1,0 @@
-#ifndef FM_8339_H
-#define FM_8339_H
-
-int fm_8339(double_cmat m, pack_mats_32x32 bmats);
-#endif

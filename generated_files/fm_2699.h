@@ -1,5 +1,0 @@
-#ifndef FM_2699_H
-#define FM_2699_H
-
-int fm_2699(double_cmat m, pack_mats_32x32 bmats);
-#endif

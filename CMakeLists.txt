@@ -15,7 +15,7 @@ file(GLOB_RECURSE SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/matmul.c"
 )
 add_compile_options(-std=c11)
-add_compile_options(-O1)
+add_compile_options(-O3)
 add_compile_options(-march=native)
 add_compile_options(-D_GNU_SOURCE)
 

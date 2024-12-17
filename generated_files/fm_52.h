@@ -1,5 +1,0 @@
-#ifndef FM_52_H
-#define FM_52_H
-
-int fm_52(double_cmat m, pack_mats_32x32 bmats);
-#endif
