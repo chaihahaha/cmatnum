@@ -5,6 +5,6 @@ my C language math and numerical computing library
 ```
 mkdir build
 cd build
-cmake .. GNinja -DBLAS_openblas_LIBRARY=/path/to/lib/libopenblas.so.0
-ninja
+cmake .. -DBLAS_openblas_LIBRARY=/path/to/lib/libopenblas.so.0
+cmake --build .
 ```
