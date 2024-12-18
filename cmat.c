@@ -1,4 +1,5 @@
 #include "cmat.h"
+
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
@@ -374,7 +375,7 @@ int assign_double_clone(double_cmat m1, double_cmat m2) {
     return 0;
 }
 
-int matlincomb_double_contiguous(double_cmat res, int n_mats, double_cmat* mats, int8_t* coeffs) {
+inline int matlincomb_double_contiguous(double_cmat res, int n_mats, double_cmat* mats, int8_t* coeffs) {
     //printf("lincomb\n");
     // res = coeffs[0] * mats[0] + ... + coeffs[n_mats-1] * mats[n_mats-1]
     // memset(&res.data[0][0], 0, sizeof(res.data[0][0])*res.shape[0]*res.shape[1]); // should not reset because it could appear in RHS

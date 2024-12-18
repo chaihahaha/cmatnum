@@ -79,17 +79,17 @@ def generate_fm_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_r
             content += f"    marr[{idx}]={name};\n"
         content += f"    matlincomb_double_contiguous(tmp1, {n_B_mats}, (double_cmat*)marr, (int8_t*)B_coeffs_{fm_index});\n"
 
-        content += "    cblas_dscal(BL*BL, dnum17, &tmp0.data[0][0], 1);\n"
+        content += "    cblas_dscal(NS, dnum17, &tmp0.data[0][0], 1);\n"
 
         content += """\
     matmul_double_blas(m, tmp0, tmp1);
 """
         m_term = f"m_{fm_index}"
         for Ci, coefficient in m_to_C[m_term]:
-            content += f"    cblas_daxpy(BL*BL, {coefficient}, &m.data[0][0], 1, &{Ci}.data[0][0], 1);\n"
+            content += f"    cblas_daxpy(NS, {coefficient}, &m.data[0][0], 1, &{Ci}.data[0][0], 1);\n"
         content += """\
-    memset(&tmp0.data[0][0], 0, sizeof(tmp0.data[0][0])*BL*BL);
-    memset(&tmp1.data[0][0], 0, sizeof(tmp1.data[0][0])*BL*BL);
+    memset(&tmp0.data[0][0], 0, sizeof(double)*NS);
+    memset(&tmp1.data[0][0], 0, sizeof(double)*NS);
 """
         fmi2code[str(fm_index)] = content
     return fmi2code
@@ -253,6 +253,7 @@ def generate_fAxxeval_source_files(A_eval_order, A_reduced_exprs, B_reduced_expr
     Axx_names = list(set([i[0] for i in Axx_eval]))
     N_Axx_eval = len(Axx_eval)
     Axxi2code = dict()
+    idfappear = set()
     for i in range(N_Axx_eval):
         idf = Axx_eval[i][0]
         expr = Axx_eval[i][1]
@@ -271,10 +272,13 @@ def generate_fAxxeval_source_files(A_eval_order, A_reduced_exprs, B_reduced_expr
             self_ind = self_inds[0]
             A_names_self = A_names.pop(self_ind)
             A_coeffs_self = A_coeffs.pop(self_ind)
-            content += f"    cblas_dscal(BL*BL, {A_coeffs_self}, &{idf}.data[0][0], 1);\n"
+            content += f"    cblas_dscal(NS, {A_coeffs_self}, &{idf}.data[0][0], 1);\n"
         else:
             reset_var = f"{idf}"
-            content+= f"    memset(&{reset_var}.data[0][0], 0, sizeof({reset_var}.data[0][0])*BL*BL);\n"
+            if reset_var not in idfappear:
+                idfappear.add(reset_var)
+            else:
+                content+= f"    memset(&{reset_var}.data[0][0], 0, sizeof(double)*NS);\n"
 
         n_A_mats = len(A_names)
 

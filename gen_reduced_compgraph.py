@@ -105,7 +105,7 @@ def compute_optimized_order(dep_graph, inputs, outputs):
                 used_temps.remove(current)
         if len(used_temps)>max_n_temps:
             max_n_temps = len(used_temps)
-    print('max opt temp', max_n_temps)
+    print('len eval seq', len(eval_order))
     #print('eval order', eval_order)
     
     return eval_order
@@ -168,7 +168,7 @@ def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', t
     else:
         symbol_generator = (sp.Symbol(f'{global_tmp_prefix}{i}') for i in count())
         replacements, reduced_exprs = sp.cse(expr_list, symbols=symbol_generator, optimizations='basic')
-        replacements, reduced_exprs = limit_cse(replacements, reduced_exprs, 12)
+        replacements, reduced_exprs = limit_cse(replacements, reduced_exprs, 3)
         output_symbols = [sp.Symbol(i) for i in outputs]
         replacements = replacements + list(zip(output_symbols,reduced_exprs))
         #print('cse', replacements)
@@ -230,7 +230,7 @@ if not (os.path.isfile('B_replacements.pickle') and os.path.isfile('B_reduced_ex
 
     symbol_generator = (sp.Symbol(f'Bx{i}') for i in count())
     replacements, reduced_exprs = sp.cse(B_expr_list, symbols=symbol_generator, optimizations='basic')
-    replacements, reduced_exprs = limit_cse(replacements, reduced_exprs, 6)
+    replacements, reduced_exprs = limit_cse(replacements, reduced_exprs, 3)
     with open('B_replacements.pickle', 'wb') as f:
         pickle.dump(replacements, f)
     with open('B_reduced_exprs.pickle', 'wb') as f:

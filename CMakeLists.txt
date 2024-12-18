@@ -19,6 +19,14 @@ add_compile_options(-O3)
 add_compile_options(-march=native)
 add_compile_options(-D_GNU_SOURCE)
 
+
+# set(JEMALLOC_ROOT "/opt/homebrew/Cellar/jemalloc/5.3.0")
+# # Add jemalloc include directory
+# include_directories("${JEMALLOC_ROOT}/include")
+# # Add jemalloc library directory
+# link_directories("${JEMALLOC_ROOT}/lib")
+
+
 # Add the executable target
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -32,6 +40,7 @@ if (BLAS_FOUND)
     target_compile_options(${PROJECT_NAME} PRIVATE ${BLAS_LINKER_FLAGS})
     target_link_libraries(${PROJECT_NAME} ${BLAS_LIBRARIES})
 endif ()
+
 
 #find_package(OpenMP REQUIRED)
 #find_package(OpenMP REQUIRED)

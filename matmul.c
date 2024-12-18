@@ -38,13 +38,9 @@ int matmul_double(double_cmat matC, double_cmat matA, double_cmat matB){
     return 0;
 }
 
-int matmul_double_blas(double_cmat C, double_cmat A_slice, double_cmat B_slice) {
+inline int matmul_double_blas(double_cmat C, double_cmat A_slice, double_cmat B_slice) {
     //printf("start matmul blas %d %d\n", A_slice.shape[0], A_slice.shape[1]);
     // Check dimensions for compatibility
-    if (A_slice.shape[1] != B_slice.shape[0] || A_slice.shape[0] != C.shape[0] || B_slice.shape[1] != C.shape[1]) {
-        fprintf(stderr, "Matrix dimensions do not match for multiplication.\n");
-        return -1;
-    }
     //memset(&C.data[0][0], 0, sizeof(C.data[0][0])*C.shape[0]*C.shape[1]);
         // Call dgemm
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,

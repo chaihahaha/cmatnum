@@ -24,8 +24,8 @@ struct float_cmat {
 };
 
 struct double_cmat {
-    double* restrict arena; // keep all the data in one arena
-    double** restrict data; // two dim indexing
+    double* arena; // keep all the data in one arena
+    double** data; // two dim indexing
     int shape[2];
     int arena_shape[2]; // to record the original matrix shape for sliced matrix indexing
     int offset[2]; // to offset sliced matrix index
