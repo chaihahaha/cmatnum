@@ -2,7 +2,11 @@
 #define MATMUL_H
 
 #include "cmat.h"
+#ifdef USE_ACCELERATE
+#include "cblas_new.h"
+#else
 #include "cblas.h"
+#endif
 
 int matmul_float(float_cmat matA, float_cmat matB, float_cmat matC);
 

@@ -5,7 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#ifdef USE_ACCELERATE
+#include "cblas_new.h"
+#else
 #include "cblas.h"
+#endif
 
 struct int_cmat {
     int* arena; // keep all the data in one arena
