@@ -10,6 +10,11 @@ BH = 32
 BW = 32
 intcoeff = 17
 min_terms = 3
+A_reduced_exprs_fn = "A_reduced_exprs_32x32.pickle"
+A_eval_order_fn = "A_eval_order_32x32.pickle"
+A_replacements_fn = "A_replacements_32x32.pickle"
+B_replacements_fn = "B_replacements_32x32.pickle"
+B_reduced_exprs_fn = "B_reduced_exprs_32x32.pickle"
 
 def limit_cse(replacements, reduced_exprs, min_terms):
     to_be_eliminated_idx = []
@@ -222,21 +227,21 @@ for line in s.split("\n"):
 
 A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*intcoeff for s in A_expr_str_list]
 
-A_eval_order, A_reduced_exprs = parse_cse_gen_assignments(A_expr_list, 'A_replacements_32x32.pickle', global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_')
+A_eval_order, A_reduced_exprs = parse_cse_gen_assignments(A_expr_list, A_replacements_fn, global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_')
 
-with open("A_eval_order_32x32.pickle", "wb") as f:
+with open(A_eval_order_fn, "wb") as f:
     pickle.dump(A_eval_order,f)
-with open("A_reduced_exprs_32x32.pickle", "wb") as f:
+with open(A_reduced_exprs_fn, "wb") as f:
     pickle.dump(A_reduced_exprs,f)
 
 
-if not (os.path.isfile('B_replacements_32x32.pickle') and os.path.isfile('B_reduced_exprs_32x32.pickle')):
+if not (os.path.isfile(B_replacements_fn) and os.path.isfile(B_reduced_exprs_fn)):
     B_expr_list = [sp.parsing.sympy_parser.parse_expr(s) for s in B_expr_str_list]
 
     symbol_generator = (sp.Symbol(f'Bx{i}') for i in count())
     replacements, reduced_exprs = sp.cse(B_expr_list, symbols=symbol_generator, optimizations='basic')
     replacements, reduced_exprs = limit_cse(replacements, reduced_exprs, min_terms)
-    with open('B_replacements_32x32.pickle', 'wb') as f:
+    with open(B_replacements_fn, 'wb') as f:
         pickle.dump(replacements, f)
-    with open('B_reduced_exprs_32x32.pickle', 'wb') as f:
+    with open(B_reduced_exprs_fn, 'wb') as f:
         pickle.dump(reduced_exprs, f)
