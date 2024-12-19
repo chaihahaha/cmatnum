@@ -38,7 +38,7 @@ def generate_fm_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_r
     m_terms = [sp.Symbol(f"m_{i}") for i in range(1, 15137)]
     d_mterms = {str(i): i for i in m_terms}
 
-    with open("C.txt", "r") as f:
+    with open("C_32x32.txt", "r") as f:
         Cs = f.read()
     m_to_C = get_m_to_C_inc_mapping(Cs, d_mterms)
 
@@ -116,13 +116,13 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B);
 
 def generate_fmm_32x32_source():
     content = ""
-    with open("A_eval_order.pickle", "rb") as f:
+    with open("A_eval_order_32x32.pickle", "rb") as f:
         A_eval_order = pickle.load(f)
-    with open("A_reduced_exprs.pickle", "rb") as f:
+    with open("A_reduced_exprs_32x32.pickle", "rb") as f:
         A_reduced_exprs = pickle.load(f)
-    with open("B_replacements.pickle", "rb") as f:
+    with open("B_replacements_32x32.pickle", "rb") as f:
         B_replacements = pickle.load(f)
-    with open("B_reduced_exprs.pickle", "rb") as f:
+    with open("B_reduced_exprs_32x32.pickle", "rb") as f:
         B_reduced_exprs = pickle.load(f)
 
     fmi2code = generate_fm_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_replacements)

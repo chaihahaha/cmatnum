@@ -6,6 +6,11 @@ from itertools import count
 import networkx as nx
 import os
 
+BH = 32
+BW = 32
+intcoeff = 17
+min_terms = 3
+
 def limit_cse(replacements, reduced_exprs, min_terms):
     to_be_eliminated_idx = []
     to_be_eliminated = []
@@ -160,7 +165,7 @@ def compute_min_intermediates_eval_order(dep_graph, inputs, outputs, tmp_prefix=
 
 def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_'):
     n_exprs = len(expr_list)
-    inputs = [f'{inputs_prefix}{i+1}_{j+1}' for i in range(32) for j in range(32)]
+    inputs = [f'{inputs_prefix}{i+1}_{j+1}' for i in range(BH) for j in range(BW)]
     outputs = [f'{fm_tmp_prefix}{i+1}' for i in range(n_exprs)]
     if os.path.isfile(rep_filename):
         with open(rep_filename, 'rb') as f:
@@ -168,7 +173,7 @@ def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', t
     else:
         symbol_generator = (sp.Symbol(f'{global_tmp_prefix}{i}') for i in count())
         replacements, reduced_exprs = sp.cse(expr_list, symbols=symbol_generator, optimizations='basic')
-        replacements, reduced_exprs = limit_cse(replacements, reduced_exprs, 3)
+        replacements, reduced_exprs = limit_cse(replacements, reduced_exprs, min_terms)
         output_symbols = [sp.Symbol(i) for i in outputs]
         replacements = replacements + list(zip(output_symbols,reduced_exprs))
         #print('cse', replacements)
@@ -194,12 +199,12 @@ def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', t
     return eval_order, reduced_exprs
 
 #a, b, c, d, e, f, g, h, x, y, z = sp.symbols('a b c d e f g h x y z')
-#expressions = [(f, a+17*c+e), (g, f+2*b), (h, g+d), (x, g+f+a), (y, f+h+e), (z, h+c+d)]
+#expressions = [(f, a+intcoeff*c+e), (g, f+2*b), (h, g+d), (x, g+f+a), (y, f+h+e), (z, h+c+d)]
 #inputs = [a, b, c, d, e]
 #outputs = [x, y, z]
 #print(eval_scheme)
 
-with open('m.txt','r') as f:
+with open('m_32x32.txt','r') as f:
     s = f.read()
 A_expr_str_list = []
 B_expr_str_list = []
@@ -215,23 +220,23 @@ for line in s.split("\n"):
         A_expr_str_list.append(A_expre.string)
         B_expr_str_list.append(B_expre.string)
 
-A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*17 for s in A_expr_str_list]
+A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*intcoeff for s in A_expr_str_list]
 
-A_eval_order, A_reduced_exprs = parse_cse_gen_assignments(A_expr_list, 'A_replacements.pickle', global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_')
+A_eval_order, A_reduced_exprs = parse_cse_gen_assignments(A_expr_list, 'A_replacements_32x32.pickle', global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_')
 
-with open("A_eval_order.pickle", "wb") as f:
+with open("A_eval_order_32x32.pickle", "wb") as f:
     pickle.dump(A_eval_order,f)
-with open("A_reduced_exprs.pickle", "wb") as f:
+with open("A_reduced_exprs_32x32.pickle", "wb") as f:
     pickle.dump(A_reduced_exprs,f)
 
 
-if not (os.path.isfile('B_replacements.pickle') and os.path.isfile('B_reduced_exprs.pickle')):
+if not (os.path.isfile('B_replacements_32x32.pickle') and os.path.isfile('B_reduced_exprs_32x32.pickle')):
     B_expr_list = [sp.parsing.sympy_parser.parse_expr(s) for s in B_expr_str_list]
 
     symbol_generator = (sp.Symbol(f'Bx{i}') for i in count())
     replacements, reduced_exprs = sp.cse(B_expr_list, symbols=symbol_generator, optimizations='basic')
-    replacements, reduced_exprs = limit_cse(replacements, reduced_exprs, 3)
-    with open('B_replacements.pickle', 'wb') as f:
+    replacements, reduced_exprs = limit_cse(replacements, reduced_exprs, min_terms)
+    with open('B_replacements_32x32.pickle', 'wb') as f:
         pickle.dump(replacements, f)
-    with open('B_reduced_exprs.pickle', 'wb') as f:
+    with open('B_reduced_exprs_32x32.pickle', 'wb') as f:
         pickle.dump(reduced_exprs, f)
