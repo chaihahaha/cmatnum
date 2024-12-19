@@ -6,15 +6,27 @@ from itertools import count
 import networkx as nx
 import os
 
-BH = 32
-BW = 32
-intcoeff = 17
-min_terms = 3
-A_reduced_exprs_fn = "A_reduced_exprs_32x32.pickle"
-A_eval_order_fn = "A_eval_order_32x32.pickle"
-A_replacements_fn = "A_replacements_32x32.pickle"
-B_replacements_fn = "B_replacements_32x32.pickle"
-B_reduced_exprs_fn = "B_reduced_exprs_32x32.pickle"
+#BH = 32
+#BW = 32
+#intcoeff = 17
+#min_terms = 3
+#A_reduced_exprs_fn = "A_reduced_exprs_32x32.pickle"
+#A_eval_order_fn = "A_eval_order_32x32.pickle"
+#A_replacements_fn = "A_replacements_32x32.pickle"
+#B_replacements_fn = "B_replacements_32x32.pickle"
+#B_reduced_exprs_fn = "B_reduced_exprs_32x32.pickle"
+#m_txt_fn = "m_32x32.txt"
+
+BH = 3
+BW = 3
+intcoeff = 8
+min_terms = 2
+A_reduced_exprs_fn = "A_reduced_exprs_3x3x6.pickle"
+A_eval_order_fn = "A_eval_order_3x3x6.pickle"
+A_replacements_fn = "A_replacements_3x3x6.pickle"
+B_replacements_fn = "B_replacements_3x3x6.pickle"
+B_reduced_exprs_fn = "B_reduced_exprs_3x3x6.pickle"
+m_txt_fn = "m_3x3x6.txt"
 
 def limit_cse(replacements, reduced_exprs, min_terms):
     to_be_eliminated_idx = []
@@ -209,7 +221,7 @@ def parse_cse_gen_assignments(expr_list, rep_filename, global_tmp_prefix='Ax', t
 #outputs = [x, y, z]
 #print(eval_scheme)
 
-with open('m_32x32.txt','r') as f:
+with open(m_txt_fn,'r') as f:
     s = f.read()
 A_expr_str_list = []
 B_expr_str_list = []
