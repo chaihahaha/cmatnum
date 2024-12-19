@@ -88,8 +88,8 @@ def generate_fm_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_r
         for Ci, coefficient in m_to_C[m_term]:
             content += f"    cblas_daxpy(NS, {coefficient}, &m.data[0][0], 1, &{Ci}.data[0][0], 1);\n"
         content += """\
-    memset(&tmp0.data[0][0], 0, sizeof(double)*NS);
-    memset(&tmp1.data[0][0], 0, sizeof(double)*NS);
+    for(int arenai=0; arenai<NS; arenai++) tmp0.arena[arenai] = 0;
+    for(int arenai=0; arenai<NS; arenai++) tmp1.arena[arenai] = 0;
 """
         fmi2code[str(fm_index)] = content
     return fmi2code
@@ -132,7 +132,7 @@ def generate_fmm_32x32_source():
     # extract the Axx evals that has to be called in separate functions
     # mA123 evals are called in fm_123
     Axx_eval = [i for i in A_eval_order if 'Axx' in i[0]]
-    Axx_names = list(set([i[0] for i in Axx_eval]))
+    Axx_names = sorted(list(set([i[0] for i in Axx_eval])))
     N_Axx_eval = len(Axx_eval)
 
     content += """\
@@ -278,7 +278,7 @@ def generate_fAxxeval_source_files(A_eval_order, A_reduced_exprs, B_reduced_expr
             if reset_var not in idfappear:
                 idfappear.add(reset_var)
             else:
-                content+= f"    memset(&{reset_var}.data[0][0], 0, sizeof(double)*NS);\n"
+                content+= f"    for(int arenai=0; arenai<NS; arenai++) {reset_var}.arena[arenai] = 0;\n"
 
         n_A_mats = len(A_names)
 
