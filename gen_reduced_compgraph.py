@@ -8,7 +8,8 @@ import os
 
 #BH = 32
 #BW = 32
-#intcoeff = 17
+#A_intcoeff = 17
+#B_intcoeff = 1
 #min_terms = 3
 #A_reduced_exprs_fn = "A_reduced_exprs_32x32.pickle"
 #A_eval_order_fn = "A_eval_order_32x32.pickle"
@@ -19,13 +20,15 @@ import os
 
 BH = 3
 BW = 3
-intcoeff = 8
+A_intcoeff = 1
+B_intcoeff = 8
 min_terms = 2
 A_reduced_exprs_fn = "A_reduced_exprs_3x3x6.pickle"
 A_eval_order_fn = "A_eval_order_3x3x6.pickle"
 A_replacements_fn = "A_replacements_3x3x6.pickle"
-B_replacements_fn = "B_replacements_3x3x6.pickle"
 B_reduced_exprs_fn = "B_reduced_exprs_3x3x6.pickle"
+B_eval_order_fn = "B_eval_order_3x3x6.pickle"
+B_replacements_fn = "B_replacements_3x3x6.pickle"
 m_txt_fn = "m_3x3x6.txt"
 
 def limit_cse(replacements, reduced_exprs, min_terms):
@@ -237,7 +240,7 @@ for line in s.split("\n"):
         A_expr_str_list.append(A_expre.string)
         B_expr_str_list.append(B_expre.string)
 
-A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*intcoeff for s in A_expr_str_list]
+A_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*A_intcoeff for s in A_expr_str_list]
 
 A_eval_order, A_reduced_exprs = parse_cse_gen_assignments(A_expr_list, A_replacements_fn, global_tmp_prefix='Ax', tmp_replace_prefix='Axx', fm_tmp_prefix='mA', inputs_prefix='A_')
 
@@ -247,13 +250,10 @@ with open(A_reduced_exprs_fn, "wb") as f:
     pickle.dump(A_reduced_exprs,f)
 
 
-if not (os.path.isfile(B_replacements_fn) and os.path.isfile(B_reduced_exprs_fn)):
-    B_expr_list = [sp.parsing.sympy_parser.parse_expr(s) for s in B_expr_str_list]
+B_expr_list = [sp.parsing.sympy_parser.parse_expr(s)*B_intcoeff for s in B_expr_str_list]
+B_eval_order, B_reduced_exprs = parse_cse_gen_assignments(B_expr_list, B_replacements_fn, global_tmp_prefix='Bx', tmp_replace_prefix='Bxx', fm_tmp_prefix='mB', inputs_prefix='B_')
 
-    symbol_generator = (sp.Symbol(f'Bx{i}') for i in count())
-    replacements, reduced_exprs = sp.cse(B_expr_list, symbols=symbol_generator, optimizations='basic')
-    replacements, reduced_exprs = limit_cse(replacements, reduced_exprs, min_terms)
-    with open(B_replacements_fn, 'wb') as f:
-        pickle.dump(replacements, f)
-    with open(B_reduced_exprs_fn, 'wb') as f:
-        pickle.dump(reduced_exprs, f)
+with open(B_eval_order_fn, "wb") as f:
+    pickle.dump(B_eval_order,f)
+with open(B_reduced_exprs_fn, "wb") as f:
+    pickle.dump(B_reduced_exprs,f)
