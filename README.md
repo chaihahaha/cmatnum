@@ -20,3 +20,5 @@ cmake --build .
 [4] https://github.com/arbenson/fast-matmul
 
 [5] https://fmm.univ-lille.fr
+
+[6] Drevet, Charles-Éric et al. “Optimization techniques for small matrix multiplication.” Theor. Comput. Sci. 412 (2011): 2219-2236.
