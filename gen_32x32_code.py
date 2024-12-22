@@ -88,8 +88,8 @@ def generate_fm_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_r
         for Ci, coefficient in m_to_C[m_term]:
             content += f"    cblas_daxpy(NS, {coefficient}, &m.data[0][0], 1, &{Ci}.data[0][0], 1);\n"
         content += """\
-    for(int arenai=0; arenai<NS; arenai++) tmp0.arena[arenai] = 0;
-    for(int arenai=0; arenai<NS; arenai++) tmp1.arena[arenai] = 0;
+    for(shape_uint arenai=0; arenai<NS; arenai++) tmp0.arena[arenai] = 0;
+    for(shape_uint arenai=0; arenai<NS; arenai++) tmp1.arena[arenai] = 0;
 """
         fmi2code[str(fm_index)] = content
     return fmi2code
@@ -141,8 +141,8 @@ def generate_fmm_32x32_source():
 #include "fmm_32x32.h"
 
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
-    int height = A.shape[0];
-    int width = A.shape[1];
+    shape_uint height = A.shape[0];
+    shape_uint width = A.shape[1];
     if (height <= 1024 || width <= 1024) {
         matmul_double_blas(C, A, B);
         return 0;
@@ -151,9 +151,9 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
         //return matmul_double(C, A, B);
         return -1;
     }
-    int N = height;
-    int BL = N/32;
-    int NS = BL*BL;
+    shape_uint N = height;
+    shape_uint BL = N/32;
+    shape_uint NS = BL*BL;
     double dnum17 = 1/17.0;
     double_cmat m;
     create_double_matrix(pairint {BL, BL}, &m);
@@ -278,7 +278,7 @@ def generate_fAxxeval_source_files(A_eval_order, A_reduced_exprs, B_reduced_expr
             if reset_var not in idfappear:
                 idfappear.add(reset_var)
             else:
-                content+= f"    for(int arenai=0; arenai<NS; arenai++) {reset_var}.arena[arenai] = 0;\n"
+                content+= f"    for(shape_uint arenai=0; arenai<NS; arenai++) {reset_var}.arena[arenai] = 0;\n"
 
         n_A_mats = len(A_names)
 
