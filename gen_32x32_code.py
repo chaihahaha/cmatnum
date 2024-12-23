@@ -156,10 +156,10 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     shape_uint NS = BL*BL;
     double dnum17 = 1/17.0;
     double_cmat m;
-    create_double_matrix(pairint {BL, BL}, &m);
+    create_double_matrix(pairuint {BL, BL}, &m);
     double_cmat tmp0, tmp1;
-    create_double_matrix(pairint {BL, BL}, &tmp0);
-    create_double_matrix(pairint {BL, BL}, &tmp1);
+    create_double_matrix(pairuint {BL, BL}, &tmp0);
+    create_double_matrix(pairuint {BL, BL}, &tmp1);
     double_cmat marr[60] = {NULL};
 """
 
@@ -170,7 +170,7 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     for j in range(1,33):
         content += (f"    create_slice_double_matrix_contiguous(&A_x_{j}, A, pairint {{ 0, N }}, pairint {{ {(j-1)}*BL, {j}*BL }});\n")
         content += (f"    create_slice_double_matrix_contiguous(&B_x_{j}, B, pairint {{ 0, N }}, pairint {{ {(j-1)}*BL, {j}*BL }});\n")
-        content += (f"    create_double_matrix(pairint {{ N, BL }}, &C_x_{j});\n")
+        content += (f"    create_double_matrix(pairuint {{ N, BL }}, &C_x_{j});\n")
     for i in range(1,33):
         for j in range(1,33):
             content += (f"    double_cmat A_{i}_{j} = slice_double_matrix(A_x_{j}, pairint {{{(i-1)}*BL, {i}*BL}}, pairint {{0, BL}});\n")
@@ -183,9 +183,9 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
         content+=f"    double_cmat {i};\n"
 
     for i in Axx_names:
-        content+=f"    create_double_matrix(pairint {{BL, BL}}, &{i});\n"
+        content+=f"    create_double_matrix(pairuint {{BL, BL}}, &{i});\n"
     for i,j in B_replacements:
-        content+=f"    create_double_matrix(pairint {{BL, BL}}, &{i});\n"
+        content+=f"    create_double_matrix(pairuint {{BL, BL}}, &{i});\n"
 
     # generate func calls to fAxi, fBxi
     for i,j in B_replacements:

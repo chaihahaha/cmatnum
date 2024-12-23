@@ -130,7 +130,7 @@ int create_double_matrix_from_array(shape_uint shape[2], double* array, shape_ui
     return 0;
 }
 
-int_cmat slice_int_matrix(int_cmat mat, shape_uint slice0[2], shape_uint slice1[2]) {
+int_cmat slice_int_matrix(int_cmat mat, shape_int slice0[2], shape_int slice1[2]) {
     int_cmat empty_mat;
     empty_mat.data = NULL;
     empty_mat.arena = NULL;
@@ -169,7 +169,7 @@ int_cmat slice_int_matrix(int_cmat mat, shape_uint slice0[2], shape_uint slice1[
     return new_mat;
 }
 
-float_cmat slice_float_matrix(float_cmat mat, shape_uint slice0[2], shape_uint slice1[2]) {
+float_cmat slice_float_matrix(float_cmat mat, shape_int slice0[2], shape_int slice1[2]) {
     float_cmat empty_mat;
     empty_mat.data = NULL;
     empty_mat.arena = NULL;
@@ -208,7 +208,7 @@ float_cmat slice_float_matrix(float_cmat mat, shape_uint slice0[2], shape_uint s
     return new_mat;
 }
 
-double_cmat slice_double_matrix(double_cmat mat, shape_uint slice0[2], shape_uint slice1[2]) {
+double_cmat slice_double_matrix(double_cmat mat, shape_int slice0[2], shape_int slice1[2]) {
     //printf("slice double\n");
     double_cmat empty_mat;
     empty_mat.data = NULL;
@@ -248,7 +248,7 @@ double_cmat slice_double_matrix(double_cmat mat, shape_uint slice0[2], shape_uin
     return new_mat;
 }
 
-int create_slice_double_matrix_contiguous(double_cmat *dst, double_cmat mat, shape_uint slice0[2], shape_uint slice1[2]) {
+int create_slice_double_matrix_contiguous(double_cmat *dst, double_cmat mat, shape_int slice0[2], shape_int slice1[2]) {
     //printf("slice conting\n");
     // dst = mat[slice0, slice1]
     if (slice0[1] < 0) {
@@ -301,7 +301,7 @@ int create_double_contiguous_from_slice(double_cmat *dest, double_cmat *src) {
     return 0;
 }
 
-int assign_int_slice(int_cmat m1, int_cmat m2, shape_uint slice0[2], shape_uint slice1[2]) {
+int assign_int_slice(int_cmat m1, int_cmat m2, shape_int slice0[2], shape_int slice1[2]) {
     if (slice0[1] < 0) {
         slice0[1] += m1.shape[0];
     }
@@ -320,7 +320,7 @@ int assign_int_slice(int_cmat m1, int_cmat m2, shape_uint slice0[2], shape_uint 
     return 0;
 }
 
-int assign_float_slice(float_cmat m1, float_cmat m2, shape_uint slice0[2], shape_uint slice1[2]) {
+int assign_float_slice(float_cmat m1, float_cmat m2, shape_int slice0[2], shape_int slice1[2]) {
     if (slice0[1] < 0) {
         slice0[1] += m1.shape[0];
     }
@@ -339,7 +339,7 @@ int assign_float_slice(float_cmat m1, float_cmat m2, shape_uint slice0[2], shape
     return 0;
 }
 
-int assign_double_slice(double_cmat m1, double_cmat m2, shape_uint slice0[2], shape_uint slice1[2]) {
+int assign_double_slice(double_cmat m1, double_cmat m2, shape_int slice0[2], shape_int slice1[2]) {
     //printf("assign slice\n");
     // assign m2 to a slice of m1 defined by slice0(x) and slice1(y)
     // m1[slice0, slice1] = m2
@@ -718,8 +718,8 @@ int main() {
     }
     create_double_matrix_from_array(pairint {2, 3}, double_array2, 6, pairint {0, 0}, &array_double2);
     print_double_matrix(array_double2);
-    shape_uint slice_double_lr0[2] = {1, 3};
-    shape_uint slice_double_lr1[2] = {1, -1};
+    shape_int slice_double_lr0[2] = {1, 3};
+    shape_int slice_double_lr1[2] = {1, -1};
     double_cmat slice_double2 = slice_double_matrix(array_double2, slice_double_lr0, slice_double_lr1);
     print_double_matrix(slice_double2);
     free_double_matrix(array_double2);
