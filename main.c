@@ -31,7 +31,8 @@ int main() {
     double endtime;
 
     clock_gettime(CLOCK_MONOTONIC, &start);
-    printf("fmm<32x32x32:15136>\n");
+    printf("fmm<3x3x6:40>\n");
+    //printf("fmm<32x32x32:15136>\n");
     //fmm_32x32(C, A, B);
     fmm_3x3x6(C, A, B);
     clock_gettime(CLOCK_MONOTONIC, &end);
