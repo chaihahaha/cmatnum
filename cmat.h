@@ -11,7 +11,10 @@
 #include "cblas.h"
 #endif
 
+#include <stdint.h>
 #define shape_uint uint32_t
+#define shape_int int32_t
+// TODO: refactor slice to shape_int
 
 
 struct int_cmat {

@@ -244,6 +244,7 @@ int matmul_double_recursive_bilinear(double_cmat matC, double_cmat matA, double_
 }
 
 int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat matB){
+    // TODO: improve with slice contiguous
     if (!(matA.shape[0] == matA.shape[1] && matA.shape[1] == matB.shape[0] && matB.shape[0] == matB.shape[1] && matA.shape[0]%2==0)) {
         return -1;
     }

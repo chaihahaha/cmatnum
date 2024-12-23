@@ -6,10 +6,14 @@
 
 int main() {
     double_cmat A, B, C;
-    int AH = 3;
-    int AW = 3;
+    int AH = 3*7800;
+    int AW = 3*7800;
     int BH = AW;
-    int BW = 6;
+    int BW = 6*7800;
+    //int AH = 32*1024;
+    //int AW = 32*1024;
+    //int BH = AW;
+    //int BW = 32*1024;
     int CH = AH;
     int CW = BW;
     printf("performing %d x %d x %d matmul...\n", AH, AW, BW);
