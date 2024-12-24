@@ -251,7 +251,7 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
     int N = matA.shape[0];
     int II = matA.shape[0]/2;
     if (N <= 4096) {
-        return matmul_double_blas(matC, matA, matB);
+        return matmul_double_blas(matC, matA, matB); // TODO: not contiguous
     }
     double_cmat A_x_1;
     double_cmat A_x_2;
@@ -390,7 +390,7 @@ int main() {
     double endtime;
 
     clock_gettime(CLOCK_MONOTONIC, &start);
-    matmul_double_strassen_winograd(C, A, B);
+    matmul_double_schwartz2024(C, A, B);
     clock_gettime(CLOCK_MONOTONIC, &end);
     endtime = (end.tv_sec - start.tv_sec) +
                           (end.tv_nsec - start.tv_nsec) / 1e9;
