@@ -6,10 +6,10 @@
 
 int main() {
     double_cmat A, B, C;
-    int AH = 3*7800;
-    int AW = 3*7800;
+    int AH = 32*1024;
+    int AW = 32*1024;
     int BH = AW;
-    int BW = 6*7800;
+    int BW = 32*1024;
     //int AH = 32*1024;
     //int AW = 32*1024;
     //int BH = AW;
@@ -17,9 +17,9 @@ int main() {
     int CH = AH;
     int CW = BW;
     printf("performing %d x %d x %d matmul...\n", AH, AW, BW);
-    create_double_matrix(pairint {AH, AW}, &A);
-    create_double_matrix(pairint {BH, BW}, &B);
-    create_double_matrix(pairint {CH, CW}, &C);
+    create_double_matrix(pairuint {AH, AW}, &A);
+    create_double_matrix(pairuint {BH, BW}, &B);
+    create_double_matrix(pairuint {CH, CW}, &C);
 
     for (int i = 0; i < AH; i++) {
         for (int j = 0; j < AW; j++) {
@@ -35,18 +35,18 @@ int main() {
     double endtime;
 
     clock_gettime(CLOCK_MONOTONIC, &start);
-    printf("fmm<3x3x6:40>\n");
-    //printf("fmm<32x32x32:15136>\n");
-    //fmm_32x32(C, A, B);
-    fmm_3x3x6(C, A, B);
+    //printf("fmm<3x3x6:40>\n");
+    printf("fmm<32x32x32:15136>\n");
+    fmm_32x32(C, A, B);
+    //fmm_3x3x6(C, A, B);
     clock_gettime(CLOCK_MONOTONIC, &end);
     endtime = (end.tv_sec - start.tv_sec) +
                           (end.tv_nsec - start.tv_nsec) / 1e9;
-    //printf("fmm 32x32 time: %f(s)\n", endtime);
-    printf("fmm 3x3x6 time: %f(s)\n", endtime);
+    printf("fmm 32x32 time: %f(s)\n", endtime);
+    //printf("fmm 3x3x6 time: %f(s)\n", endtime);
 
     double_cmat TC;
-    create_double_matrix(pairint {CH, CW}, &TC);
+    create_double_matrix(pairuint {CH, CW}, &TC);
     clock_gettime(CLOCK_MONOTONIC, &start);
     matmul_double_blas(TC, A, B);
     clock_gettime(CLOCK_MONOTONIC, &end);
