@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+title: cmatnum
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Shitong
+    family-names: Chai
+    affiliation: Harbin Institute of Technology
+repository-code: 'https://github.com/chaihahaha/cmatnum'
+abstract: >-
+  cmatnum: implementation of fast subcubic matrix multiplications with BLAS and C programming language
+license: GPLv3
