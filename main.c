@@ -58,11 +58,10 @@ int main() {
         for (int j = 0; j < CW; j++) {
             if (fabs(C.data[i][j] - TC.data[i][j]) > 0.1) {
                 printf("wrong: %lf, true: %lf, at: %d-%d\n", C.data[i][j], TC.data[i][j], i, j);
+                return -1;
             }
         }
     }
-    printf("finished\n");
-    return 0;
 
     free_double_matrix(A);
     free_double_matrix(B);
