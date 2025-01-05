@@ -452,6 +452,7 @@ int main() {
         for (int j = 0; j < N; j++) {
             if (fabs(C.data[i][j] - TC.data[i][j]) > 0.01) {
                 printf("wrong: %lf, true: %lf, at: %d-%d\n", C.data[i][j], TC.data[i][j], i, j);
+                return -1;
             }
         }
     }

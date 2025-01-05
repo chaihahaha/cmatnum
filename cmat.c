@@ -352,12 +352,19 @@ int assign_double_slice(double_cmat m1, double_cmat m2, shape_int slice0[2], sha
     if (slice0[0] >= slice0[1] || slice1[0] >= slice1[1] || slice0[1] - slice0[0] != m2.shape[0] || slice1[1] - slice1[0] != m2.shape[1]) {
         return -1;
     }
-    for (shape_uint i = 0; i < m2.shape[0]; i++) {
-        //memcpy(&m1.data[slice0[0] + i][slice1[0]],  m2.data[i], sizeof(double) * m2.shape[1]);
-        cblas_dcopy(m2.shape[1], m2.data[i], 1, &m1.data[slice0[0] + i][slice1[0]], 1);
-        //for (int j = 0; j < m2.shape[1]; j++) {
-        //    m1.data[slice0[0] + i][slice1[0] + j] = m2.data[i][j];
-        //}
+    int iscontig = is_contiguous_double(m1)&&is_contiguous_double(m2)&&(m1.shape[1]==m2.shape[1]);
+    shape_uint N = m2.shape[0]*m2.shape[1];
+    if (iscontig) {
+        cblas_dcopy(N, m2.data[0], 1, &m1.data[slice0[0]][slice1[0]], 1);
+    }
+    else {
+        for (shape_uint i = 0; i < m2.shape[0]; i++) {
+            //memcpy(&m1.data[slice0[0] + i][slice1[0]],  m2.data[i], sizeof(double) * m2.shape[1]);
+            cblas_dcopy(m2.shape[1], m2.data[i], 1, &m1.data[slice0[0] + i][slice1[0]], 1);
+            //for (int j = 0; j < m2.shape[1]; j++) {
+            //    m1.data[slice0[0] + i][slice1[0] + j] = m2.data[i][j];
+            //}
+        }
     }
     return 0;
 }
@@ -427,25 +434,43 @@ int matadd_double(double_cmat m3, double_cmat m1, double_cmat m2) {
     if (m1.shape[0] != m3.shape[0] || m1.shape[1] != m3.shape[1]) {
         return -1;
     }
+    int iscontig = is_contiguous_double(m1) && is_contiguous_double(m2);
+    shape_uint N = m1.shape[0]*m1.shape[1];
     if (m1.data[0] == m3.data[0]) {
         // m3 = m3 + m2
-        for (shape_uint i = 0; i < m2.shape[0]; i++) {
-            cblas_daxpy(m3.shape[1], 1.0, m2.data[i], 1, m3.data[i], 1);
+        if (iscontig) {
+            cblas_daxpy(N, 1.0, m2.data[0], 1, m3.data[0], 1);
+        }
+        else {
+            for (shape_uint i = 0; i < m2.shape[0]; i++) {
+                cblas_daxpy(m3.shape[1], 1.0, m2.data[i], 1, m3.data[i], 1);
+            }
         }
     }
     else if (m2.data[0] == m3.data[0]) {
         // m3 = m1 + m3
-        for (shape_uint i = 0; i < m2.shape[0]; i++) {
-            cblas_daxpy(m3.shape[1], 1.0, m1.data[i], 1, m3.data[i], 1);
+        if (iscontig) {
+            cblas_daxpy(N, 1.0, m1.data[0], 1, m3.data[0], 1);
+        }
+        else {
+            for (shape_uint i = 0; i < m2.shape[0]; i++) {
+                cblas_daxpy(m3.shape[1], 1.0, m1.data[i], 1, m3.data[i], 1);
+            }
         }
     }
     else {
-        for (shape_uint i = 0; i < m2.shape[0]; i++) {
-            //for (int j = 0; j < m2.shape[1]; j++) {
-            //    m3.data[i][j] = m1.data[i][j] + m2.data[i][j];
-            //}
-            cblas_dcopy(m3.shape[1], m1.data[i], 1, m3.data[i], 1);
-            cblas_daxpy(m3.shape[1], 1.0, m2.data[i], 1, m3.data[i], 1);
+        if (iscontig) {
+            cblas_dcopy(N, m1.data[0], 1, m3.data[0], 1);
+            cblas_daxpy(N, 1.0, m2.data[0], 1, m3.data[0], 1);
+        }
+        else {
+            for (shape_uint i = 0; i < m2.shape[0]; i++) {
+                //for (int j = 0; j < m2.shape[1]; j++) {
+                //    m3.data[i][j] = m1.data[i][j] + m2.data[i][j];
+                //}
+                cblas_dcopy(m3.shape[1], m1.data[i], 1, m3.data[i], 1);
+                cblas_daxpy(m3.shape[1], 1.0, m2.data[i], 1, m3.data[i], 1);
+            }
         }
     }
     return 0;
@@ -489,30 +514,52 @@ int matsub_double(double_cmat m3, double_cmat m1, double_cmat m2) {
     if (m1.shape[0] != m3.shape[0] || m1.shape[1] != m3.shape[1]) {
         return -1;
     }
+    int iscontig = is_contiguous_double(m1) && is_contiguous_double(m2);
+    shape_uint N = m1.shape[0]*m1.shape[1];
     if (m1.data[0] == m3.data[0]) {
         // m3 = m3 - m2
-        for (shape_uint i = 0; i < m2.shape[0]; i++) {
-            cblas_daxpy(m3.shape[1], -1.0, m2.data[i], 1, m3.data[i], 1);
+        if (iscontig) {
+            cblas_daxpy(N, -1.0, m2.data[0], 1, m3.data[0], 1);
+        }
+        else {
+            for (shape_uint i = 0; i < m2.shape[0]; i++) {
+                cblas_daxpy(m3.shape[1], -1.0, m2.data[i], 1, m3.data[i], 1);
+            }
         }
     }
     else if (m2.data[0] == m3.data[0]) {
         // m3 = m1 - m3
-        double *tmp2 = (double*) malloc(m3.shape[1] * sizeof(double));
-        for (shape_uint i = 0; i < m2.shape[0]; i++) {
-            cblas_dcopy(m3.shape[1], m2.data[i], 1, tmp2, 1);
-            cblas_dcopy(m3.shape[1], m1.data[i], 1, m3.data[i], 1);
-            cblas_daxpy(m3.shape[1], -1.0, tmp2, 1, m3.data[i], 1);
+        if (iscontig) {
+            double *tmp2 = (double*) malloc(N * sizeof(double));
+            cblas_dcopy(N, m2.data[i], 1, tmp2, 1);
+            cblas_dcopy(N, m1.data[0], 1, m3.data[0], 1);
+            cblas_daxpy(N, -1.0, tmp2, 1, m3.data[0], 1);
+            free(tmp2);
         }
-        free(tmp2);
+        else {
+            double *tmp2 = (double*) malloc(m3.shape[1] * sizeof(double));
+            for (shape_uint i = 0; i < m2.shape[0]; i++) {
+                cblas_dcopy(m3.shape[1], m2.data[i], 1, tmp2, 1);
+                cblas_dcopy(m3.shape[1], m1.data[i], 1, m3.data[i], 1);
+                cblas_daxpy(m3.shape[1], -1.0, tmp2, 1, m3.data[i], 1);
+            }
+            free(tmp2);
+        }
     }
     else {
-        for (shape_uint i = 0; i < m2.shape[0]; i++) {
-            //for (int j = 0; j < m2.shape[1]; j++) {
-            //    m3.data[i][j] = m1.data[i][j] - m2.data[i][j];
-            //}
+        if (iscontig) {
+            cblas_dcopy(N, m1.data[0], 1, m3.data[0], 1);
+            cblas_daxpy(N, -1.0, m2.data[0], 1, m3.data[0], 1);
+        }
+        else {
+            for (shape_uint i = 0; i < m2.shape[0]; i++) {
+                //for (int j = 0; j < m2.shape[1]; j++) {
+                //    m3.data[i][j] = m1.data[i][j] - m2.data[i][j];
+                //}
 
-            cblas_dcopy(m3.shape[1], m1.data[i], 1, m3.data[i], 1);
-            cblas_daxpy(m3.shape[1], -1.0, m2.data[i], 1, m3.data[i], 1);
+                cblas_dcopy(m3.shape[1], m1.data[i], 1, m3.data[i], 1);
+                cblas_daxpy(m3.shape[1], -1.0, m2.data[i], 1, m3.data[i], 1);
+            }
         }
     }
     return 0;
