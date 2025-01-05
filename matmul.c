@@ -218,112 +218,7 @@ int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, double_c
     return 0;
 }
 
-int matmul_double_recursive_bilinear(double_cmat matC, double_cmat matA, double_cmat matB){
-    if (!(matA.shape[0] == matA.shape[1] && matA.shape[1] == matB.shape[0] && matB.shape[0] == matB.shape[1] && matA.shape[0]%2==0)) {
-        return -1;
-    }
-    int N = matA.shape[0];
-    int II = matA.shape[0]/2;
-    if (N <= 4096) {
-        return matmul_double_blas_nocontig(matC, matA, matB);
-    }
-    double_cmat A_x_1;
-    double_cmat A_x_2;
-    double_cmat B_x_1;
-    double_cmat B_x_2;
-    double_cmat C_x_1;
-    double_cmat C_x_2;
-    create_slice_double_matrix_contiguous(&A_x_1, matA, pairint { 0, N }, pairint { 0*II, 1*II });
-    create_slice_double_matrix_contiguous(&A_x_2, matA, pairint { 0, N }, pairint { 1*II, 2*II });
-    create_slice_double_matrix_contiguous(&B_x_1, matB, pairint { 0, N }, pairint { 0*II, 1*II });
-    create_slice_double_matrix_contiguous(&B_x_2, matB, pairint { 0, N }, pairint { 1*II, 2*II });
-    create_double_matrix(pairuint { N, II }, &C_x_1);
-    create_double_matrix(pairuint { N, II }, &C_x_2);
-    double_cmat A11 = slice_double_matrix(A_x_1, pairint {0,II}, pairint {0,II});
-    double_cmat A12 = slice_double_matrix(A_x_2, pairint {0,II}, pairint {0,II});
-    double_cmat A21 = slice_double_matrix(A_x_1, pairint {II,N}, pairint {0,II});
-    double_cmat A22 = slice_double_matrix(A_x_2, pairint {II,N}, pairint {0,II});
-    double_cmat B11 = slice_double_matrix(B_x_1, pairint {0,II}, pairint {0,II});
-    double_cmat B12 = slice_double_matrix(B_x_2, pairint {0,II}, pairint {0,II});
-    double_cmat B21 = slice_double_matrix(B_x_1, pairint {II,N}, pairint {0,II});
-    double_cmat B22 = slice_double_matrix(B_x_2, pairint {II,N}, pairint {0,II});
-    double_cmat C11 = slice_double_matrix(C_x_1, pairint {0,II}, pairint {0,II});
-    double_cmat C12 = slice_double_matrix(C_x_2, pairint {0,II}, pairint {0,II});
-    double_cmat C21 = slice_double_matrix(C_x_1, pairint {II,N}, pairint {0,II});
-    double_cmat C22 = slice_double_matrix(C_x_2, pairint {II,N}, pairint {0,II});
-    double_cmat S5, T5, M1, M2, M3, M4, M5, M6, M7;
-    create_double_matrix(pairuint {II,II}, &S5);
-    create_double_matrix(pairuint {II,II}, &T5);
-    create_double_matrix(pairuint {II,II}, &M1);
-    create_double_matrix(pairuint {II,II}, &M2);
-    create_double_matrix(pairuint {II,II}, &M3);
-    create_double_matrix(pairuint {II,II}, &M4);
-    create_double_matrix(pairuint {II,II}, &M5);
-    create_double_matrix(pairuint {II,II}, &M6);
-    create_double_matrix(pairuint {II,II}, &M7);
-
-
-
-
-    matadd_double(S5, A21, A22);
-    matadd_double(T5, B21, B22);
-    matmul_double_schwartz2024(M5, S5,  T5 );
-    matsub_double(S5, A22, A12);
-    matsub_double(T5, B22, B12);
-    matmul_double_schwartz2024(M6, S5,  T5 );
-    matsub_double(S5, A22, A11);
-    matmul_double_schwartz2024(M7, S5,  B12);
-
-    matsub_double(T5, B22, B11);
-    matmul_double_schwartz2024(M3, A21, T5 );
-    matmul_double_schwartz2024(M4, A22, B22);
-    matmul_double_schwartz2024(M1, A11, B11);
-    matmul_double_schwartz2024(M2, A12, B21);
-
-    matadd_double(C11, M1, M2);
-    matsub_double(C12, M5, M7);
-    matadd_double(C21, M3, M6);
-    for (int i=0; i < II; i++) {
-        for (int j=0; j < II; j++) {
-            C22.data[i][j] = M5.data[i][j] + M6.data[i][j] - M2.data[i][j] - M4.data[i][j];
-        }
-    }
-
-    assign_double_slice(matC, C_x_1, pairint {0, N}, pairint { 0*II, 1*II });
-    assign_double_slice(matC, C_x_2, pairint {0, N}, pairint { 1*II, 2*II });
-
-    free_double_matrix(S5);
-    free_double_matrix(T5);
-    free_double_matrix(M1);
-    free_double_matrix(M2);
-    free_double_matrix(M3);
-    free_double_matrix(M4);
-    free_double_matrix(M5);
-    free_double_matrix(M6);
-    free_double_matrix(M7);
-    free_double_matrix(A11);
-    free_double_matrix(A12);
-    free_double_matrix(A21);
-    free_double_matrix(A22);
-    free_double_matrix(B11);
-    free_double_matrix(B12);
-    free_double_matrix(B21);
-    free_double_matrix(B22);
-    free_double_matrix(C11);
-    free_double_matrix(C12);
-    free_double_matrix(C21);
-    free_double_matrix(C22);
-    free_double_matrix(A_x_1);
-    free_double_matrix(A_x_2);
-    free_double_matrix(B_x_1);
-    free_double_matrix(B_x_2);
-    free_double_matrix(C_x_1);
-    free_double_matrix(C_x_2);
-    return 0;
-}
-
 int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat matB){
-    // TODO: improve with slice contiguous
     if (!(matA.shape[0] == matA.shape[1] && matA.shape[1] == matB.shape[0] && matB.shape[0] == matB.shape[1] && matA.shape[0]%2==0)) {
         return -1;
     }
@@ -361,7 +256,18 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
     // pb12 = b11 + b12
     // pb21 = b21 - b11
     // pb22 = b11 + b22
-    // TODO: migrate to contig fails here, possibly because of self assign?
+    double_cmat S5, T5, M1, M2, M3, M4, M5, M6, M7;
+    create_double_matrix(pairuint {II,II}, &S5);
+    create_double_matrix(pairuint {II,II}, &T5);
+    create_double_matrix(pairuint {II,II}, &M1);
+    create_double_matrix(pairuint {II,II}, &M2);
+    create_double_matrix(pairuint {II,II}, &M3);
+    create_double_matrix(pairuint {II,II}, &M4);
+    create_double_matrix(pairuint {II,II}, &M5);
+    create_double_matrix(pairuint {II,II}, &M6);
+    create_double_matrix(pairuint {II,II}, &M7);
+
+
     double_cmat tmp1;
     double_cmat tmp2;
     create_double_matrix(pairuint {II,II}, &tmp1);
@@ -381,7 +287,31 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
     //print_double_matrix(matA);
     //printf("B\n");
     //print_double_matrix(matB);
-    matmul_double_recursive_bilinear(matC, matA, matB);
+    matadd_double(S5, A21, A22);
+    matadd_double(T5, B21, B22);
+    matmul_double_schwartz2024(M5, S5,  T5 );
+    matsub_double(S5, A22, A12);
+    matsub_double(T5, B22, B12);
+    matmul_double_schwartz2024(M6, S5,  T5 );
+    matsub_double(S5, A22, A11);
+    matmul_double_schwartz2024(M7, S5,  B12);
+
+    matsub_double(T5, B22, B11);
+    matmul_double_schwartz2024(M3, A21, T5 );
+    matmul_double_schwartz2024(M4, A22, B22);
+    matmul_double_schwartz2024(M1, A11, B11);
+    matmul_double_schwartz2024(M2, A12, B21);
+
+    matadd_double(C11, M1, M2);
+    matsub_double(C12, M5, M7);
+    matadd_double(C21, M3, M6);
+    for (int i=0; i < II; i++) {
+        for (int j=0; j < II; j++) {
+            C22.data[i][j] = M5.data[i][j] + M6.data[i][j] - M2.data[i][j] - M4.data[i][j];
+        }
+    }
+
+
     //printf("C\n");
     //print_double_matrix(matC);
 
@@ -406,6 +336,16 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
     matneg_double(tmp1, tmp1);
     assign_double_clone(C12, tmp1);
 
+    free_double_matrix(S5);
+    free_double_matrix(T5);
+    free_double_matrix(M1);
+    free_double_matrix(M2);
+    free_double_matrix(M3);
+    free_double_matrix(M4);
+    free_double_matrix(M5);
+    free_double_matrix(M6);
+    free_double_matrix(M7);
+ 
     free_double_matrix(tmp1);
     free_double_matrix(tmp2);
     free_double_matrix(A11);
