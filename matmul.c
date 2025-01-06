@@ -49,9 +49,9 @@ int matmul_double_blas(double_cmat C, double_cmat A_slice, double_cmat B_slice) 
         // Call dgemm
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                     C.shape[0], C.shape[1], A_slice.shape[1],
-                    1.0, A_slice.data[0], A_slice.arena_shape[1],
-                    B_slice.data[0], B_slice.arena_shape[1],
-                    0.0, C.arena, C.arena_shape[1]);
+                    1.0, &A_slice.data[0][0], A_slice.arena_shape[1],
+                    &B_slice.data[0][0], B_slice.arena_shape[1],
+                    0.0, &C.data[0][0], C.arena_shape[1]);
     //printf("finish matmul blas\n");
     return 0;
 }
