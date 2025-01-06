@@ -126,7 +126,7 @@ int matmul_double_strassen_winograd(double_cmat matC, double_cmat matA, double_c
     }
     int N = matA.shape[0];
     int II = matA.shape[0]/2;
-    if (N <= 4096) {
+    if (N <= 18000) {
         return matmul_double_blas(matC, matA, matB);
     }
     double_cmat A_x_1;
@@ -224,7 +224,8 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
     }
     int N = matA.shape[0];
     int II = matA.shape[0]/2;
-    if (N <= 4096) {
+    int BN = II*II;
+    if (N <= 18000) {
         return matmul_double_blas(matC, matA, matB);
     }
     double_cmat A_x_1;
@@ -280,16 +281,15 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
     create_double_matrix(pairuint {II,II}, &M7);
 
 
-    double_cmat tmp1;
-    double_cmat tmp2;
-    create_double_matrix(pairuint {II,II}, &tmp1);
-    create_double_matrix(pairuint {II,II}, &tmp2);
-    assign_double_clone(tmp2, A11);
-    matneg_double(tmp1, A11);
+    // reuse M1 for tmp1, M2 for tmp2
+    assign_double_clone(M2, A11);
+    matneg_double(M1, A11);
     matadd_double(A11, A21, A22);
-    matsub_double(A21, tmp1, A12);
+    matsub_double(A21, M1, A12);
     assign_double_clone(A12, A22);
-    matadd_double(A22, tmp2, A22);
+    matadd_double(A22, M2, A22);
+    memset(&M1.data[0][0], 0, sizeof(double)*BN);
+    memset(&M2.data[0][0], 0, sizeof(double)*BN);
 
     matadd_double(B12, B11, B12);
     matsub_double(B21, B21, B11);
@@ -317,11 +317,9 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
     matadd_double(C11, M1, M2);
     matsub_double(C12, M5, M7);
     matadd_double(C21, M3, M6);
-    for (int i=0; i < II; i++) {
-        for (int j=0; j < II; j++) {
-            C22.data[i][j] = M5.data[i][j] + M6.data[i][j] - M2.data[i][j] - M4.data[i][j];
-        }
-    }
+    matadd_double(C22, M5, M6);
+    matsub_double(C22, C22, M2);
+    matsub_double(C22, C22, M4);
 
 
     //printf("C\n");
@@ -337,16 +335,15 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
     // c11 = tmp1 - c22
     // c22 = c12 - c21 - c22
     // c12 = -tmp1
-    assign_double_clone(tmp1, C21);
+    assign_double_clone(M1, C21);
     assign_double_clone(C21, C11);
-    matsub_double(C11, tmp1, C22);
-    for (int i=0; i < II; i++) {
-        for (int j=0; j < II; j++) {
-            C22.data[i][j] = C12.data[i][j] - C21.data[i][j] - C22.data[i][j];
-        }
-    }
-    matneg_double(tmp1, tmp1);
-    assign_double_clone(C12, tmp1);
+    matsub_double(C11, M1, C22);
+
+    matneg_double(C22, C22);
+    matadd_double(C22, C22, C12);
+    matsub_double(C22, C22, C21);
+
+    matneg_double(C12, M1);
 
     assign_double_slice(matC, C_x_1, pairint {0, N}, pairint { 0*II, 1*II });
     assign_double_slice(matC, C_x_2, pairint {0, N}, pairint { 1*II, 2*II });
@@ -361,8 +358,6 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
     free_double_matrix(M6);
     free_double_matrix(M7);
  
-    free_double_matrix(tmp1);
-    free_double_matrix(tmp2);
     free_double_matrix(A11);
     free_double_matrix(A12);
     free_double_matrix(A21);
@@ -391,8 +386,7 @@ int matmul_double_schwartz2024(double_cmat matC, double_cmat matA, double_cmat m
 
 int main() {
     double_cmat A, B, C, TC;
-    double_cmat Ac, Bc;
-    int N = 8192*2;
+    int N = 6000*2*2;
     create_double_matrix(pairuint {N, N}, &A);
     create_double_matrix(pairuint {N, N}, &B);
     create_double_matrix(pairuint {N, N}, &C);
@@ -411,23 +405,19 @@ int main() {
     struct timespec start, end;
     double endtime;
 
-    //clock_gettime(CLOCK_MONOTONIC, &start);
-    //matmul_double_strassen_winograd(C, A, B);
-    //clock_gettime(CLOCK_MONOTONIC, &end);
-    //endtime = (end.tv_sec - start.tv_sec) +
-    //                      (end.tv_nsec - start.tv_nsec) / 1e9;
-    //printf("strassen winograd time: %f(s)\n", endtime);
-
-    create_double_matrix(pairuint {N, N}, &Ac);
-    create_double_matrix(pairuint {N, N}, &Bc);
-    assign_double_clone(Ac, A);
-    assign_double_clone(Bc, B);
     clock_gettime(CLOCK_MONOTONIC, &start);
-    matmul_double_schwartz2024(C, Ac, Bc);
+    matmul_double_strassen_winograd(C, A, B);
     clock_gettime(CLOCK_MONOTONIC, &end);
     endtime = (end.tv_sec - start.tv_sec) +
                           (end.tv_nsec - start.tv_nsec) / 1e9;
-    printf("schwartz 2024 time: %f(s)\n", endtime);
+    printf("strassen winograd time: %f(s)\n", endtime);
+
+    //clock_gettime(CLOCK_MONOTONIC, &start);
+    //matmul_double_schwartz2024(C, A, B);
+    //clock_gettime(CLOCK_MONOTONIC, &end);
+    //endtime = (end.tv_sec - start.tv_sec) +
+    //                      (end.tv_nsec - start.tv_nsec) / 1e9;
+    //printf("schwartz 2024 time: %f(s)\n", endtime);
 
     //start = clock();
     //matmul_double_sse2(C, A, B);
