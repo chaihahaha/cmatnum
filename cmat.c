@@ -389,7 +389,7 @@ int assign_double_clone(double_cmat m1, double_cmat m2) {
     return 0;
 }
 
-inline int matlincomb_double_contiguous(double_cmat res, shape_uint n_mats, double_cmat* mats, int8_t* coeffs) {
+int matlincomb_double_contiguous(double_cmat res, shape_uint n_mats, double_cmat* mats, int8_t* coeffs) {
     //printf("lincomb\n");
     // res = coeffs[0] * mats[0] + ... + coeffs[n_mats-1] * mats[n_mats-1]
     // memset(&res.data[0][0], 0, sizeof(res.data[0][0])*res.shape[0]*res.shape[1]); // should not reset because it could appear in RHS
@@ -398,7 +398,7 @@ inline int matlincomb_double_contiguous(double_cmat res, shape_uint n_mats, doub
     }
     shape_uint n_elems = mats[0].shape[0] * mats[0].shape[1];
     for (shape_uint i = 0; i < n_mats; i++) {
-        cblas_daxpy(n_elems, coeffs[i], &mats[i].data[0][0], 1, &res.data[0][0], 1);
+        cblas_daxpy(n_elems, coeffs[i], mats[i].data[0], 1, res.data[0], 1);
     }
     return 0;
 }

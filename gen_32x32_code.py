@@ -82,7 +82,11 @@ def generate_fm_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_r
         content += "    cblas_dscal(NS, dnum17, &tmp0.data[0][0], 1);\n"
 
         content += """\
-    matmul_double_blas(m, tmp0, tmp1);
+        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                    BL, BL, BL,
+                    1.0, tmp0.data[0], BL,
+                    tmp1.data[0], BL,
+                    0.0, m.data[0], BL);
 """
         m_term = f"m_{fm_index}"
         for Ci, coefficient in m_to_C[m_term]:
