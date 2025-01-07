@@ -68,7 +68,12 @@ def generate_fm_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_r
 
         for idx, name in enumerate(A_names):
             content += f"    marr[{idx}]={name};\n"
-        content += f"    matlincomb_double_contiguous(tmp0, {n_A_mats}, (double_cmat*)marr, (int8_t*)A_coeffs_{fm_index});\n"
+        #content += f"    matlincomb_double_contiguous(tmp0, {n_A_mats}, (double_cmat*)marr, (int8_t*)A_coeffs_{fm_index});\n"
+        content += f"""
+    for (shape_uint i = 0; i < {n_A_mats}; i++) {{
+        cblas_daxpy(NS, A_coeffs_{fm_index}[i], marr[i].data[0], 1, tmp0.data[0], 1);
+    }}
+"""
 
         content += f"    static const int8_t B_coeffs_{fm_index}[{n_B_mats}] = {{"
         for c in B_coeffs:
@@ -77,7 +82,12 @@ def generate_fm_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_r
 
         for idx, name in enumerate(B_names):
             content += f"    marr[{idx}]={name};\n"
-        content += f"    matlincomb_double_contiguous(tmp1, {n_B_mats}, (double_cmat*)marr, (int8_t*)B_coeffs_{fm_index});\n"
+        #content += f"    matlincomb_double_contiguous(tmp1, {n_B_mats}, (double_cmat*)marr, (int8_t*)B_coeffs_{fm_index});\n"
+        content += f"""
+    for (shape_uint i = 0; i < {n_B_mats}; i++) {{
+        cblas_daxpy(NS, B_coeffs_{fm_index}[i], marr[i].data[0], 1, tmp1.data[0], 1);
+    }}
+"""
 
         content += "    cblas_dscal(NS, dnum17, &tmp0.data[0][0], 1);\n"
 
@@ -293,7 +303,12 @@ def generate_fAxxeval_source_files(A_eval_order, A_reduced_exprs, B_reduced_expr
 
         for idx, name in enumerate(A_names):
             content += f"    marr[{idx}]={name};\n"
-        content += f"    matlincomb_double_contiguous({idf}, {n_A_mats}, (double_cmat*)marr,  (int8_t*)A_coeffs_{func_name});\n"
+        #content += f"    matlincomb_double_contiguous({idf}, {n_A_mats}, (double_cmat*)marr,  (int8_t*)A_coeffs_{func_name});\n"
+        content += f"""
+    for (shape_uint i = 0; i < {n_A_mats}; i++) {{
+        cblas_daxpy(NS, A_coeffs_{func_name}[i], marr[i].data[0], 1, {idf}.data[0], 1);
+    }}
+"""
         Axxi2code[i] = content
     return Axxi2code
 
@@ -321,7 +336,12 @@ def generate_fBx_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_
 
         for idx, name in enumerate(B_names):
             content += f"    marr[{idx}]={name};\n"
-        content += f"    matlincomb_double_contiguous({idf}, {n_B_mats}, (double_cmat*)marr,  (int8_t*)B_coeffs_{idf});\n"
+        #content += f"    matlincomb_double_contiguous({idf}, {n_B_mats}, (double_cmat*)marr,  (int8_t*)B_coeffs_{idf});\n"
+        content += f"""
+    for (shape_uint i = 0; i < {n_B_mats}; i++) {{
+        cblas_daxpy(NS, B_coeffs_{idf}[i], marr[i].data[0], 1, {idf}.data[0], 1);
+    }}
+"""
         Bxi2code[idf] = content
     return Bxi2code
 

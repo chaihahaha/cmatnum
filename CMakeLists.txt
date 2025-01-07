@@ -22,7 +22,7 @@ file(GLOB_RECURSE SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/matmul.c"
 )
 add_compile_options(-std=c11)
-add_compile_options(-O2)
+add_compile_options(-O3)
 add_compile_options(-march=native)
 add_compile_options(-D_GNU_SOURCE)
 
@@ -38,7 +38,7 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
-set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/main.c" PROPERTIES COMPILE_FLAGS "-O1")
+#set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/main.c" PROPERTIES COMPILE_FLAGS "-O1")
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     target_compile_definitions(${PROJECT_NAME} PRIVATE ACCELERATE_NEW_LAPACK)
