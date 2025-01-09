@@ -1,3 +1,4 @@
+import functools
 import os
 import re
 import sympy as sp
@@ -198,8 +199,6 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     for i,j in B_replacements:
         content+=f"    double_cmat {i};\n"
 
-    for i in Axx_names:
-        content+=f"    create_double_matrix(pairuint {{BL, BL}}, &{i});\n"
     for i,j in B_replacements:
         content+=f"    create_double_matrix(pairuint {{BL, BL}}, &{i});\n"
 
@@ -210,16 +209,30 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
 
     # generate func calls to fm_i
     cnt_Axx = 0
-    for i in A_eval_order:
-        var_name = i[0]
-        expr = i[1]
-        final_m_str = 'mA'
-        temp_str = 'Axx'
+    Axx_set = set()
+    inuse = set()
+    final_m_str = 'mA'
+    temp_str = 'Axx'
+    for i in range(len(A_eval_order)):
+        var_name = A_eval_order[i][0]
+        if temp_str in var_name and var_name not in Axx_set:
+            content+=f"    create_double_matrix(pairuint {{BL, BL}}, &{var_name});\n"
+            Axx_set.add(var_name)
+        expr = A_eval_order[i][1]
         if final_m_str in var_name:
             content += fmi2code[var_name.lstrip(final_m_str)]
         if temp_str in var_name:
             content += Axxi2code[cnt_Axx]
             cnt_Axx += 1
+
+        list_of_sets = [j[1].free_symbols for j in A_eval_order[i+1:]]
+        union_set = functools.reduce(lambda a, b: a | b, list_of_sets, set())
+        tobefree = inuse - union_set
+        inuse = union_set
+        for sym in tobefree:
+            if temp_str in str(sym):
+                content+=f"    free_double_matrix({sym});\n"
+
 
     # copy C_x_j to C[:][j]
     for j in range(1,33):
@@ -234,8 +247,6 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
         content += (f"    free_double_matrix(A_x_{j});\n")
         content += (f"    free_double_matrix(B_x_{j});\n")
         content += (f"    free_double_matrix(C_x_{j});\n")
-    for i in Axx_names:
-        content+=f"    free_double_matrix({i});\n"
     for i,j in B_replacements:
         content+=f"    free_double_matrix({i});\n"
     content += """\
