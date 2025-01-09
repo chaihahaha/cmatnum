@@ -156,7 +156,11 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     shape_uint height = A.shape[0];
     shape_uint width = A.shape[1];
     if (height <= 1024 || width <= 1024) {
-        matmul_double_blas(C, A, B);
+        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                    C.shape[0], C.shape[1], A.shape[1],
+                    1.0, A.data[0], A.arena_shape[1],
+                    B.data[0], B.arena_shape[1],
+                    0.0, C.data[0], C.arena_shape[1]);
         return 0;
     }
     if (!(height % 32 == width % 32 && height % 32 == 0 && height / 32 == width / 32)) {
