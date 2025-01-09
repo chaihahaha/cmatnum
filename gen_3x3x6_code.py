@@ -165,10 +165,10 @@ int fmm_3x3x6(double_cmat C, double_cmat A, double_cmat B) {
     }
     double dnum8 = 1/8.0;
     double_cmat m;
-    create_double_matrix(pairint {BLHC, BLWC}, &m);
+    create_double_matrix(pairuint {BLHC, BLWC}, &m);
     double_cmat tmp0, tmp1;
-    create_double_matrix(pairint {BLHA, BLWA}, &tmp0);
-    create_double_matrix(pairint {BLHB, BLWB}, &tmp1);
+    create_double_matrix(pairuint {BLHA, BLWA}, &tmp0);
+    create_double_matrix(pairuint {BLHB, BLWB}, &tmp1);
     double_cmat marr[60] = {NULL};
 """
 
@@ -182,7 +182,7 @@ int fmm_3x3x6(double_cmat C, double_cmat A, double_cmat B) {
     for j in range(1,7):
         content += (f"    create_slice_double_matrix_contiguous(&B_x_{j}, B, pairint {{ 0, B_height }}, pairint {{ {(j-1)}*BLWB, {j}*BLWB }});\n")
     for j in range(1,7):
-        content += (f"    create_double_matrix(pairint {{ C_height, BLWC }}, &C_x_{j});\n")
+        content += (f"    create_double_matrix(pairuint {{ C_height, BLWC }}, &C_x_{j});\n")
     for i in range(1,4):
         for j in range(1,4):
             content += (f"    double_cmat A_{i}_{j} = slice_double_matrix(A_x_{j}, pairint {{{(i-1)}*BLHA, {i}*BLWA}}, pairint {{0, BLWA}});\n")
@@ -197,9 +197,9 @@ int fmm_3x3x6(double_cmat C, double_cmat A, double_cmat B) {
         content+=f"    double_cmat {i};\n"
 
     for i in Bxx_names:
-        content+=f"    create_double_matrix(pairint {{BLHB, BLWB}}, &{i});\n"
+        content+=f"    create_double_matrix(pairuint {{BLHB, BLWB}}, &{i});\n"
     for i,j in A_replacements:
-        content+=f"    create_double_matrix(pairint {{BLHA, BLWA}}, &{i});\n"
+        content+=f"    create_double_matrix(pairuint {{BLHA, BLWA}}, &{i});\n"
 
     # generate func calls to fAxi, fBxi
     for i,j in A_replacements:

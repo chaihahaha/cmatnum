@@ -61,9 +61,9 @@ def generate_fm_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_r
         n_B_mats = len(B_names)
 
 
-        content += f"    static const int8_t A_coeffs_{fm_index}[{n_A_mats}] = {{"
+        content += f"    static const double A_coeffs_{fm_index}[{n_A_mats}] = {{"
         for c in A_coeffs:
-            content += f"{c}, "
+            content += f"{c}*dnum17, "
         content += "};\n"
 
         for idx, name in enumerate(A_names):
@@ -89,7 +89,7 @@ def generate_fm_source_files(A_eval_order, A_reduced_exprs, B_reduced_exprs, B_r
     }}
 """
 
-        content += "    cblas_dscal(NS, dnum17, &tmp0.data[0][0], 1);\n"
+        #content += "    cblas_dscal(NS, dnum17, &tmp0.data[0][0], 1);\n"
 
         content += """\
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
@@ -117,7 +117,6 @@ def generate_fmm_32x32_header():
 #include <stdio.h>
 #include <stdlib.h>
 #include "cmat.h"
-#include "matmul.h"
 """
     content += """\
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B);
@@ -151,7 +150,6 @@ def generate_fmm_32x32_source():
 
     content += """\
 #include "cmat.h"
-#include "matmul.h"
 #include "fmm_32x32.h"
 
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
@@ -168,7 +166,7 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     shape_uint N = height;
     shape_uint BL = N/32;
     shape_uint NS = BL*BL;
-    double dnum17 = 1/17.0;
+    static const double dnum17 = 1/17.0;
     double_cmat m;
     create_double_matrix(pairuint {BL, BL}, &m);
     double_cmat tmp0, tmp1;
