@@ -4,7 +4,7 @@
 int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     shape_uint height = A.shape[0];
     shape_uint width = A.shape[1];
-    if (height <= 1200 || width <= 1200 || !(height % 3 == width % 3 && height % 3 == 0 && height / 3 == width / 3)) {
+    if (height <= 10000 || width <= 10000 || !(height % 3 == width % 3 && height % 3 == 0 && height / 3 == width / 3)) {
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                     C.shape[0], C.shape[1], A.shape[1],
                     1.0, A.data[0], A.arena_shape[1],
@@ -124,71 +124,71 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     double_cmat B_2_2 = slice_double_matrix(B_x_2, pairint {2*BL, 3*BL}, pairint {0, BL});
     double_cmat C_2_2 = slice_double_matrix(C_x_2, pairint {2*BL, 3*BL}, pairint {0, BL});
 
-    cblas_daxpy(NS, 100.0, A_2_0.data[0], 1, S0.data[0], 1);
+    cblas_daxpy(NS, 10.0, A_2_0.data[0], 1, S0.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_2_2.data[0], 1, S0.data[0], 1);
+    cblas_daxpy(NS, 0.1, A_0_0.data[0], 1, S0.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, A_0_0.data[0], 1, S0.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_2_2.data[0], 1, S0.data[0], 1);
 
-    cblas_daxpy(NS, -1.0000000000000002e-06, A_0_2.data[0], 1, S0.data[0], 1);
+    cblas_daxpy(NS, -0.0010000000000000002, A_0_2.data[0], 1, S0.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_1_0.data[0], 1, S1.data[0], 1);
+    cblas_daxpy(NS, 0.0010000000000000002, A_0_2.data[0], 1, S1.data[0], 1);
 
-    cblas_daxpy(NS, 1.0000000000000002e-06, A_0_2.data[0], 1, S1.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_1_0.data[0], 1, S1.data[0], 1);
 
-    cblas_daxpy(NS, -100.0, A_1_1.data[0], 1, S1.data[0], 1);
+    cblas_daxpy(NS, -10.0, A_1_1.data[0], 1, S1.data[0], 1);
 
-    cblas_daxpy(NS, -0.01, A_2_2.data[0], 1, S1.data[0], 1);
+    cblas_daxpy(NS, -0.1, A_2_2.data[0], 1, S1.data[0], 1);
 
     cblas_daxpy(NS, 1.0, A_1_1.data[0], 1, S2.data[0], 1);
 
-    cblas_daxpy(NS, -100.0, A_1_0.data[0], 1, S2.data[0], 1);
+    cblas_daxpy(NS, -10.0, A_1_0.data[0], 1, S2.data[0], 1);
 
-    cblas_daxpy(NS, -10000.0, A_2_1.data[0], 1, S2.data[0], 1);
+    cblas_daxpy(NS, -99.99999999999999, A_2_1.data[0], 1, S2.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, A_2_1.data[0], 1, S3.data[0], 1);
+    cblas_daxpy(NS, 10.0, A_2_1.data[0], 1, S3.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, A_0_1.data[0], 1, S3.data[0], 1);
+    cblas_daxpy(NS, 0.1, A_0_1.data[0], 1, S3.data[0], 1);
 
     cblas_daxpy(NS, -1.0, A_0_0.data[0], 1, S3.data[0], 1);
 
-    cblas_daxpy(NS, -10000.0, A_2_0.data[0], 1, S3.data[0], 1);
+    cblas_daxpy(NS, -99.99999999999999, A_2_0.data[0], 1, S3.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_1_0.data[0], 1, S4.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_1_0.data[0], 1, S4.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_2_2.data[0], 1, S4.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_2_2.data[0], 1, S4.data[0], 1);
 
-    cblas_daxpy(NS, -1.0000000000000002e-06, A_0_2.data[0], 1, S4.data[0], 1);
+    cblas_daxpy(NS, -0.0010000000000000002, A_0_2.data[0], 1, S4.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_2_0.data[0], 1, S5.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_2_0.data[0], 1, S5.data[0], 1);
 
-    cblas_daxpy(NS, -100.0, A_2_1.data[0], 1, S5.data[0], 1);
+    cblas_daxpy(NS, -10.0, A_2_1.data[0], 1, S5.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_2_0.data[0], 1, S6.data[0], 1);
+    cblas_daxpy(NS, 0.1, A_0_0.data[0], 1, S6.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, A_0_0.data[0], 1, S6.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_2_0.data[0], 1, S6.data[0], 1);
 
-    cblas_daxpy(NS, -100.0, A_2_1.data[0], 1, S6.data[0], 1);
+    cblas_daxpy(NS, -10.0, A_2_1.data[0], 1, S6.data[0], 1);
 
-    cblas_daxpy(NS, -0.0002, A_0_1.data[0], 1, S6.data[0], 1);
+    cblas_daxpy(NS, -0.020000000000000004, A_0_1.data[0], 1, S6.data[0], 1);
 
     cblas_daxpy(NS, 1.0, A_1_2.data[0], 1, S7.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, A_2_0.data[0], 1, S7.data[0], 1);
+    cblas_daxpy(NS, 10.0, A_2_0.data[0], 1, S7.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, A_0_0.data[0], 1, S7.data[0], 1);
+    cblas_daxpy(NS, 0.1, A_0_0.data[0], 1, S7.data[0], 1);
 
-    cblas_daxpy(NS, -10000.0, A_1_0.data[0], 1, S7.data[0], 1);
+    cblas_daxpy(NS, -0.0010000000000000002, A_0_2.data[0], 1, S7.data[0], 1);
 
-    cblas_daxpy(NS, -1.0000000000000002e-06, A_0_2.data[0], 1, S7.data[0], 1);
+    cblas_daxpy(NS, -99.99999999999999, A_1_0.data[0], 1, S7.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, A_1_1.data[0], 1, S8.data[0], 1);
+    cblas_daxpy(NS, 10.0, A_1_1.data[0], 1, S8.data[0], 1);
 
-    cblas_daxpy(NS, -10000.0, A_1_0.data[0], 1, S8.data[0], 1);
+    cblas_daxpy(NS, -99.99999999999999, A_1_0.data[0], 1, S8.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_2_1.data[0], 1, S9.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_2_1.data[0], 1, S9.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_1_0.data[0], 1, S10.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_1_0.data[0], 1, S10.data[0], 1);
 
     cblas_daxpy(NS, -1.0, A_1_2.data[0], 1, S10.data[0], 1);
 
@@ -196,242 +196,322 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
 
     cblas_daxpy(NS, 1.0, A_2_1.data[0], 1, S11.data[0], 1);
 
-    cblas_daxpy(NS, 0.0001, A_0_1.data[0], 1, S11.data[0], 1);
+    cblas_daxpy(NS, 0.010000000000000002, A_0_1.data[0], 1, S11.data[0], 1);
 
-    cblas_daxpy(NS, -10000.0, A_1_0.data[0], 1, S11.data[0], 1);
+    cblas_daxpy(NS, -99.99999999999999, A_1_0.data[0], 1, S11.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_2_0.data[0], 1, S12.data[0], 1);
+    cblas_daxpy(NS, 0.1, A_1_1.data[0], 1, S12.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, A_1_1.data[0], 1, S12.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_2_0.data[0], 1, S12.data[0], 1);
 
     cblas_daxpy(NS, -1.0, A_1_0.data[0], 1, S12.data[0], 1);
 
-    cblas_daxpy(NS, -100.0, A_2_1.data[0], 1, S12.data[0], 1);
+    cblas_daxpy(NS, -10.0, A_2_1.data[0], 1, S12.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, A_2_1.data[0], 1, S13.data[0], 1);
+    cblas_daxpy(NS, 10.0, A_2_1.data[0], 1, S13.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, A_0_1.data[0], 1, S13.data[0], 1);
+    cblas_daxpy(NS, 0.010000000000000002, A_0_2.data[0], 1, S13.data[0], 1);
 
-    cblas_daxpy(NS, 0.0001, A_0_2.data[0], 1, S13.data[0], 1);
+    cblas_daxpy(NS, 0.1, A_0_1.data[0], 1, S13.data[0], 1);
 
     cblas_daxpy(NS, -1.0, A_0_0.data[0], 1, S13.data[0], 1);
 
-    cblas_daxpy(NS, -10000.0, A_2_0.data[0], 1, S13.data[0], 1);
+    cblas_daxpy(NS, -99.99999999999999, A_2_0.data[0], 1, S13.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_2_2.data[0], 1, S14.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_2_2.data[0], 1, S14.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_1_0.data[0], 1, S15.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_1_0.data[0], 1, S15.data[0], 1);
 
     cblas_daxpy(NS, -1.0, A_2_1.data[0], 1, S15.data[0], 1);
 
-    cblas_daxpy(NS, -0.0001, A_0_1.data[0], 1, S15.data[0], 1);
+    cblas_daxpy(NS, -0.010000000000000002, A_0_1.data[0], 1, S15.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, A_2_0.data[0], 1, S16.data[0], 1);
+    cblas_daxpy(NS, 10.0, A_2_0.data[0], 1, S16.data[0], 1);
 
     cblas_daxpy(NS, 1.0, A_1_1.data[0], 1, S17.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, A_1_2.data[0], 1, S17.data[0], 1);
+    cblas_daxpy(NS, 0.1, A_1_2.data[0], 1, S17.data[0], 1);
 
-    cblas_daxpy(NS, -100.0, A_1_0.data[0], 1, S17.data[0], 1);
+    cblas_daxpy(NS, -10.0, A_1_0.data[0], 1, S17.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_2_2.data[0], 1, S18.data[0], 1);
+    cblas_daxpy(NS, 0.010000000000000002, A_1_2.data[0], 1, S18.data[0], 1);
 
-    cblas_daxpy(NS, 0.0001, A_1_2.data[0], 1, S18.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_2_2.data[0], 1, S18.data[0], 1);
 
     cblas_daxpy(NS, -1.0, A_1_0.data[0], 1, S18.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, A_1_0.data[0], 1, S19.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, A_1_0.data[0], 1, S19.data[0], 1);
 
     cblas_daxpy(NS, 1.0, B_0_0.data[0], 1, T0.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_1_0.data[0], 1, T0.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_1_0.data[0], 1, T0.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, B_2_0.data[0], 1, T0.data[0], 1);
+    cblas_daxpy(NS, 0.1, B_0_1.data[0], 1, T0.data[0], 1);
 
-    cblas_daxpy(NS, 2.0000000000000003e-06, B_2_2.data[0], 1, T0.data[0], 1);
+    cblas_daxpy(NS, 0.0020000000000000005, B_2_2.data[0], 1, T0.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, B_0_1.data[0], 1, T0.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, B_2_0.data[0], 1, T0.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_2_2.data[0], 1, T1.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_2_2.data[0], 1, T1.data[0], 1);
 
-    cblas_daxpy(NS, 1.0000000000000002e-06, B_1_2.data[0], 1, T1.data[0], 1);
+    cblas_daxpy(NS, 0.0010000000000000002, B_1_2.data[0], 1, T1.data[0], 1);
 
     cblas_daxpy(NS, 1.0, B_1_1.data[0], 1, T2.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_1_0.data[0], 1, T2.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_1_0.data[0], 1, T2.data[0], 1);
 
-    cblas_daxpy(NS, -0.0001, B_1_2.data[0], 1, T2.data[0], 1);
+    cblas_daxpy(NS, -0.010000000000000002, B_1_2.data[0], 1, T2.data[0], 1);
 
     cblas_daxpy(NS, 1.0, B_1_0.data[0], 1, T3.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_2_0.data[0], 1, T3.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_2_0.data[0], 1, T3.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, B_0_0.data[0], 1, T3.data[0], 1);
+    cblas_daxpy(NS, 0.1, B_0_0.data[0], 1, T3.data[0], 1);
 
     cblas_daxpy(NS, 1.0, B_0_0.data[0], 1, T4.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_1_0.data[0], 1, T4.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_1_0.data[0], 1, T4.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_2_1.data[0], 1, T4.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_2_1.data[0], 1, T4.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, B_2_0.data[0], 1, T4.data[0], 1);
+    cblas_daxpy(NS, 0.1, B_0_1.data[0], 1, T4.data[0], 1);
 
-    cblas_daxpy(NS, 1.0000000000000002e-06, B_2_2.data[0], 1, T4.data[0], 1);
+    cblas_daxpy(NS, 0.0010000000000000002, B_2_2.data[0], 1, T4.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, B_0_1.data[0], 1, T4.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, B_2_0.data[0], 1, T4.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, B_1_0.data[0], 1, T5.data[0], 1);
+    cblas_daxpy(NS, 0.010000000000000002, B_0_2.data[0], 1, T5.data[0], 1);
 
-    cblas_daxpy(NS, 0.0001, B_0_2.data[0], 1, T5.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, B_1_0.data[0], 1, T5.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_1_0.data[0], 1, T6.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_1_0.data[0], 1, T6.data[0], 1);
 
-    cblas_daxpy(NS, 1.0000000000000002e-06, B_0_2.data[0], 1, T6.data[0], 1);
+    cblas_daxpy(NS, 0.1, B_0_0.data[0], 1, T6.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, B_0_0.data[0], 1, T6.data[0], 1);
+    cblas_daxpy(NS, 0.0010000000000000002, B_0_2.data[0], 1, T6.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, B_2_0.data[0], 1, T7.data[0], 1);
+    cblas_daxpy(NS, 0.1, B_0_2.data[0], 1, T7.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, B_0_2.data[0], 1, T7.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, B_2_0.data[0], 1, T7.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_2_2.data[0], 1, T8.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_2_2.data[0], 1, T8.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, B_1_1.data[0], 1, T8.data[0], 1);
+    cblas_daxpy(NS, 0.1, B_1_1.data[0], 1, T8.data[0], 1);
 
     cblas_daxpy(NS, 1.0, B_1_1.data[0], 1, T9.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_1_0.data[0], 1, T9.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_1_0.data[0], 1, T9.data[0], 1);
 
-    cblas_daxpy(NS, 1.0000000000000002e-06, B_0_2.data[0], 1, T9.data[0], 1);
+    cblas_daxpy(NS, 0.0010000000000000002, B_0_2.data[0], 1, T9.data[0], 1);
 
     cblas_daxpy(NS, 1.0, B_1_2.data[0], 1, T10.data[0], 1);
 
     cblas_daxpy(NS, 1.0, B_2_1.data[0], 1, T10.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, B_0_2.data[0], 1, T10.data[0], 1);
+    cblas_daxpy(NS, 0.1, B_0_2.data[0], 1, T10.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, B_2_0.data[0], 1, T11.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, B_2_0.data[0], 1, T11.data[0], 1);
 
     cblas_daxpy(NS, -1.0, B_1_2.data[0], 1, T11.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, B_1_0.data[0], 1, T12.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, B_1_0.data[0], 1, T12.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_2_0.data[0], 1, T13.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_2_0.data[0], 1, T13.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, B_2_1.data[0], 1, T14.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, B_2_1.data[0], 1, T14.data[0], 1);
 
-    cblas_daxpy(NS, -0.0001, B_2_2.data[0], 1, T14.data[0], 1);
+    cblas_daxpy(NS, -0.010000000000000002, B_2_2.data[0], 1, T14.data[0], 1);
 
     cblas_daxpy(NS, 1.0, B_0_0.data[0], 1, T15.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_1_0.data[0], 1, T15.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_1_0.data[0], 1, T15.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, B_2_0.data[0], 1, T15.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, B_2_0.data[0], 1, T15.data[0], 1);
 
     cblas_daxpy(NS, -1.0, B_1_1.data[0], 1, T15.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_1_0.data[0], 1, T16.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_1_0.data[0], 1, T16.data[0], 1);
 
-    cblas_daxpy(NS, 1.0000000000000002e-06, B_0_2.data[0], 1, T16.data[0], 1);
+    cblas_daxpy(NS, 0.0010000000000000002, B_0_2.data[0], 1, T16.data[0], 1);
 
-    cblas_daxpy(NS, -2.0000000000000003e-06, B_2_2.data[0], 1, T16.data[0], 1);
+    cblas_daxpy(NS, -0.1, B_0_1.data[0], 1, T16.data[0], 1);
 
-    cblas_daxpy(NS, -0.01, B_0_1.data[0], 1, T16.data[0], 1);
+    cblas_daxpy(NS, -0.0020000000000000005, B_2_2.data[0], 1, T16.data[0], 1);
 
     cblas_daxpy(NS, 1.0, B_1_2.data[0], 1, T17.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_2_2.data[0], 1, T17.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_2_2.data[0], 1, T17.data[0], 1);
 
-    cblas_daxpy(NS, 10000.0, B_2_1.data[0], 1, T18.data[0], 1);
+    cblas_daxpy(NS, 99.99999999999999, B_2_1.data[0], 1, T18.data[0], 1);
 
     cblas_daxpy(NS, 1.0, B_1_1.data[0], 1, T19.data[0], 1);
 
-    cblas_daxpy(NS, 100.0, B_2_1.data[0], 1, T19.data[0], 1);
+    cblas_daxpy(NS, 10.0, B_2_1.data[0], 1, T19.data[0], 1);
 
-    cblas_daxpy(NS, 1.0000000000000002e-06, B_2_2.data[0], 1, T19.data[0], 1);
+    cblas_daxpy(NS, 0.1, B_0_1.data[0], 1, T19.data[0], 1);
 
-    cblas_daxpy(NS, 0.01, B_0_1.data[0], 1, T19.data[0], 1);
-    fmm_3x3(m0, S0, T0);
-    fmm_3x3(m1, S1, T1);
-    fmm_3x3(m2, S2, T2);
-    fmm_3x3(m3, S3, T3);
-    fmm_3x3(m4, S4, T4);
-    fmm_3x3(m5, S5, T5);
-    fmm_3x3(m6, S6, T6);
-    fmm_3x3(m7, S7, T7);
-    fmm_3x3(m8, S8, T8);
-    fmm_3x3(m9, S9, T9);
-    fmm_3x3(m10, S10, T10);
-    fmm_3x3(m11, S11, T11);
-    fmm_3x3(m12, S12, T12);
-    fmm_3x3(m13, S13, T13);
-    fmm_3x3(m14, S14, T14);
-    fmm_3x3(m15, S15, T15);
-    fmm_3x3(m16, S16, T16);
-    fmm_3x3(m17, S17, T17);
-    fmm_3x3(m18, S18, T18);
-    fmm_3x3(m19, S19, T19);
+    cblas_daxpy(NS, 0.0010000000000000002, B_2_2.data[0], 1, T19.data[0], 1);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S0.data[0], BL,
+                T0.data[0], BL,
+                0.0, m0.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S1.data[0], BL,
+                T1.data[0], BL,
+                0.0, m1.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S2.data[0], BL,
+                T2.data[0], BL,
+                0.0, m2.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S3.data[0], BL,
+                T3.data[0], BL,
+                0.0, m3.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S4.data[0], BL,
+                T4.data[0], BL,
+                0.0, m4.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S5.data[0], BL,
+                T5.data[0], BL,
+                0.0, m5.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S6.data[0], BL,
+                T6.data[0], BL,
+                0.0, m6.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S7.data[0], BL,
+                T7.data[0], BL,
+                0.0, m7.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S8.data[0], BL,
+                T8.data[0], BL,
+                0.0, m8.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S9.data[0], BL,
+                T9.data[0], BL,
+                0.0, m9.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S10.data[0], BL,
+                T10.data[0], BL,
+                0.0, m10.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S11.data[0], BL,
+                T11.data[0], BL,
+                0.0, m11.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S12.data[0], BL,
+                T12.data[0], BL,
+                0.0, m12.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S13.data[0], BL,
+                T13.data[0], BL,
+                0.0, m13.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S14.data[0], BL,
+                T14.data[0], BL,
+                0.0, m14.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S15.data[0], BL,
+                T15.data[0], BL,
+                0.0, m15.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S16.data[0], BL,
+                T16.data[0], BL,
+                0.0, m16.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S17.data[0], BL,
+                T17.data[0], BL,
+                0.0, m17.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S18.data[0], BL,
+                T18.data[0], BL,
+                0.0, m18.data[0], BL);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S19.data[0], BL,
+                T19.data[0], BL,
+                0.0, m19.data[0], BL);
     cblas_daxpy(NS, 1.0, &m5.data[0][0], 1, &C_0_0.data[0][0], 1);
-    cblas_daxpy(NS, 100.0, &m13.data[0][0], 1, &C_0_0.data[0][0], 1);
-    cblas_daxpy(NS, 0.01, &m2.data[0][0], 1, &C_0_0.data[0][0], 1);
-    cblas_daxpy(NS, 0.01, &m9.data[0][0], 1, &C_0_0.data[0][0], 1);
-    cblas_daxpy(NS, -100.0, &m3.data[0][0], 1, &C_0_0.data[0][0], 1);
-    cblas_daxpy(NS, -100.0, &m6.data[0][0], 1, &C_0_0.data[0][0], 1);
-    cblas_daxpy(NS, -0.01, &m1.data[0][0], 1, &C_0_0.data[0][0], 1);
-    cblas_daxpy(NS, -0.01, &m12.data[0][0], 1, &C_0_0.data[0][0], 1);
-    cblas_daxpy(NS, -0.01, &m8.data[0][0], 1, &C_0_0.data[0][0], 1);
-    cblas_daxpy(NS, 100.0, &m14.data[0][0], 1, &C_0_1.data[0][0], 1);
-    cblas_daxpy(NS, 10000.0, &m0.data[0][0], 1, &C_0_1.data[0][0], 1);
-    cblas_daxpy(NS, 10000.0, &m15.data[0][0], 1, &C_0_1.data[0][0], 1);
-    cblas_daxpy(NS, 10000.0, &m16.data[0][0], 1, &C_0_1.data[0][0], 1);
-    cblas_daxpy(NS, 10000.0, &m19.data[0][0], 1, &C_0_1.data[0][0], 1);
-    cblas_daxpy(NS, 10000.0, &m3.data[0][0], 1, &C_0_1.data[0][0], 1);
+    cblas_daxpy(NS, 10.0, &m13.data[0][0], 1, &C_0_0.data[0][0], 1);
+    cblas_daxpy(NS, 0.1, &m2.data[0][0], 1, &C_0_0.data[0][0], 1);
+    cblas_daxpy(NS, 0.1, &m9.data[0][0], 1, &C_0_0.data[0][0], 1);
+    cblas_daxpy(NS, -10.0, &m3.data[0][0], 1, &C_0_0.data[0][0], 1);
+    cblas_daxpy(NS, -10.0, &m6.data[0][0], 1, &C_0_0.data[0][0], 1);
+    cblas_daxpy(NS, -0.1, &m1.data[0][0], 1, &C_0_0.data[0][0], 1);
+    cblas_daxpy(NS, -0.1, &m12.data[0][0], 1, &C_0_0.data[0][0], 1);
+    cblas_daxpy(NS, -0.1, &m8.data[0][0], 1, &C_0_0.data[0][0], 1);
+    cblas_daxpy(NS, 10.0, &m14.data[0][0], 1, &C_0_1.data[0][0], 1);
+    cblas_daxpy(NS, 99.99999999999999, &m0.data[0][0], 1, &C_0_1.data[0][0], 1);
+    cblas_daxpy(NS, 99.99999999999999, &m15.data[0][0], 1, &C_0_1.data[0][0], 1);
+    cblas_daxpy(NS, 99.99999999999999, &m16.data[0][0], 1, &C_0_1.data[0][0], 1);
+    cblas_daxpy(NS, 99.99999999999999, &m19.data[0][0], 1, &C_0_1.data[0][0], 1);
+    cblas_daxpy(NS, 99.99999999999999, &m3.data[0][0], 1, &C_0_1.data[0][0], 1);
     cblas_daxpy(NS, -1.0, &m5.data[0][0], 1, &C_0_1.data[0][0], 1);
     cblas_daxpy(NS, -1.0, &m9.data[0][0], 1, &C_0_1.data[0][0], 1);
-    cblas_daxpy(NS, -10000.0, &m4.data[0][0], 1, &C_0_1.data[0][0], 1);
-    cblas_daxpy(NS, 10000.0, &m1.data[0][0], 1, &C_0_2.data[0][0], 1);
-    cblas_daxpy(NS, 10000.0, &m10.data[0][0], 1, &C_0_2.data[0][0], 1);
-    cblas_daxpy(NS, 10000.0, &m12.data[0][0], 1, &C_0_2.data[0][0], 1);
-    cblas_daxpy(NS, 10000.0, &m13.data[0][0], 1, &C_0_2.data[0][0], 1);
-    cblas_daxpy(NS, 10000.0, &m18.data[0][0], 1, &C_0_2.data[0][0], 1);
-    cblas_daxpy(NS, 10000.0, &m7.data[0][0], 1, &C_0_2.data[0][0], 1);
-    cblas_daxpy(NS, 10000.0, &m8.data[0][0], 1, &C_0_2.data[0][0], 1);
-    cblas_daxpy(NS, -10000.0, &m11.data[0][0], 1, &C_0_2.data[0][0], 1);
-    cblas_daxpy(NS, -10000.0, &m14.data[0][0], 1, &C_0_2.data[0][0], 1);
-    cblas_daxpy(NS, -10000.0, &m2.data[0][0], 1, &C_0_2.data[0][0], 1);
-    cblas_daxpy(NS, -10000.0, &m5.data[0][0], 1, &C_0_2.data[0][0], 1);
-    cblas_daxpy(NS, -10000.0, &m9.data[0][0], 1, &C_0_2.data[0][0], 1);
-    cblas_daxpy(NS, 0.00999999, &m2.data[0][0], 1, &C_1_0.data[0][0], 1);
-    cblas_daxpy(NS, 1e-08, &m12.data[0][0], 1, &C_1_0.data[0][0], 1);
-    cblas_daxpy(NS, 0.01, &m11.data[0][0], 1, &C_1_0.data[0][0], 1);
-    cblas_daxpy(NS, 0.01, &m9.data[0][0], 1, &C_1_0.data[0][0], 1);
-    cblas_daxpy(NS, 0.0001, &m4.data[0][0], 1, &C_1_0.data[0][0], 1);
-    cblas_daxpy(NS, -1.0000000000000002e-06, &m14.data[0][0], 1, &C_1_0.data[0][0], 1);
-    cblas_daxpy(NS, -0.0099, &m7.data[0][0], 1, &C_1_0.data[0][0], 1);
-    cblas_daxpy(NS, -0.01, &m1.data[0][0], 1, &C_1_0.data[0][0], 1);
-    cblas_daxpy(NS, -0.01, &m10.data[0][0], 1, &C_1_0.data[0][0], 1);
-    cblas_daxpy(NS, -0.01, &m13.data[0][0], 1, &C_1_0.data[0][0], 1);
-    cblas_daxpy(NS, -0.01, &m8.data[0][0], 1, &C_1_0.data[0][0], 1);
-    cblas_daxpy(NS, -0.0001, &m0.data[0][0], 1, &C_1_0.data[0][0], 1);
+    cblas_daxpy(NS, -99.99999999999999, &m4.data[0][0], 1, &C_0_1.data[0][0], 1);
+    cblas_daxpy(NS, 99.99999999999999, &m1.data[0][0], 1, &C_0_2.data[0][0], 1);
+    cblas_daxpy(NS, 99.99999999999999, &m10.data[0][0], 1, &C_0_2.data[0][0], 1);
+    cblas_daxpy(NS, 99.99999999999999, &m12.data[0][0], 1, &C_0_2.data[0][0], 1);
+    cblas_daxpy(NS, 99.99999999999999, &m13.data[0][0], 1, &C_0_2.data[0][0], 1);
+    cblas_daxpy(NS, 99.99999999999999, &m18.data[0][0], 1, &C_0_2.data[0][0], 1);
+    cblas_daxpy(NS, 99.99999999999999, &m7.data[0][0], 1, &C_0_2.data[0][0], 1);
+    cblas_daxpy(NS, 99.99999999999999, &m8.data[0][0], 1, &C_0_2.data[0][0], 1);
+    cblas_daxpy(NS, -99.99999999999999, &m11.data[0][0], 1, &C_0_2.data[0][0], 1);
+    cblas_daxpy(NS, -99.99999999999999, &m14.data[0][0], 1, &C_0_2.data[0][0], 1);
+    cblas_daxpy(NS, -99.99999999999999, &m2.data[0][0], 1, &C_0_2.data[0][0], 1);
+    cblas_daxpy(NS, -99.99999999999999, &m5.data[0][0], 1, &C_0_2.data[0][0], 1);
+    cblas_daxpy(NS, -99.99999999999999, &m9.data[0][0], 1, &C_0_2.data[0][0], 1);
+    cblas_daxpy(NS, 0.010000000000000002, &m4.data[0][0], 1, &C_1_0.data[0][0], 1);
+    cblas_daxpy(NS, 0.1, &m11.data[0][0], 1, &C_1_0.data[0][0], 1);
+    cblas_daxpy(NS, 0.1, &m9.data[0][0], 1, &C_1_0.data[0][0], 1);
+    cblas_daxpy(NS, 0.00010000000000000002, &m12.data[0][0], 1, &C_1_0.data[0][0], 1);
+    cblas_daxpy(NS, 0.0999, &m2.data[0][0], 1, &C_1_0.data[0][0], 1);
+    cblas_daxpy(NS, -0.010000000000000002, &m0.data[0][0], 1, &C_1_0.data[0][0], 1);
+    cblas_daxpy(NS, -0.09, &m7.data[0][0], 1, &C_1_0.data[0][0], 1);
+    cblas_daxpy(NS, -0.1, &m1.data[0][0], 1, &C_1_0.data[0][0], 1);
+    cblas_daxpy(NS, -0.1, &m10.data[0][0], 1, &C_1_0.data[0][0], 1);
+    cblas_daxpy(NS, -0.1, &m13.data[0][0], 1, &C_1_0.data[0][0], 1);
+    cblas_daxpy(NS, -0.1, &m8.data[0][0], 1, &C_1_0.data[0][0], 1);
+    cblas_daxpy(NS, -0.0010000000000000002, &m14.data[0][0], 1, &C_1_0.data[0][0], 1);
     cblas_daxpy(NS, 1.0, &m1.data[0][0], 1, &C_1_1.data[0][0], 1);
     cblas_daxpy(NS, 1.0, &m18.data[0][0], 1, &C_1_1.data[0][0], 1);
-    cblas_daxpy(NS, 0.01, &m19.data[0][0], 1, &C_1_1.data[0][0], 1);
-    cblas_daxpy(NS, 0.0001, &m17.data[0][0], 1, &C_1_1.data[0][0], 1);
-    cblas_daxpy(NS, 0.999999, &m8.data[0][0], 1, &C_1_1.data[0][0], 1);
+    cblas_daxpy(NS, 0.010000000000000002, &m17.data[0][0], 1, &C_1_1.data[0][0], 1);
+    cblas_daxpy(NS, 0.1, &m19.data[0][0], 1, &C_1_1.data[0][0], 1);
+    cblas_daxpy(NS, 0.999, &m8.data[0][0], 1, &C_1_1.data[0][0], 1);
     cblas_daxpy(NS, -1.0, &m14.data[0][0], 1, &C_1_1.data[0][0], 1);
     cblas_daxpy(NS, 1.0, &m17.data[0][0], 1, &C_1_2.data[0][0], 1);
-    cblas_daxpy(NS, 0.01, &m1.data[0][0], 1, &C_1_2.data[0][0], 1);
-    cblas_daxpy(NS, 0.01, &m10.data[0][0], 1, &C_1_2.data[0][0], 1);
-    cblas_daxpy(NS, 0.01, &m18.data[0][0], 1, &C_1_2.data[0][0], 1);
-    cblas_daxpy(NS, -0.01, &m14.data[0][0], 1, &C_1_2.data[0][0], 1);
-    cblas_daxpy(NS, 1e-08, &m0.data[0][0], 1, &C_2_0.data[0][0], 1);
-    cblas_daxpy(NS, 1e-08, &m3.data[0][0], 1, &C_2_0.data[0][0], 1);
-    cblas_daxpy(NS, 0.01, &m16.data[0][0], 1, &C_2_0.data[0][0], 1);
-    cblas_daxpy(NS, 0.01, &m6.data[0][0], 1, &C_2_0.data[0][0], 1);
-    cblas_daxpy(NS, -0.000101, &m5.data[0][0], 1, &C_2_0.data[0][0], 1);
-    cblas_daxpy(NS, 1e-08, &m14.data[0][0], 1, &C_2_1.data[0][0], 1);
-    cblas_daxpy(NS, 0.0001, &m5.data[0][0], 1, &C_2_1.data[0][0], 1);
-    cblas_daxpy(NS, 0.0001, &m9.data[0][0], 1, &C_2_1.data[0][0], 1);
+    cblas_daxpy(NS, 0.1, &m1.data[0][0], 1, &C_1_2.data[0][0], 1);
+    cblas_daxpy(NS, 0.1, &m10.data[0][0], 1, &C_1_2.data[0][0], 1);
+    cblas_daxpy(NS, 0.1, &m18.data[0][0], 1, &C_1_2.data[0][0], 1);
+    cblas_daxpy(NS, -0.1, &m14.data[0][0], 1, &C_1_2.data[0][0], 1);
+    cblas_daxpy(NS, 0.1, &m16.data[0][0], 1, &C_2_0.data[0][0], 1);
+    cblas_daxpy(NS, 0.1, &m6.data[0][0], 1, &C_2_0.data[0][0], 1);
+    cblas_daxpy(NS, 0.00010000000000000002, &m0.data[0][0], 1, &C_2_0.data[0][0], 1);
+    cblas_daxpy(NS, 0.00010000000000000002, &m3.data[0][0], 1, &C_2_0.data[0][0], 1);
+    cblas_daxpy(NS, -0.011000000000000003, &m5.data[0][0], 1, &C_2_0.data[0][0], 1);
+    cblas_daxpy(NS, 0.010000000000000002, &m5.data[0][0], 1, &C_2_1.data[0][0], 1);
+    cblas_daxpy(NS, 0.010000000000000002, &m9.data[0][0], 1, &C_2_1.data[0][0], 1);
+    cblas_daxpy(NS, 0.00010000000000000002, &m14.data[0][0], 1, &C_2_1.data[0][0], 1);
     cblas_daxpy(NS, -1.0, &m16.data[0][0], 1, &C_2_1.data[0][0], 1);
     cblas_daxpy(NS, 1.0, &m2.data[0][0], 1, &C_2_2.data[0][0], 1);
     cblas_daxpy(NS, 1.0, &m5.data[0][0], 1, &C_2_2.data[0][0], 1);

@@ -6,7 +6,7 @@ import pickle
 
 threshold = 1e-3
 
-x = 1e-2
+x = 1e-1
 _2x2 = 2*x**2
 _2x3 = 2*x**3
 x2 = x**2
@@ -110,7 +110,7 @@ def generate_fmm_3x3_source():
 int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     shape_uint height = A.shape[0];
     shape_uint width = A.shape[1];
-    if (height <= 1200 || width <= 1200 || !(height % 3 == width % 3 && height % 3 == 0 && height / 3 == width / 3)) {
+    if (height <= 10000 || width <= 10000 || !(height % 3 == width % 3 && height % 3 == 0 && height / 3 == width / 3)) {
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                     C.shape[0], C.shape[1], A.shape[1],
                     1.0, A.data[0], A.arena_shape[1],
@@ -228,16 +228,16 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, {coeff}, {var}.data[0], 1, T{tidx}.data[0], 1);
 """
     for midx in range(20):
-        content += f"""\
-    fmm_3x3(m{midx}, S{midx}, T{midx});
-"""
 #        content += f"""\
-#    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-#                BL, BL, BL,
-#                1.0, S{midx}.data[0], BL,
-#                T{midx}.data[0], BL,
-#                0.0, m{midx}.data[0], BL);
+#    fmm_3x3(m{midx}, S{midx}, T{midx});
 #"""
+        content += f"""\
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                BL, BL, BL,
+                1.0, S{midx}.data[0], BL,
+                T{midx}.data[0], BL,
+                0.0, m{midx}.data[0], BL);
+"""
     for i in range(3):
         for j in range(3):
             cidx = 3*i + j
