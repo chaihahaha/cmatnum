@@ -84,6 +84,21 @@ for i in range(len(CC)):
     new_expr = sp.Add(*new_terms)
     CC[i] = new_expr
 
+m_to_C = {f"m{i}": [] for i in range(20)}
+for i in range(3):
+    for j in range(3):
+        cidx = 3*i + j
+        if C_exprs[cidx].is_Mul:
+            args = [C_exprs[cidx]]
+        else:
+            args = C_exprs[cidx].args
+        for carg in args:
+            var = list(carg.free_symbols)[0]
+            coeff = carg.coeff(var)
+            var = str(var)
+            coeff = float(coeff)
+            m_to_C[var].append((coeff, f"C_{i}_{j}"))
+
 def generate_fmm_3x3_header():
     content = """\
 #ifndef FMM_3x3_H
@@ -121,69 +136,12 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     shape_uint N = height;
     shape_uint BL = N/3;
     shape_uint NS = BL*BL;
-    double_cmat m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15,m16,m17,m18,m19;
-    double_cmat S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S13,S14,S15,S16,S17,S18,S19;
-    double_cmat T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19;
-    create_double_matrix(pairuint {BL, BL}, &m0);
-    create_double_matrix(pairuint {BL, BL}, &m1);
-    create_double_matrix(pairuint {BL, BL}, &m2);
-    create_double_matrix(pairuint {BL, BL}, &m3);
-    create_double_matrix(pairuint {BL, BL}, &m4);
-    create_double_matrix(pairuint {BL, BL}, &m5);
-    create_double_matrix(pairuint {BL, BL}, &m6);
-    create_double_matrix(pairuint {BL, BL}, &m7);
-    create_double_matrix(pairuint {BL, BL}, &m8);
-    create_double_matrix(pairuint {BL, BL}, &m9);
-    create_double_matrix(pairuint {BL, BL}, &m10);
-    create_double_matrix(pairuint {BL, BL}, &m11);
-    create_double_matrix(pairuint {BL, BL}, &m12);
-    create_double_matrix(pairuint {BL, BL}, &m13);
-    create_double_matrix(pairuint {BL, BL}, &m14);
-    create_double_matrix(pairuint {BL, BL}, &m15);
-    create_double_matrix(pairuint {BL, BL}, &m16);
-    create_double_matrix(pairuint {BL, BL}, &m17);
-    create_double_matrix(pairuint {BL, BL}, &m18);
-    create_double_matrix(pairuint {BL, BL}, &m19);
-    create_double_matrix(pairuint {BL, BL}, &S0);
-    create_double_matrix(pairuint {BL, BL}, &S1);
-    create_double_matrix(pairuint {BL, BL}, &S2);
-    create_double_matrix(pairuint {BL, BL}, &S3);
-    create_double_matrix(pairuint {BL, BL}, &S4);
-    create_double_matrix(pairuint {BL, BL}, &S5);
-    create_double_matrix(pairuint {BL, BL}, &S6);
-    create_double_matrix(pairuint {BL, BL}, &S7);
-    create_double_matrix(pairuint {BL, BL}, &S8);
-    create_double_matrix(pairuint {BL, BL}, &S9);
-    create_double_matrix(pairuint {BL, BL}, &S10);
-    create_double_matrix(pairuint {BL, BL}, &S11);
-    create_double_matrix(pairuint {BL, BL}, &S12);
-    create_double_matrix(pairuint {BL, BL}, &S13);
-    create_double_matrix(pairuint {BL, BL}, &S14);
-    create_double_matrix(pairuint {BL, BL}, &S15);
-    create_double_matrix(pairuint {BL, BL}, &S16);
-    create_double_matrix(pairuint {BL, BL}, &S17);
-    create_double_matrix(pairuint {BL, BL}, &S18);
-    create_double_matrix(pairuint {BL, BL}, &S19);
-    create_double_matrix(pairuint {BL, BL}, &T0);
-    create_double_matrix(pairuint {BL, BL}, &T1);
-    create_double_matrix(pairuint {BL, BL}, &T2);
-    create_double_matrix(pairuint {BL, BL}, &T3);
-    create_double_matrix(pairuint {BL, BL}, &T4);
-    create_double_matrix(pairuint {BL, BL}, &T5);
-    create_double_matrix(pairuint {BL, BL}, &T6);
-    create_double_matrix(pairuint {BL, BL}, &T7);
-    create_double_matrix(pairuint {BL, BL}, &T8);
-    create_double_matrix(pairuint {BL, BL}, &T9);
-    create_double_matrix(pairuint {BL, BL}, &T10);
-    create_double_matrix(pairuint {BL, BL}, &T11);
-    create_double_matrix(pairuint {BL, BL}, &T12);
-    create_double_matrix(pairuint {BL, BL}, &T13);
-    create_double_matrix(pairuint {BL, BL}, &T14);
-    create_double_matrix(pairuint {BL, BL}, &T15);
-    create_double_matrix(pairuint {BL, BL}, &T16);
-    create_double_matrix(pairuint {BL, BL}, &T17);
-    create_double_matrix(pairuint {BL, BL}, &T18);
-    create_double_matrix(pairuint {BL, BL}, &T19);
+    double_cmat m;
+    double_cmat S;
+    double_cmat T;
+    create_double_matrix(pairuint {BL, BL}, &m);
+    create_double_matrix(pairuint {BL, BL}, &S);
+    create_double_matrix(pairuint {BL, BL}, &T);
 """
 
     for j in range(3):
@@ -212,9 +170,9 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
             var = str(var)
             coeff = float(coeff)
             content += f"""
-    cblas_daxpy(NS, {coeff}, {var}.data[0], 1, S{sidx}.data[0], 1);
+    cblas_daxpy(NS, {coeff}, {var}.data[0], 1, S.data[0], 1);
 """
-    for tidx in range(20):
+        tidx = sidx
         if T_exprs[tidx].is_Mul:
             args = [T_exprs[tidx]]
         else:
@@ -225,32 +183,21 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
             var = str(var)
             coeff = float(coeff)
             content += f"""
-    cblas_daxpy(NS, {coeff}, {var}.data[0], 1, T{tidx}.data[0], 1);
+    cblas_daxpy(NS, {coeff}, {var}.data[0], 1, T.data[0], 1);
 """
-    for midx in range(20):
-#        content += f"""\
-#    fmm_3x3(m{midx}, S{midx}, T{midx});
-#"""
-        content += f"""\
+        midx = sidx
+        content += """\
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                 BL, BL, BL,
-                1.0, S{midx}.data[0], BL,
-                T{midx}.data[0], BL,
-                0.0, m{midx}.data[0], BL);
+                1.0, S.data[0], BL,
+                T.data[0], BL,
+                0.0, m.data[0], BL);
 """
-    for i in range(3):
-        for j in range(3):
-            cidx = 3*i + j
-            if C_exprs[cidx].is_Mul:
-                args = [C_exprs[cidx]]
-            else:
-                args = C_exprs[cidx].args
-            for carg in args:
-                var = list(carg.free_symbols)[0]
-                coeff = carg.coeff(var)
-                var = str(var)
-                coeff = float(coeff)
-                content += f"    cblas_daxpy(NS, {coeff}, &{var}.data[0][0], 1, &C_{i}_{j}.data[0][0], 1);\n"
+
+        for coeff, C_name in m_to_C[f"m{midx}"]:
+            content += f"    cblas_daxpy(NS, {coeff}, &m.data[0][0], 1, &{C_name}.data[0][0], 1);\n"
+        for reset_var in ['S', 'T']:
+            content+= f"    for(shape_uint arenai=0; arenai<NS; arenai++) {reset_var}.arena[arenai] = 0;\n"
     for j in range(3):
         content += f"    assign_double_slice(C, C_x_{j}, pairint {{0, N}}, pairint {{ {(j)}*BL, {j+1}*BL }});\n"
     for i in range(3):
@@ -263,66 +210,9 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
         content += (f"    free_double_matrix(B_x_{j});\n")
         content += (f"    free_double_matrix(C_x_{j});\n")
     content += """\
-    free_double_matrix(m0);
-    free_double_matrix(m1);
-    free_double_matrix(m2);
-    free_double_matrix(m3);
-    free_double_matrix(m4);
-    free_double_matrix(m5);
-    free_double_matrix(m6);
-    free_double_matrix(m7);
-    free_double_matrix(m8);
-    free_double_matrix(m9);
-    free_double_matrix(m10);
-    free_double_matrix(m11);
-    free_double_matrix(m12);
-    free_double_matrix(m13);
-    free_double_matrix(m14);
-    free_double_matrix(m15);
-    free_double_matrix(m16);
-    free_double_matrix(m17);
-    free_double_matrix(m18);
-    free_double_matrix(m19);
-    free_double_matrix(S0);
-    free_double_matrix(S1);
-    free_double_matrix(S2);
-    free_double_matrix(S3);
-    free_double_matrix(S4);
-    free_double_matrix(S5);
-    free_double_matrix(S6);
-    free_double_matrix(S7);
-    free_double_matrix(S8);
-    free_double_matrix(S9);
-    free_double_matrix(S10);
-    free_double_matrix(S11);
-    free_double_matrix(S12);
-    free_double_matrix(S13);
-    free_double_matrix(S14);
-    free_double_matrix(S15);
-    free_double_matrix(S16);
-    free_double_matrix(S17);
-    free_double_matrix(S18);
-    free_double_matrix(S19);
-    free_double_matrix(T0);
-    free_double_matrix(T1);
-    free_double_matrix(T2);
-    free_double_matrix(T3);
-    free_double_matrix(T4);
-    free_double_matrix(T5);
-    free_double_matrix(T6);
-    free_double_matrix(T7);
-    free_double_matrix(T8);
-    free_double_matrix(T9);
-    free_double_matrix(T10);
-    free_double_matrix(T11);
-    free_double_matrix(T12);
-    free_double_matrix(T13);
-    free_double_matrix(T14);
-    free_double_matrix(T15);
-    free_double_matrix(T16);
-    free_double_matrix(T17);
-    free_double_matrix(T18);
-    free_double_matrix(T19);
+    free_double_matrix(m);
+    free_double_matrix(S);
+    free_double_matrix(T);
     return 0;
 }
 """

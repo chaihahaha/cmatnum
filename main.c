@@ -7,10 +7,10 @@
 
 int main() {
     double_cmat A, B, C;
-    int AH = 21879;
-    int AW = 21879;
+    int AH = 20100;
+    int AW = 20100;
     int BH = AW;
-    int BW = 21879;
+    int BW = 20100;
     //int AH = 32*1024;
     //int AW = 32*1024;
     //int BH = AW;
@@ -60,7 +60,7 @@ int main() {
 
     for (int i = 0; i < CH; i++) {
         for (int j = 0; j < CW; j++) {
-            if (fabs(C.data[i][j] - TC.data[i][j]) > 0.1*TC.data[i][j]) {
+            if (fabs(C.data[i][j] - TC.data[i][j]) > 0.01*TC.data[i][j]) {
                 printf("wrong: %lf, true: %lf, at: %d-%d\n", C.data[i][j], TC.data[i][j], i, j);
                 return -1;
             }
