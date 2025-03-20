@@ -6,7 +6,7 @@ import pickle
 
 threshold = 1e-3
 
-x = 1e-1
+x = sp.sympify(2)**(-7)
 _2x2 = 2*x**2
 _2x3 = 2*x**3
 x2 = x**2
@@ -84,6 +84,8 @@ for i in range(len(CC)):
     new_expr = sp.Add(*new_terms)
     CC[i] = new_expr
 
+print(C-CC)
+
 m_to_C = {f"m{i}": [] for i in range(20)}
 for i in range(3):
     for j in range(3):
@@ -96,7 +98,7 @@ for i in range(3):
             var = list(carg.free_symbols)[0]
             coeff = carg.coeff(var)
             var = str(var)
-            coeff = float(coeff)
+            coeff = sp.ccode(coeff)
             m_to_C[var].append((coeff, f"C_{i}_{j}"))
 
 def generate_fmm_3x3_header():
@@ -168,7 +170,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
             var = list(S_arg.free_symbols)[0]
             coeff = S_arg.coeff(var)
             var = str(var)
-            coeff = float(coeff)
+            coeff = sp.ccode(coeff)
             content += f"""
     cblas_daxpy(NS, {coeff}, {var}.data[0], 1, S.data[0], 1);
 """
@@ -181,7 +183,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
             var = list(T_arg.free_symbols)[0]
             coeff = T_arg.coeff(var)
             var = str(var)
-            coeff = float(coeff)
+            coeff = sp.ccode(coeff)
             content += f"""
     cblas_daxpy(NS, {coeff}, {var}.data[0], 1, T.data[0], 1);
 """

@@ -60,7 +60,7 @@ int main() {
 
     for (int i = 0; i < CH; i++) {
         for (int j = 0; j < CW; j++) {
-            if (fabs(C.data[i][j] - TC.data[i][j]) > 0.02*TC.data[i][j]) {
+            if (fabs(C.data[i][j] - TC.data[i][j]) > 0.01*TC.data[i][j]) {
                 printf("wrong: %lf, true: %lf, at: %d-%d\n", C.data[i][j], TC.data[i][j], i, j);
                 return -1;
             }
