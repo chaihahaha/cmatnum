@@ -22,3 +22,7 @@ cmake --build .
 [5] https://fmm.univ-lille.fr
 
 [6] Drevet, Charles-Éric et al. “Optimization techniques for small matrix multiplication.” Theor. Comput. Sci. 412 (2011): 2219-2236.
+
+[7] Respondek, J. S. (2025). Fast matrix multiplication with applications. doi:10.1007/978-3-031-76930-6
+
+[8] Smirnov, A.V. (2013). The bilinear complexity and practical algorithms for matrix multiplication. Computational Mathematics and Mathematical Physics, 53, 1781-1795.
