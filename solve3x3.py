@@ -23,7 +23,7 @@ model = ConcreteModel()
 
 # Parameters
 M = 2000000000000.0       # Variable bounds
-epsilon = 0.1  # Tolerance
+epsilon = 0.001  # Tolerance
 rank = 17     # Factorization rank
 
 # ----------------------------
@@ -54,13 +54,19 @@ model.C = Var(
 # Tensor Approximation Constraints
 # ----------------------------
 model.tensor_constraints = ConstraintList()
-for i, j, k in non_zero_indices:
-    expr = sum(
-        model.A[i, m] * model.B[j, m] * model.C[k, m]
-        for m in range(rank)
-    )
-    model.tensor_constraints.add(expr >= 1 - epsilon)
-    model.tensor_constraints.add(expr <= 1 + epsilon)
+for i in range(9):
+    for j in range(9):
+        for k in range(9):
+            expr = sum(
+                model.A[i, m] * model.B[j, m] * model.C[k, m]
+                for m in range(rank)
+            )
+            if (i, j, k) in non_zero_indices:
+                model.tensor_constraints.add(expr >= 1 - epsilon)
+                model.tensor_constraints.add(expr <= 1 + epsilon)
+            else:
+                model.tensor_constraints.add(expr >= 0 - epsilon)
+                model.tensor_constraints.add(expr <= 0 + epsilon)
 
 # ----------------------------
 # Dummy Objective (Required by Ipopt)
@@ -80,8 +86,8 @@ model.obj = Objective(
 # ----------------------------
 solver = SolverFactory('ipopt')
 solver.options = {
-    'max_iter': 5000,
-    'tol': 1e-4,
+    'max_iter': 50000,
+    'tol': 1e-8,
     'print_level': 5,
 }
 
