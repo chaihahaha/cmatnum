@@ -22,8 +22,8 @@ for i, j, k in non_zero_indices:
 model = ConcreteModel()
 
 # Parameters
-M = 2.0       # Variable bounds
-epsilon = 0.01  # Tolerance
+M = 2000000000000.0       # Variable bounds
+epsilon = 0.1  # Tolerance
 rank = 17     # Factorization rank
 
 # ----------------------------
@@ -83,7 +83,6 @@ solver.options = {
     'max_iter': 5000,
     'tol': 1e-4,
     'print_level': 5,
-    'linear_solver': 'ma57'  # Better for large problems (requires HSL)
 }
 
 results = solver.solve(model, tee=True)
