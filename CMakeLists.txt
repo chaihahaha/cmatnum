@@ -24,7 +24,7 @@ file(GLOB_RECURSE SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/matmul.c"
 )
 add_compile_options(-std=c11)
-add_compile_options(-O2)
+add_compile_options(-O3)
 add_compile_options(-march=native)
 add_compile_options(-D_GNU_SOURCE)
 
@@ -53,10 +53,7 @@ if (BLAS_FOUND)
 endif ()
 
 
-#find_package(OpenMP REQUIRED)
-#find_package(OpenMP REQUIRED)
-#
-#if(OpenMP_CXX_FOUND)
-#    target_link_libraries(fmm32x32 PRIVATE OpenMP::OpenMP_CXX)
-#endif()
-
+find_package(OpenMP REQUIRED)
+if(OpenMP_FOUND)
+    target_link_libraries(cfmm OpenMP::OpenMP_C)
+endif()

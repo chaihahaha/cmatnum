@@ -189,11 +189,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
 """
         midx = sidx
         content += """\
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
 """
 
         for coeff, C_name in m_to_C[f"m{midx}"]:

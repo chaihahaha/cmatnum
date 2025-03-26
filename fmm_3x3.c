@@ -84,11 +84,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 1.0/128.0, B_0_1.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 1.0/1048576.0, B_2_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 16384, &m.data[0][0], 1, &C_0_1.data[0][0], 1);
     cblas_daxpy(NS, -1.0/16384.0, &m.data[0][0], 1, &C_1_0.data[0][0], 1);
     cblas_daxpy(NS, 1.0/268435456.0, &m.data[0][0], 1, &C_2_0.data[0][0], 1);
@@ -106,11 +102,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 128, B_2_2.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 1.0/2097152.0, B_1_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, -1.0/128.0, &m.data[0][0], 1, &C_0_0.data[0][0], 1);
     cblas_daxpy(NS, 16384, &m.data[0][0], 1, &C_0_2.data[0][0], 1);
     cblas_daxpy(NS, -1.0/128.0, &m.data[0][0], 1, &C_1_0.data[0][0], 1);
@@ -131,11 +123,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 128, B_1_0.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, -1.0/16384.0, B_1_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 1.0/128.0, &m.data[0][0], 1, &C_0_0.data[0][0], 1);
     cblas_daxpy(NS, -16384, &m.data[0][0], 1, &C_0_2.data[0][0], 1);
     cblas_daxpy(NS, 2097151.0/268435456.0, &m.data[0][0], 1, &C_1_0.data[0][0], 1);
@@ -156,11 +144,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 128, B_2_0.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 1.0/128.0, B_0_0.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, -128, &m.data[0][0], 1, &C_0_0.data[0][0], 1);
     cblas_daxpy(NS, 16384, &m.data[0][0], 1, &C_0_1.data[0][0], 1);
     cblas_daxpy(NS, 1.0/268435456.0, &m.data[0][0], 1, &C_2_0.data[0][0], 1);
@@ -184,11 +168,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 1.0/128.0, B_0_1.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 1.0/2097152.0, B_2_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, -16384, &m.data[0][0], 1, &C_0_1.data[0][0], 1);
     cblas_daxpy(NS, 1.0/16384.0, &m.data[0][0], 1, &C_1_0.data[0][0], 1);
     for(shape_uint arenai=0; arenai<NS; arenai++) S.arena[arenai] = 0;
@@ -201,11 +181,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 16384, B_1_0.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 1.0/16384.0, B_0_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 1, &m.data[0][0], 1, &C_0_0.data[0][0], 1);
     cblas_daxpy(NS, -1, &m.data[0][0], 1, &C_0_1.data[0][0], 1);
     cblas_daxpy(NS, -16384, &m.data[0][0], 1, &C_0_2.data[0][0], 1);
@@ -228,11 +204,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 1.0/128.0, B_0_0.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 1.0/2097152.0, B_0_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, -128, &m.data[0][0], 1, &C_0_0.data[0][0], 1);
     cblas_daxpy(NS, 1.0/128.0, &m.data[0][0], 1, &C_2_0.data[0][0], 1);
     for(shape_uint arenai=0; arenai<NS; arenai++) S.arena[arenai] = 0;
@@ -251,11 +223,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 16384, B_2_0.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 1.0/128.0, B_0_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 16384, &m.data[0][0], 1, &C_0_2.data[0][0], 1);
     cblas_daxpy(NS, -127.0/16384.0, &m.data[0][0], 1, &C_1_0.data[0][0], 1);
     for(shape_uint arenai=0; arenai<NS; arenai++) S.arena[arenai] = 0;
@@ -268,11 +236,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 128, B_2_2.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 1.0/128.0, B_1_1.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, -1.0/128.0, &m.data[0][0], 1, &C_0_0.data[0][0], 1);
     cblas_daxpy(NS, 16384, &m.data[0][0], 1, &C_0_2.data[0][0], 1);
     cblas_daxpy(NS, -1.0/128.0, &m.data[0][0], 1, &C_1_0.data[0][0], 1);
@@ -288,11 +252,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 128, B_1_0.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 1.0/2097152.0, B_0_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 1.0/128.0, &m.data[0][0], 1, &C_0_0.data[0][0], 1);
     cblas_daxpy(NS, -1, &m.data[0][0], 1, &C_0_1.data[0][0], 1);
     cblas_daxpy(NS, -16384, &m.data[0][0], 1, &C_0_2.data[0][0], 1);
@@ -311,11 +271,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 1, B_2_1.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 1.0/128.0, B_0_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 16384, &m.data[0][0], 1, &C_0_2.data[0][0], 1);
     cblas_daxpy(NS, -1.0/128.0, &m.data[0][0], 1, &C_1_0.data[0][0], 1);
     cblas_daxpy(NS, 1.0/128.0, &m.data[0][0], 1, &C_1_2.data[0][0], 1);
@@ -333,11 +289,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, -1, B_1_2.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 16384, B_2_0.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, -16384, &m.data[0][0], 1, &C_0_2.data[0][0], 1);
     cblas_daxpy(NS, 1.0/128.0, &m.data[0][0], 1, &C_1_0.data[0][0], 1);
     for(shape_uint arenai=0; arenai<NS; arenai++) S.arena[arenai] = 0;
@@ -352,11 +304,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 1.0/128.0, A_1_1.data[0], 1, S.data[0], 1);
 
     cblas_daxpy(NS, 16384, B_1_0.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, -1.0/128.0, &m.data[0][0], 1, &C_0_0.data[0][0], 1);
     cblas_daxpy(NS, 16384, &m.data[0][0], 1, &C_0_2.data[0][0], 1);
     cblas_daxpy(NS, 1.0/268435456.0, &m.data[0][0], 1, &C_1_0.data[0][0], 1);
@@ -375,11 +323,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 1.0/16384.0, A_0_2.data[0], 1, S.data[0], 1);
 
     cblas_daxpy(NS, 128, B_2_0.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 128, &m.data[0][0], 1, &C_0_0.data[0][0], 1);
     cblas_daxpy(NS, 16384, &m.data[0][0], 1, &C_0_2.data[0][0], 1);
     cblas_daxpy(NS, -1.0/128.0, &m.data[0][0], 1, &C_1_0.data[0][0], 1);
@@ -391,11 +335,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 16384, B_2_1.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, -1.0/16384.0, B_2_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 128, &m.data[0][0], 1, &C_0_1.data[0][0], 1);
     cblas_daxpy(NS, -16384, &m.data[0][0], 1, &C_0_2.data[0][0], 1);
     cblas_daxpy(NS, -1.0/2097152.0, &m.data[0][0], 1, &C_1_0.data[0][0], 1);
@@ -418,11 +358,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 128, B_1_0.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 16384, B_2_0.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 16384, &m.data[0][0], 1, &C_0_1.data[0][0], 1);
     for(shape_uint arenai=0; arenai<NS; arenai++) S.arena[arenai] = 0;
     for(shape_uint arenai=0; arenai<NS; arenai++) T.arena[arenai] = 0;
@@ -436,11 +372,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, -1.0/1048576.0, B_2_2.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 1.0/2097152.0, B_0_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 16384, &m.data[0][0], 1, &C_0_1.data[0][0], 1);
     cblas_daxpy(NS, 1.0/128.0, &m.data[0][0], 1, &C_2_0.data[0][0], 1);
     cblas_daxpy(NS, -1, &m.data[0][0], 1, &C_2_1.data[0][0], 1);
@@ -456,11 +388,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 1, B_1_2.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 128, B_2_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 1.0/16384.0, &m.data[0][0], 1, &C_1_1.data[0][0], 1);
     cblas_daxpy(NS, 1, &m.data[0][0], 1, &C_1_2.data[0][0], 1);
     for(shape_uint arenai=0; arenai<NS; arenai++) S.arena[arenai] = 0;
@@ -473,11 +401,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 1.0/16384.0, A_1_2.data[0], 1, S.data[0], 1);
 
     cblas_daxpy(NS, 16384, B_2_1.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 16384, &m.data[0][0], 1, &C_0_2.data[0][0], 1);
     cblas_daxpy(NS, 1, &m.data[0][0], 1, &C_1_1.data[0][0], 1);
     cblas_daxpy(NS, 1.0/128.0, &m.data[0][0], 1, &C_1_2.data[0][0], 1);
@@ -493,11 +417,7 @@ int fmm_3x3(double_cmat C, double_cmat A, double_cmat B) {
     cblas_daxpy(NS, 1.0/128.0, B_0_1.data[0], 1, T.data[0], 1);
 
     cblas_daxpy(NS, 1.0/2097152.0, B_2_2.data[0], 1, T.data[0], 1);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                BL, BL, BL,
-                1.0, S.data[0], BL,
-                T.data[0], BL,
-                0.0, m.data[0], BL);
+    fmm_3x3(m, S, T);
     cblas_daxpy(NS, 16384, &m.data[0][0], 1, &C_0_1.data[0][0], 1);
     cblas_daxpy(NS, 1.0/128.0, &m.data[0][0], 1, &C_1_1.data[0][0], 1);
     for(shape_uint arenai=0; arenai<NS; arenai++) S.arena[arenai] = 0;

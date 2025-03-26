@@ -59,3 +59,6 @@ build/
 .DS_Store
 *.ipynb
 .ipynb_checkpoints
+*.pickle
+*.mpl
+*.bk
