@@ -1,48 +1,7 @@
 from pyomo.environ import *
+import pyomo.environ as pyo
 import numpy as np
 
-#x=1e-3
-#
-#_2x2 = 2*x**2
-#_2x3 = 2*x**3
-#x2 = x**2
-#x3 = x**3
-#x4 = x**4
-#xi = 1/x
-#x2i = 1/(x**2)
-#
-#B_coeffs = [x,0,0,-1,0,0,x,x,0,0,0,0,0,-1,0,0,0,0,0,0,
-#0,0,0,x,0,0,-_2x2,0,0,0,0,x2,0,x,0,-x2,0,0,0,0,
-#-x3,x3,0,0,-x3,0,0,-x3,0,0,0,0,0,x2,0,0,0,0,0,0,
-#0,x2i,-xi,0,x2i,0,0,-x2i,-x2i,0,x2i,-x2i,-1,0,0,x2i,0,-xi,-1,x2i,
-#0,-xi,1,0,0,0,0,0,xi,0,0,0,x,0,0,0,0,1,0,0,
-#0,0,0,0,0,0,0,1,0,0,-1,1,0,0,0,0,0,x,x2,0,
-#xi,0,0,-x2i,0,x2i,x2i,xi,0,0,0,0,x2i,-x2i,0,0,xi,0,0,0,
-#0,0,-x2i,xi,0,-xi,-xi,0,0,x2i,0,1,-xi,xi,0,-1,0,0,0,0,
-#x2i,-x,0,0,x2i,0,0,0,0,0,0,0,0,0,x2i,0,0,0,x2i,0,]
-#B_coeffs = np.array(B_coeffs).reshape([9, 20])
-#
-#C_coeffs=[1,0,0,x,1,0,x,0,0,0,0,0,0,0,0,1,0,0,0,0,
-#x,0,0,0,x,0,0,0,0,0,0,0,0,0,0,0,-x,0,0,x,
-#0,0,0,0,0,x2,x3,x,0,x3,x,0,0,0,0,0,x3,0,0,0,
-#xi,0,xi,1,xi,x2i,xi,0,0,xi,0,0,x2i,0,0,xi,xi,0,0,0,
-#0,0,1,0,0,0,0,0,x,1,0,0,0,0,0,-1,0,0,0,1,
-#0,x3,-x2,0,0,0,0,0,0,0,1,-1,0,0,0,0,0,1,0,0,
-#x2i,0,0,xi,x2i,0,0,x2i,0,0,0,x2i,0,xi,0,x2i,0,0,0,0,
-#0,0,0,0,xi,0,0,0,0,0,1,0,0,0,x2i,0,0,0,x2i,xi,
-#_2x3,xi,0,0,x3,0,0,0,xi,0,0,0,0,0,-x2,0,-_2x3,xi,0,x3,]
-#C_coeffs = np.array(C_coeffs).reshape([9, 20])
-#
-#A_coeffs=[0,-x,x,-xi,0,1,-xi,0,-x,x,0,0,-x,xi,0,0,0,0,0,0,
-#x2i,0,0,x2i,-x2i,-1,0,0,0,-1,0,0,0,0,xi,x2i,x2i,0,0,x2i,
-#0,x2i,-x2i,0,0,-x2i,0,x2i,x2i,-x2i,x2i,-x2i,x2i,x2i,-x2i,0,0,0,x2i,0,
-#-x2,-x,(x+-x4),0,x2,0,0,(-x+x2),-x,x,-x,x,x4,-x,-x3,0,0,0,0,0,
-#0,1,0,0,0,0,0,0,(1+-x3),0,0,0,0,0,-1,0,0,x2,1,x,
-#0,x,0,0,0,0,0,0,0,0,x,0,0,0,-x,0,0,1,x,0,
-#x4,0,0,x4,0,(-x2+-x3),x,0,0,0,0,0,0,0,0,0,x,0,0,0,
-#0,0,0,0,0,x2,0,0,0,x2,0,0,0,0,x4,0,-1,0,0,0,
-#0,-1,1,0,0,1,0,0,-1,1,0,0,-1,0,0,0,0,0,0,0,]
-#A_coeffs = np.array(A_coeffs).reshape([9, 20])
 # ----------------------------
 # Define the target tensor T
 # ----------------------------
@@ -64,65 +23,82 @@ for i, j, k in non_zero_indices:
 model = ConcreteModel()
 
 # Parameters
-M = 1e20      # Variable bounds
-rank = 20    # Factorization rank
+allowed_values = [0, 1, 1e3, 1e6, 1e-3, 1e-6, 1e-9, 1e-12]
+rank = 17
+n_values = len(allowed_values)  # Should be 8
+
+# Create an index set for allowed values
+model.value_index = pyo.Set(initialize=range(n_values))
 
 # ----------------------------
-# Decision Variables
+# Modified Decision Variables
 # ----------------------------
-model.A = Var(
-    range(9), range(rank),
-    bounds=(-M, M),
-    #initialize=lambda m, i, j: A_coeffs[i,j]
-    initialize=lambda m, i, j: np.random.uniform(-0.1, 0.1)
+# Binary variables: x[i,j,v] = 1 if A[i,j] = allowed_values[v]
+model.A_vars = pyo.Var(
+    range(9), range(rank), model.value_index,
+    within=pyo.Binary, initialize=0
 )
-model.B = Var(
-    range(9), range(rank),
-    bounds=(-M, M),
-    #initialize=lambda m, i, j: B_coeffs[i,j]
-    initialize=lambda m, i, j: np.random.uniform(-0.1, 0.1)
+model.B_vars = pyo.Var(
+    range(9), range(rank), model.value_index,
+    within=pyo.Binary, initialize=0
 )
-model.C = Var(
-    range(9), range(rank),
-    bounds=(-M, M),
-    #initialize=lambda m, i, j: C_coeffs[i,j]
-    initialize=lambda m, i, j: np.random.uniform(-0.1, 0.1)
+model.C_vars = pyo.Var(
+    range(9), range(rank), model.value_index,
+    within=pyo.Binary, initialize=0
 )
 
 # ----------------------------
-# Objective: Minimize Total Squared Error
+# New Constraints
+# ----------------------------
+# Each position must select exactly one value
+def one_value_rule_A(model, i, j):
+    return sum(model.A_vars[i,j,v] for v in model.value_index) == 1
+model.one_value_A = pyo.Constraint(range(9), range(rank), rule=one_value_rule_A)
+
+def one_value_rule_B(model, i, j):
+    return sum(model.B_vars[i,j,v] for v in model.value_index) == 1
+model.one_value_B = pyo.Constraint(range(9), range(rank), rule=one_value_rule_B)
+
+def one_value_rule_C(model, i, j):
+    return sum(model.C_vars[i,j,v] for v in model.value_index) == 1
+model.one_value_C = pyo.Constraint(range(9), range(rank), rule=one_value_rule_C)
+
+# ----------------------------
+# Modified Objective Function
 # ----------------------------
 def total_error(model):
     error = 0.0
     for i in range(9):
         for j in range(9):
             for k in range(9):
-                expr = sum(
-                    model.A[i, m] * model.B[j, m] * model.C[k, m]
-                    for m in range(rank)
-                )
+                expr = 0.0
+                for m in range(rank):
+                    # Calculate A[i,m] * B[j,m] * C[k,m] using binary variables
+                    a_val = sum(allowed_values[v] * model.A_vars[i,m,v] for v in model.value_index)
+                    b_val = sum(allowed_values[v] * model.B_vars[j,m,v] for v in model.value_index)
+                    c_val = sum(allowed_values[v] * model.C_vars[k,m,v] for v in model.value_index)
+                    expr += a_val * b_val * c_val
                 target = T[i, j, k]
                 error += (expr - target)**2
     return error
 
-model.obj = Objective(rule=total_error, sense=minimize)
+model.obj = pyo.Objective(rule=total_error, sense=pyo.minimize)
 
 # ----------------------------
-# Solve with Ipopt
+# Solve with SCIP (Changed solver)
 # ----------------------------
-solver = SolverFactory('ipopt')
+solver = pyo.SolverFactory('scip')
 solver.options = {
-    'max_iter': 5000,
-    'tol': 1e-6,
-    'print_level': 5
+    'limits/time': 7200,        # 2-hour timeout
+    'limits/gap': 0.05,         # 5% optimality gap
+    'presolving/maxrounds': 3,  # Moderate presolving
 }
-
 results = solver.solve(model, tee=True)
 
 # ----------------------------
-# Post-Process Results
+# Post-Process Results (Unchanged)
 # ----------------------------
-if results.solver.termination_condition == TerminationCondition.optimal:
+if results.solver.termination_condition == pyo.TerminationCondition.optimal:
     print("\nSolution found!")
     A_sol = np.array([[model.A[i, m].value for m in range(rank)] for i in range(9)])
     B_sol = np.array([[model.B[j, m].value for m in range(rank)] for j in range(9)])
