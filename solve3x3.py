@@ -17,23 +17,19 @@ non_zero_indices = [
 for i, j, k in non_zero_indices:
     T[i, j, k] = 1
 
+
 # ----------------------------
-# Pyomo Model Setup
+# Pyomo Model Setup (Linear Reformulation)
 # ----------------------------
 model = ConcreteModel()
-
-# Parameters
-allowed_values = [0, 1, 1e3, 1e6, 1e-3, 1e-6, 1e-9, 1e-12]
+allowed_values = [0, 1, -1, 1e-3, -1e-3, 1e3, -1e3]
 rank = 17
-n_values = len(allowed_values)  # Should be 8
-
-# Create an index set for allowed values
+n_values = len(allowed_values)
 model.value_index = pyo.Set(initialize=range(n_values))
 
 # ----------------------------
-# Modified Decision Variables
+# Decision Variables (Binary)
 # ----------------------------
-# Binary variables: x[i,j,v] = 1 if A[i,j] = allowed_values[v]
 model.A_vars = pyo.Var(
     range(9), range(rank), model.value_index,
     within=pyo.Binary, initialize=0
@@ -48,51 +44,70 @@ model.C_vars = pyo.Var(
 )
 
 # ----------------------------
-# New Constraints
+# Linear Constraints
 # ----------------------------
-# Each position must select exactly one value
-def one_value_rule_A(model, i, j):
-    return sum(model.A_vars[i,j,v] for v in model.value_index) == 1
-model.one_value_A = pyo.Constraint(range(9), range(rank), rule=one_value_rule_A)
-
-def one_value_rule_B(model, i, j):
-    return sum(model.B_vars[i,j,v] for v in model.value_index) == 1
-model.one_value_B = pyo.Constraint(range(9), range(rank), rule=one_value_rule_B)
-
-def one_value_rule_C(model, i, j):
-    return sum(model.C_vars[i,j,v] for v in model.value_index) == 1
-model.one_value_C = pyo.Constraint(range(9), range(rank), rule=one_value_rule_C)
-
-# ----------------------------
-# Modified Objective Function
-# ----------------------------
-def total_error(model):
-    error = 0.0
-    for i in range(9):
-        for j in range(9):
-            for k in range(9):
-                expr = 0.0
-                for m in range(rank):
-                    # Calculate A[i,m] * B[j,m] * C[k,m] using binary variables
-                    a_val = sum(allowed_values[v] * model.A_vars[i,m,v] for v in model.value_index)
-                    b_val = sum(allowed_values[v] * model.B_vars[j,m,v] for v in model.value_index)
-                    c_val = sum(allowed_values[v] * model.C_vars[k,m,v] for v in model.value_index)
-                    expr += a_val * b_val * c_val
-                target = T[i, j, k]
-                error += (expr - target)**2
-    return error
-
-model.obj = pyo.Objective(rule=total_error, sense=pyo.minimize)
+# One-value selection constraints
+model.one_value_A = pyo.Constraint(
+    range(9), range(rank),
+    rule=lambda m, i, j: sum(m.A_vars[i,j,v] for v in model.value_index) == 1
+)
+model.one_value_B = pyo.Constraint(
+    range(9), range(rank),
+    rule=lambda m, i, j: sum(m.B_vars[i,j,v] for v in model.value_index) == 1
+)
+model.one_value_C = pyo.Constraint(
+    range(9), range(rank),
+    rule=lambda m, i, j: sum(m.C_vars[i,j,v] for v in model.value_index) == 1
+)
 
 # ----------------------------
-# Solve with SCIP (Changed solver)
+# Linear Objective Reformulation
 # ----------------------------
-solver = pyo.SolverFactory('scip')
+# Precompute all possible product values
+product_values = [a*b*c for a in allowed_values for b in allowed_values for c in allowed_values]
+
+# New binary variables for product selection
+model.product_sel = pyo.Var(
+    range(9), range(9), range(9), range(rank), range(len(product_values)),
+    within=pyo.Binary, initialize=0
+)
+
+# Constraints to link product selection with individual variables
+def product_selection_rule(model, i, j, k, m, p):
+    a_idx = p // (n_values**2)
+    b_idx = (p // n_values) % n_values
+    c_idx = p % n_values
+    return model.product_sel[i,j,k,m,p] <= 0.5 * (
+        model.A_vars[i,m,a_idx] + 
+        model.B_vars[j,m,b_idx] + 
+        model.C_vars[k,m,c_idx]
+    )
+
+model.product_constr = pyo.Constraint(
+    range(9), range(9), range(9), range(rank), range(len(product_values)),
+    rule=product_selection_rule
+)
+
+# Linear objective
+model.obj = pyo.Objective(
+    expr=sum(
+        (sum(product_values[p] * model.product_sel[i,j,k,m,p] 
+         for m in range(rank) for p in range(len(product_values))) - T[i,j,k]
+        )**2 for i in range(9) for j in range(9) for k in range(9)),
+    sense=pyo.minimize
+)
+
+# ----------------------------
+# Solve with Gurobi
+# ----------------------------
+solver = pyo.SolverFactory('gurobi')
 solver.options = {
-    'limits/time': 7200,        # 2-hour timeout
-    'limits/gap': 0.05,         # 5% optimality gap
-    'presolving/maxrounds': 3,  # Moderate presolving
+    'TimeLimit': 3600,
+    'MIPGap': 0.1,
+    'Presolve': 2,
+    'Threads': 4
 }
+
 results = solver.solve(model, tee=True)
 
 # ----------------------------
