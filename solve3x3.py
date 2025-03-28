@@ -17,7 +17,7 @@ model = gp.Model()
 model.Params.NonConvex = 2  # 允许非凸优化
 
 # 参数设置
-M = 2
+M = 1e10
 epsilon = 0.001
 
 # 创建变量：A、B、C及其二进制变量
@@ -56,15 +56,13 @@ for i in range(9):
     for j in range(9):
         for k in range(9):
             target = T[i, j, k]
-            if target == 0:
-                continue  # 跳过零元素约束
             sum_expr = 0
             for m in range(17):
                 a = A_vars[i, m]
                 b = B_vars[j, m]
                 c = C_vars[k, m]
                 # 创建中间变量u表示三次乘积
-                u = model.addVar(lb=-8, ub=8, name=f'u_{i}_{j}_{k}_{m}')
+                u = model.addVar(lb=-M**3, ub=M**3, name=f'u_{i}_{j}_{k}_{m}')
                 # 正确方式：使用变量对象直接构建表达式
                 model.addGenConstrNL(u, a*b*c)
                 sum_expr += u
