@@ -18,7 +18,7 @@ model.Params.NonConvex = 2  # 允许非凸优化
 
 # 参数设置
 M = 2
-epsilon = 0.01
+epsilon = 0.001
 
 # 创建变量：A、B、C及其二进制变量
 A_vars = {}
@@ -83,6 +83,9 @@ model.optimize()
 
 # 输出结果
 if model.status == GRB.OPTIMAL:
+    import pickle
+    with open("vars.pickle", "wb") as f:
+        pickle.dump(list(model.getVars()), f)
     print("最优解找到，目标值:", model.objVal)
 else:
     print("未找到最优解，状态码:", model.status)
