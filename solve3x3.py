@@ -76,14 +76,19 @@ obj = gp.quicksum(A_bin[i, m] for i in range(9) for m in range(17)) + \
       gp.quicksum(C_bin[k, m] for k in range(9) for m in range(17))
 model.setObjective(obj, GRB.MINIMIZE)
 
+def stop_at_feasible(model, where):
+    if where == GRB.Callback.MIPSOL:
+        print("找到可行解，终止求解")
+        model.terminate()
+
 # 求解模型
-model.optimize()
+model.optimize(stop_at_feasible)
 
 # 输出结果
-if model.status == GRB.OPTIMAL:
+if model.SolCount > 0:
     import pickle
     with open("vars.pickle", "wb") as f:
         pickle.dump(list(model.getVars()), f)
-    print("最优解找到，目标值:", model.objVal)
+    print("可行解找到，目标值:", model.objVal)
 else:
-    print("未找到最优解，状态码:", model.status)
+    print("未找到可行解，状态码:", model.status)
