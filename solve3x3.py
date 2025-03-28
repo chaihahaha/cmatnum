@@ -66,7 +66,7 @@ for i in range(9):
                 # 创建中间变量u表示三次乘积
                 u = model.addVar(lb=-8, ub=8, name=f'u_{i}_{j}_{k}_{m}')
                 # 正确方式：使用变量对象直接构建表达式
-                model.addGenConstrNL(u, f"{a.VarName} * {b.VarName} * {c.VarName}")
+                model.addGenConstrNL(u, a*b*c)
                 sum_expr += u
             # 添加精度约束
             model.addConstr(sum_expr <= target + epsilon, f"upper_{i}_{j}_{k}")
