@@ -2,7 +2,7 @@ import gurobipy as gp
 from gurobipy import GRB
 import numpy as np
 
-# å®ä¹å¼ éT
+# 定义张量T
 T = np.zeros([9, 9, 9])
 non_zero_indices = [(0, 0, 0), (0, 1, 3), (0, 2, 6), (1, 0, 1), (1, 1, 4), (1, 2, 7),
                     (2, 0, 2), (2, 1, 5), (2, 2, 8), (3, 3, 0), (3, 4, 3), (3, 5, 6),
@@ -12,15 +12,15 @@ non_zero_indices = [(0, 0, 0), (0, 1, 3), (0, 2, 6), (1, 0, 1), (1, 1, 4), (1, 2
 for i, j, k in non_zero_indices:
     T[i, j, k] = 1
 
-# åå§åGurobiæ¨¡å
+# 初始化Gurobi模型
 model = gp.Model()
-model.Params.NonConvex = 2  # åè®¸éå¸ä¼å
+model.Params.NonConvex = 2  # 允许非凸优化
 
-# åæ°è®¾ç½®
+# 参数设置
 M = 2
 epsilon = 0.01
 
-# åå»ºåéï¼AãBãCåå¶äºè¿å¶åé
+# 创建变量：A、B、C及其二进制变量
 A_vars = {}
 A_bin = {}
 for i in range(9):
@@ -48,41 +48,41 @@ for k in range(9):
         model.addConstr(C_vars[k, m] >= -M * C_bin[k, m])
         model.addConstr(C_vars[k, m] <= M * C_bin[k, m])
 
-# å¿é¡»æ´æ°æ¨¡åä»¥ç¡®ä¿åéå±æ§å¯ç¨
+# 必须更新模型以确保变量属性可用
 model.update()
 
-# æ·»å å¼ éè¿ä¼¼çº¦æ
+# 添加张量近似约束
 for i in range(9):
     for j in range(9):
         for k in range(9):
             target = T[i, j, k]
             if target == 0:
-                continue  # è·³è¿é¶åç´ çº¦æ
+                continue  # 跳过零元素约束
             sum_expr = 0
             for m in range(17):
                 a = A_vars[i, m]
                 b = B_vars[j, m]
                 c = C_vars[k, m]
-                # åå»ºä¸­é´åéuè¡¨ç¤ºä¸æ¬¡ä¹ç§¯
+                # 创建中间变量u表示三次乘积
                 u = model.addVar(lb=-8, ub=8, name=f'u_{i}_{j}_{k}_{m}')
-                # æ­£ç¡®æ¹å¼ï¼ä½¿ç¨åéå¯¹è±¡ç´æ¥æå»ºè¡¨è¾¾å¼
-                model.addGenConstrNL(u, a*b*c)
+                # 正确方式：使用变量对象直接构建表达式
+                model.addGenConstrNL(u, f"{a.VarName} * {b.VarName} * {c.VarName}")
                 sum_expr += u
-            # æ·»å ç²¾åº¦çº¦æ
+            # 添加精度约束
             model.addConstr(sum_expr <= target + epsilon, f"upper_{i}_{j}_{k}")
             model.addConstr(sum_expr >= target - epsilon, f"lower_{i}_{j}_{k}")
 
-# è®¾ç½®ç®æ å½æ°
+# 设置目标函数
 obj = gp.quicksum(A_bin[i, m] for i in range(9) for m in range(17)) + \
       gp.quicksum(B_bin[j, m] for j in range(9) for m in range(17)) + \
       gp.quicksum(C_bin[k, m] for k in range(9) for m in range(17))
 model.setObjective(obj, GRB.MINIMIZE)
 
-# æ±è§£æ¨¡å
+# 求解模型
 model.optimize()
 
-# è¾åºç»æ
+# 输出结果
 if model.status == GRB.OPTIMAL:
-    print("æä¼è§£æ¾å°ï¼ç®æ å¼:", model.objVal)
+    print("最优解找到，目标值:", model.objVal)
 else:
-    print("æªæ¾å°æä¼è§£ï¼ç¶æç :", model.status)
+    print("未找到最优解，状态码:", model.status)
