@@ -43,15 +43,19 @@ for i in range(9):
             target = T[i,j,k]
             expr = 0
             for m in range(rank):
-                expr += A[i,m] * B[j,m] * C[k,m]
+                AB_mul = model.addVar(lb=-M, ub=M, name="AB_mul_{i}_{j}_{k}_{m}")
+                ABC_mul = model.addVar(lb=-M, ub=M, name="ABC_mul_{i}_{j}_{k}_{m}")
+                model.addConstr(AB_mul== A[i,m] * B[j,m])
+                model.addConstr(ABC_mul== AB_mul * C[k,m])
+                expr += ABC_mul
 
             sum_ijk = model.addVar(lb=-M, ub=M, name="sum_{i}_{j}_{k}")
             model.addGenConstrNL(sum_ijk, expr)
 
             
             # 添加精度约束
-            err = model.addVar(lb=-M, ub=M, name=f"err_{i}_{j}_{k}")
-            model.addGenConstrNL(err, (sum_ijk - target)**2)
+            err = model.addVar(lb=-M, ub=M, name=f"err_mat_{i}_{j}_{k}")
+            model.addConstr(err== (sum_ijk - target)**2)
             err_matmul += err
 
 err_zeros = 0
@@ -60,7 +64,9 @@ for i in range(9):
     for j in range(rank):
         # For each element in A, B, C, create a binary variable indicating if it's within [-epsilon, epsilon]
         for i_mat, matrix in enumerate([A, B, C]):
-            err_zeros += matrix[i,j]**2
+            err = model.addVar(lb=-M, ub=M, name=f"err_zero_{i}_{j}_{k}")
+            model.addConstr(err== matrix[i,j]**2)
+            err_zeros += err
 
 model.setObjective(1+1e-3*err_zeros + err_matmul, GRB.MINIMIZE)
 
