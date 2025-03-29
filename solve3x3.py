@@ -22,11 +22,11 @@ for i,j,k in T_nonzero:
 # 初始化模型
 model = gp.Model()
 model.Params.NonConvex = 2  # 启用非凸优化
-model.Params.MIPGap = 6e-4
+model.Params.MIPGap = 0.49
 
 # 参数设置
 rank = 17  # 降低分解秩
-M = 1e9
+M = GRB.INFINITY
 epsilon = 1e-2  # 放宽精度
 
 # 创建核心变量（连续型）
@@ -34,7 +34,7 @@ A = model.addVars(9, rank, lb=-M, ub=M, name="A")
 B = model.addVars(9, rank, lb=-M, ub=M, name="B")
 C = model.addVars(9, rank, lb=-M, ub=M, name="C")
 
-n_matmul = 0
+err_matmul = 0
 
 # 添加非零元素约束
 for i in range(9):
@@ -45,33 +45,24 @@ for i in range(9):
             for m in range(rank):
                 expr += A[i,m] * B[j,m] * C[k,m]
 
-            sum_ijk = model.addVar(lb=-M**3, ub=M**3, name="sum_{i}_{j}_{k}")
+            sum_ijk = model.addVar(lb=-M, ub=M, name="sum_{i}_{j}_{k}")
             model.addGenConstrNL(sum_ijk, expr)
 
             
             # 添加精度约束
-            ml = model.addVar(vtype=GRB.BINARY, name=f"ml_{i}_{j}_{k}")
-            mg = model.addVar(vtype=GRB.BINARY, name=f"mg_{i}_{j}_{k}")
-            model.addGenConstrIndicator(ml, 1, sum_ijk >= target - epsilon)
-            model.addGenConstrIndicator(mg, 1, sum_ijk <= target + epsilon)
-            n_matmul += ml
-            n_matmul += mg
+            err = model.addVar(lb=-M, ub=M, name=f"err_{i}_{j}_{k}")
+            model.addGenConstrNL(err, (sum_ijk - target)**2)
+            err_matmul += err
 
-n_zeros = 0
+err_zeros = 0
 
 for i in range(9):
     for j in range(rank):
         # For each element in A, B, C, create a binary variable indicating if it's within [-epsilon, epsilon]
         for i_mat, matrix in enumerate([A, B, C]):
-            zl = model.addVar(vtype=GRB.BINARY, name=f"zl_{i}_{j}_{i_mat}")
-            zg = model.addVar(vtype=GRB.BINARY, name=f"zg_{i}_{j}_{i_mat}")
-            # If z == 1, then matrix[i,j] <= epsilon and matrix[i,j] >= -epsilon
-            model.addGenConstrIndicator(zl, 1, matrix[i,j] <= epsilon)
-            n_zeros += zl
-            model.addGenConstrIndicator(zg, 1, matrix[i,j] >= -epsilon)
-            n_zeros += zg
+            err_zeros += matrix[i,j]**2
 
-model.setObjective(1e-3*n_zeros + n_matmul, GRB.MAXIMIZE)
+model.setObjective(1+1e-3*err_zeros + err_matmul, GRB.MINIMIZE)
 
 # 求解模型
 model.optimize()
