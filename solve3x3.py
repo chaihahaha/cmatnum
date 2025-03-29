@@ -22,12 +22,12 @@ for i,j,k in T_nonzero:
 # 初始化模型
 model = gp.Model()
 model.Params.NonConvex = 2  # 启用非凸优化
-model.Params.MIPGap = 0.01
+model.Params.MIPGap = 6e-4
 
 # 参数设置
 rank = 17  # 降低分解秩
 M = 1e9
-epsilon = 0.003  # 放宽精度
+epsilon = 1e-2  # 放宽精度
 
 # 创建核心变量（连续型）
 A = model.addVars(9, rank, lb=-M, ub=M, name="A")
@@ -71,7 +71,7 @@ for i in range(9):
             model.addGenConstrIndicator(zg, 1, matrix[i,j] >= -epsilon)
             n_zeros += zg
 
-model.setObjective(1e-4*n_zeros + n_matmul, GRB.MAXIMIZE)
+model.setObjective(1e-3*n_zeros + n_matmul, GRB.MAXIMIZE)
 
 # 求解模型
 model.optimize()
@@ -96,3 +96,6 @@ with open("vars.pickle", "wb") as f:
 print(f"A = \n{A_np}")
 print(f"B = \n{B_np}")
 print(f"C = \n{C_np}")
+error_tensor = np.abs(T-np.einsum("im,jm,km", A_np,B_np,C_np))
+error_matrix = np.max(error_tensor, axis=0)
+print(f"error = \n{error_matrix}")
