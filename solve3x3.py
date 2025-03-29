@@ -22,16 +22,19 @@ for i,j,k in T_nonzero:
 # 初始化模型
 model = gp.Model()
 model.Params.NonConvex = 2  # 启用非凸优化
+model.Params.MIPGap = 0.01
 
 # 参数设置
 rank = 17  # 降低分解秩
 M = 1e9
-epsilon = 0.1  # 放宽精度
+epsilon = 0.003  # 放宽精度
 
 # 创建核心变量（连续型）
 A = model.addVars(9, rank, lb=-M, ub=M, name="A")
 B = model.addVars(9, rank, lb=-M, ub=M, name="B")
 C = model.addVars(9, rank, lb=-M, ub=M, name="C")
+
+n_matmul = 0
 
 # 添加非零元素约束
 for i in range(9):
@@ -40,16 +43,19 @@ for i in range(9):
             target = T[i,j,k]
             expr = 0
             for m in range(rank):
-                # 创建中间变量
-                prod_abc = model.addVar(lb=-M**3, ub=M**3, name=f"prod_abc_{i}_{j}_{k}_{m}")
-                
-                # 分步构建三次项
-                model.addGenConstrNL(prod_abc, A[i,m] * B[j,m] * C[k,m])  # 三次项
-                expr += prod_abc
+                expr += A[i,m] * B[j,m] * C[k,m]
+
+            sum_ijk = model.addVar(lb=-M**3, ub=M**3, name="sum_{i}_{j}_{k}")
+            model.addGenConstrNL(sum_ijk, expr)
+
             
             # 添加精度约束
-            model.addConstr(expr >= target - epsilon, name=f"lower_{i}_{j}_{k}")
-            model.addConstr(expr <= target + epsilon, name=f"upper_{i}_{j}_{k}")
+            ml = model.addVar(vtype=GRB.BINARY, name=f"ml_{i}_{j}_{k}")
+            mg = model.addVar(vtype=GRB.BINARY, name=f"mg_{i}_{j}_{k}")
+            model.addGenConstrIndicator(ml, 1, sum_ijk >= target - epsilon)
+            model.addGenConstrIndicator(mg, 1, sum_ijk <= target + epsilon)
+            n_matmul += ml
+            n_matmul += mg
 
 n_zeros = 0
 
@@ -57,38 +63,36 @@ for i in range(9):
     for j in range(rank):
         # For each element in A, B, C, create a binary variable indicating if it's within [-epsilon, epsilon]
         for i_mat, matrix in enumerate([A, B, C]):
-            z = model.addVar(vtype=GRB.BINARY, name=f"z_{i}_{j}_{i_mat}")
+            zl = model.addVar(vtype=GRB.BINARY, name=f"zl_{i}_{j}_{i_mat}")
+            zg = model.addVar(vtype=GRB.BINARY, name=f"zg_{i}_{j}_{i_mat}")
             # If z == 1, then matrix[i,j] <= epsilon and matrix[i,j] >= -epsilon
-            model.addGenConstrIndicator(z, 1, matrix[i,j] <= epsilon)
-            n_zeros += z
-            model.addGenConstrIndicator(z, 1, matrix[i,j] >= -epsilon)
-            n_zeros += z
+            model.addGenConstrIndicator(zl, 1, matrix[i,j] <= epsilon)
+            n_zeros += zl
+            model.addGenConstrIndicator(zg, 1, matrix[i,j] >= -epsilon)
+            n_zeros += zg
 
-model.setObjective(n_zeros, GRB.MAXIMIZE)
-
-def stop_at_feasible(model, where):
-    if where == GRB.Callback.MIPSOL:
-        print("找到可行解，终止求解")
-        model.terminate()
+model.setObjective(1e-4*n_zeros + n_matmul, GRB.MAXIMIZE)
 
 # 求解模型
-model.optimize(stop_at_feasible)
+model.optimize()
 
 # 输出结果
 if model.status == GRB.OPTIMAL:
-    A_np = np.zeros([9, rank])
-    B_np = np.zeros([9, rank])
-    C_np = np.zeros([9, rank])
-    for m in range(rank):
-        A_np[:,m] = [A[i,m].X for i in range(9)]
-        B_np[:,m] = [B[i,m].X for i in range(9)]
-        C_np[:,m] = [C[i,m].X for i in range(9)]
-    solved_vars = {'A':A_np, 'B':B_np, 'C':C_np}
-    import pickle
-    with open("vars.pickle", "wb") as f:
-        pickle.dump(solved_vars, f)
-    print(f"A = \n{A_np}")
-    print(f"B = \n{B_np}")
-    print(f"C = \n{C_np}")
+    print("找到可行解")
 else:
     print("未找到可行解，状态码:", model.status)
+
+A_np = np.zeros([9, rank])
+B_np = np.zeros([9, rank])
+C_np = np.zeros([9, rank])
+for m in range(rank):
+    A_np[:,m] = [A[i,m].X for i in range(9)]
+    B_np[:,m] = [B[i,m].X for i in range(9)]
+    C_np[:,m] = [C[i,m].X for i in range(9)]
+solved_vars = {'A':A_np, 'B':B_np, 'C':C_np}
+import pickle
+with open("vars.pickle", "wb") as f:
+    pickle.dump(solved_vars, f)
+print(f"A = \n{A_np}")
+print(f"B = \n{B_np}")
+print(f"C = \n{C_np}")
