@@ -18,11 +18,12 @@ T_nonzero = {
 T = np.zeros([9,9,9])
 for i,j,k in T_nonzero:
     T[i,j,k] = 1
+assert np.sum(T) == 9*3
 
 # 初始化模型
 model = gp.Model()
-model.Params.NonConvex = 2  # 启用非凸优化
-model.Params.MIPGap = 0.49
+#model.Params.NonConvex = 2  # 启用非凸优化
+#model.Params.MIPGap = 0.49
 
 # 参数设置
 rank = 19  # 降低分解秩
@@ -88,7 +89,8 @@ for m in range(rank):
     A_np[:,m] = [A[i,m].X for i in range(9)]
     B_np[:,m] = [B[i,m].X for i in range(9)]
     C_np[:,m] = [C[i,m].X for i in range(9)]
-solved_vars = {'A':A_np, 'B':B_np, 'C':C_np}
+#solved_vars = {'A':A_np, 'B':B_np, 'C':C_np}
+solved_vars = {v.VarName: v.X for v in model.getVars()}
 import pickle
 with open("vars.pickle", "wb") as f:
     pickle.dump(solved_vars, f)
@@ -98,3 +100,8 @@ print(f"C = \n{C_np}")
 error_tensor = np.abs(T-np.einsum("im,jm,km", A_np,B_np,C_np))
 error_matrix = np.max(error_tensor, axis=(1,2))
 print(f"error = \n{error_matrix}")
+
+tolerance = 0.1
+for constr in model.getConstrs():
+    slack = constr.slack
+    print(f'Constr {constr.ConstrName}, slack: {slack}')
