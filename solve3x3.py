@@ -21,11 +21,11 @@ for i,j,k in T_nonzero:
 
 # 初始化模型
 model = gp.Model()
-model.Params.NonConvex = 2  # 启用非凸优化
+#model.Params.NonConvex = 2  # 启用非凸优化
 model.Params.MIPGap = 0.49
 
 # 参数设置
-rank = 17  # 降低分解秩
+rank = 19  # 降低分解秩
 M = GRB.INFINITY
 epsilon = 1e-2  # 放宽精度
 
@@ -94,5 +94,5 @@ print(f"A = \n{A_np}")
 print(f"B = \n{B_np}")
 print(f"C = \n{C_np}")
 error_tensor = np.abs(T-np.einsum("im,jm,km", A_np,B_np,C_np))
-error_matrix = np.max(error_tensor, axis=0)
+error_matrix = np.max(error_tensor, axis=(1,2))
 print(f"error = \n{error_matrix}")
