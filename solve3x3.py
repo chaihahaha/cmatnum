@@ -21,7 +21,7 @@ for i,j,k in T_nonzero:
 
 # 初始化模型
 model = gp.Model()
-#model.Params.NonConvex = 2  # 启用非凸优化
+model.Params.NonConvex = 2  # 启用非凸优化
 model.Params.MIPGap = 0.49
 
 # 参数设置
@@ -50,12 +50,14 @@ for i in range(9):
                 expr += ABC_mul
 
             sum_ijk = model.addVar(lb=-M, ub=M, name="sum_{i}_{j}_{k}")
-            model.addGenConstrNL(sum_ijk, expr)
+            diff = model.addVar(lb=-M, ub=M, name="diff_{i}_{j}_{k}")
+            model.addConstr(sum_ijk== expr)
 
             
             # 添加精度约束
             err = model.addVar(lb=-M, ub=M, name=f"err_mat_{i}_{j}_{k}")
-            model.addConstr(err== (sum_ijk - target)**2)
+            model.addConstr(diff== sum_ijk - target)
+            model.addGenConstrAbs(err, diff)
             err_matmul += err
 
 err_zeros = 0
@@ -65,7 +67,7 @@ for i in range(9):
         # For each element in A, B, C, create a binary variable indicating if it's within [-epsilon, epsilon]
         for i_mat, matrix in enumerate([A, B, C]):
             err = model.addVar(lb=-M, ub=M, name=f"err_zero_{i}_{j}_{k}")
-            model.addConstr(err== matrix[i,j]**2)
+            model.addGenConstrAbs(err, matrix[i,j])
             err_zeros += err
 
 model.setObjective(1+1e-3*err_zeros + err_matmul, GRB.MINIMIZE)
