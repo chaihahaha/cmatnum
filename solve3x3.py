@@ -27,7 +27,7 @@ model.Params.NonConvex = 2  # 启用非凸优化
 
 # 参数设置
 rank = 19  # 降低分解秩
-M = 1e40
+M = GRB.INFINITY
 epsilon = 1e-2  # 放宽精度
 
 # 创建核心变量（连续型）
