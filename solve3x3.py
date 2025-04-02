@@ -24,9 +24,13 @@ assert np.sum(T) == 9*3
 model = gp.Model()
 model.Params.NonConvex = 2  # 启用非凸优化
 #model.Params.MIPGap = 0.49
+model.Params.NodefileStart = 0.5
+model.Params.SoftMemLimit = 63
+model.Params.Presolve = 2
+model.Params.Method = 2
 
 # 参数设置
-rank = 19  # 降低分解秩
+rank = 18  # 降低分解秩
 M = GRB.INFINITY
 epsilon = 1e-2  # 放宽精度
 
@@ -44,10 +48,9 @@ for i in range(9):
             target = T[i,j,k]
             expr = 0
             for m in range(rank):
-                AB_mul = model.addVar(lb=-M, ub=M, name=f"AB_mul_{i}_{j}_{k}_{m}")
+                #AB_mul = model.addVar(lb=-M, ub=M, name=f"AB_mul_{i}_{j}_{k}_{m}")
                 ABC_mul = model.addVar(lb=-M, ub=M, name=f"ABC_mul_{i}_{j}_{k}_{m}")
-                model.addConstr(AB_mul== A[i,m] * B[j,m])
-                model.addConstr(ABC_mul== AB_mul * C[k,m])
+                model.addGenConstrNL(ABC_mul, A[i,m] * B[j,m] * C[k,m])
                 expr += ABC_mul
 
             sum_ijk = model.addVar(lb=-M, ub=M, name=f"sum_{i}_{j}_{k}")
