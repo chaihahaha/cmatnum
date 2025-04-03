@@ -24,13 +24,13 @@ assert np.sum(T) == 9*3
 model = gp.Model()
 model.Params.NonConvex = 2  # 启用非凸优化
 #model.Params.MIPGap = 0.49
-model.Params.NodefileStart = 0.5
+model.Params.NodefileStart = 40
 model.Params.SoftMemLimit = 63
 model.Params.Presolve = 2
 model.Params.Method = 2
 
 # 参数设置
-rank = 18  # 降低分解秩
+rank = 17  # 降低分解秩
 M = GRB.INFINITY
 epsilon = 1e-2  # 放宽精度
 
@@ -64,18 +64,18 @@ for i in range(9):
             model.addGenConstrAbs(err, diff)
             err_matmul += err
 
-err_zeros = 0
-
-for i in range(9):
-    for j in range(rank):
-        # For each element in A, B, C, create a binary variable indicating if it's within [-epsilon, epsilon]
-        for i_mat, matrix in enumerate([A, B, C]):
-            err = model.addVar(lb=-M, ub=M, name=f"err_zero_{i}_{j}_{k}")
-            model.addGenConstrAbs(err, matrix[i,j])
-            err_zeros += err
+#err_zeros = 0
+#
+#for i in range(9):
+#    for j in range(rank):
+#        # For each element in A, B, C, create a binary variable indicating if it's within [-epsilon, epsilon]
+#        for i_mat, matrix in enumerate([A, B, C]):
+#            err = model.addVar(lb=-M, ub=M, name=f"err_zero_{i}_{j}_{k}")
+#            model.addGenConstrAbs(err, matrix[i,j])
+#            err_zeros += err
 
 model.addConstr(err_matmul<=0.5)
-model.setObjective(err_zeros, GRB.MINIMIZE)
+model.setObjective(0, GRB.MINIMIZE)
 
 # 求解模型
 model.optimize()
@@ -85,6 +85,10 @@ if model.status == GRB.OPTIMAL:
     print("找到可行解")
 else:
     print("未找到可行解，状态码:", model.status)
+solved_vars = {v.VarName: v.X for v in model.getVars()}
+import pickle
+with open("vars.pickle", "wb") as f:
+    pickle.dump(solved_vars, f)
 
 A_np = np.zeros([9, rank])
 B_np = np.zeros([9, rank])
@@ -94,10 +98,6 @@ for m in range(rank):
     B_np[:,m] = [B[i,m].X for i in range(9)]
     C_np[:,m] = [C[i,m].X for i in range(9)]
 #solved_vars = {'A':A_np, 'B':B_np, 'C':C_np}
-solved_vars = {v.VarName: v.X for v in model.getVars()}
-import pickle
-with open("vars.pickle", "wb") as f:
-    pickle.dump(solved_vars, f)
 print(f"A = \n{A_np}")
 print(f"B = \n{B_np}")
 print(f"C = \n{C_np}")
