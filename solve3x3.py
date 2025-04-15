@@ -24,14 +24,15 @@ assert np.sum(T) == 9*3
 model = gp.Model()
 model.Params.NonConvex = 2  # 启用非凸优化
 #model.Params.MIPGap = 0.49
-model.Params.NodefileStart = 40
+model.Params.NodefileStart = 20
 model.Params.SoftMemLimit = 63
 model.Params.Presolve = 2
 model.Params.Method = 2
 
 # 参数设置
 rank = 17  # 降低分解秩
-M = GRB.INFINITY
+#M = GRB.INFINITY
+M = 1e4
 epsilon = 1e-2  # 放宽精度
 
 # 创建核心变量（连续型）
@@ -48,20 +49,25 @@ for i in range(9):
             target = T[i,j,k]
             expr = 0
             for m in range(rank):
-                #AB_mul = model.addVar(lb=-M, ub=M, name=f"AB_mul_{i}_{j}_{k}_{m}")
+                AB_mul = model.addVar(lb=-M, ub=M, name=f"AB_mul_{i}_{j}_{k}_{m}")
                 ABC_mul = model.addVar(lb=-M, ub=M, name=f"ABC_mul_{i}_{j}_{k}_{m}")
-                model.addGenConstrNL(ABC_mul, A[i,m] * B[j,m] * C[k,m])
+                #model.addGenConstrNL(ABC_mul, A[i,m] * B[j,m] * C[k,m])
+                model.addConstr(AB_mul == A[i,m] * B[j,m])
+                model.addConstr(ABC_mul == AB_mul * C[k,m])
+                
                 expr += ABC_mul
 
-            sum_ijk = model.addVar(lb=-M, ub=M, name=f"sum_{i}_{j}_{k}")
+            #sum_ijk = model.addVar(lb=-M, ub=M, name=f"sum_{i}_{j}_{k}")
             diff = model.addVar(lb=-M, ub=M, name=f"diff_{i}_{j}_{k}")
-            model.addConstr(sum_ijk== expr)
+            #model.addConstr(sum_ijk== expr)
 
             
             # 添加精度约束
             err = model.addVar(lb=-M, ub=M, name=f"err_mat_{i}_{j}_{k}")
-            model.addConstr(diff== sum_ijk - target)
+            #model.addConstr(diff== sum_ijk - target)
+            model.addConstr(diff== expr - target)
             model.addGenConstrAbs(err, diff)
+            model.addConstr(err<=0.1)
             err_matmul += err
 
 #err_zeros = 0
@@ -74,8 +80,7 @@ for i in range(9):
 #            model.addGenConstrAbs(err, matrix[i,j])
 #            err_zeros += err
 
-model.addConstr(err_matmul<=0.5)
-model.setObjective(0, GRB.MINIMIZE)
+model.setObjective(err_matmul, GRB.MINIMIZE)
 
 # 求解模型
 model.optimize()
