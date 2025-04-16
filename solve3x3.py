@@ -32,7 +32,7 @@ model.Params.Method = 2
 # 参数设置
 rank = 17  # 降低分解秩
 #M = GRB.INFINITY
-M = 1e4
+M = 1e5
 epsilon = 1e-2  # 放宽精度
 
 # 创建核心变量（连续型）
@@ -51,24 +51,30 @@ for i in range(9):
             for m in range(rank):
                 AB_mul = model.addVar(lb=-M, ub=M, name=f"AB_mul_{i}_{j}_{k}_{m}")
                 ABC_mul = model.addVar(lb=-M, ub=M, name=f"ABC_mul_{i}_{j}_{k}_{m}")
+                #ABdiff_mul = model.addVar(lb=-M, ub=M, name=f"ABdiff_mul_{i}_{j}_{k}_{m}")
+                #ABCdiff_mul = model.addVar(lb=-M, ub=M, name=f"ABCdiff_mul_{i}_{j}_{k}_{m}")
                 #model.addGenConstrNL(ABC_mul, A[i,m] * B[j,m] * C[k,m])
-                model.addConstr(AB_mul == A[i,m] * B[j,m])
-                model.addConstr(ABC_mul == AB_mul * C[k,m])
+                model.addConstr(AB_mul - A[i,m] * B[j,m]<=1e-4)
+                model.addConstr(AB_mul - A[i,m] * B[j,m]>=-1e-4)
+                model.addConstr(ABC_mul - AB_mul * C[k,m]<=1e-4)
+                model.addConstr(ABC_mul - AB_mul * C[k,m]>=-1e-4)
                 
                 expr += ABC_mul
 
             #sum_ijk = model.addVar(lb=-M, ub=M, name=f"sum_{i}_{j}_{k}")
-            diff = model.addVar(lb=-M, ub=M, name=f"diff_{i}_{j}_{k}")
+            #diff = model.addVar(lb=-M, ub=M, name=f"diff_{i}_{j}_{k}")
             #model.addConstr(sum_ijk== expr)
 
             
             # 添加精度约束
-            err = model.addVar(lb=-M, ub=M, name=f"err_mat_{i}_{j}_{k}")
+            #err = model.addVar(lb=-M, ub=M, name=f"err_mat_{i}_{j}_{k}")
             #model.addConstr(diff== sum_ijk - target)
-            model.addConstr(diff== expr - target)
-            model.addGenConstrAbs(err, diff)
-            model.addConstr(err<=0.1)
-            err_matmul += err
+            #model.addConstr(diff== expr - target)
+            expr -= target
+            #model.addGenConstrAbs(diff, expr)
+            #err_matmul += diff
+            model.addConstr(expr<=0.1)
+            model.addConstr(expr>=-0.1)
 
 #err_zeros = 0
 #
@@ -80,7 +86,7 @@ for i in range(9):
 #            model.addGenConstrAbs(err, matrix[i,j])
 #            err_zeros += err
 
-model.setObjective(err_matmul, GRB.MINIMIZE)
+model.setObjective(0, GRB.MINIMIZE)
 
 # 求解模型
 model.optimize()
