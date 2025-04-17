@@ -33,12 +33,14 @@ model.Params.Method = 2
 rank = 17  # 降低分解秩
 #M = GRB.INFINITY
 M = 1e5
-epsilon = 1e-2  # 放宽精度
+#epsilon = 1e-2  # 放宽精度
 
 # 创建核心变量（连续型）
 A = model.addVars(9, rank, lb=-M, ub=M, name="A")
 B = model.addVars(9, rank, lb=-M, ub=M, name="B")
 C = model.addVars(9, rank, lb=-M, ub=M, name="C")
+epsilon = model.addVar(lb=0, ub=0.1, name="epsilon")
+epsilon_eq = model.addVar(lb=0, ub=1e-4, name="epsilon_eq")
 
 err_matmul = 0
 
@@ -54,10 +56,10 @@ for i in range(9):
                 #ABdiff_mul = model.addVar(lb=-M, ub=M, name=f"ABdiff_mul_{i}_{j}_{k}_{m}")
                 #ABCdiff_mul = model.addVar(lb=-M, ub=M, name=f"ABCdiff_mul_{i}_{j}_{k}_{m}")
                 #model.addGenConstrNL(ABC_mul, A[i,m] * B[j,m] * C[k,m])
-                model.addConstr(AB_mul - A[i,m] * B[j,m]<=1e-4)
-                model.addConstr(AB_mul - A[i,m] * B[j,m]>=-1e-4)
-                model.addConstr(ABC_mul - AB_mul * C[k,m]<=1e-4)
-                model.addConstr(ABC_mul - AB_mul * C[k,m]>=-1e-4)
+                model.addConstr(AB_mul - A[i,m] * B[j,m] <= epsilon_eq)
+                model.addConstr(AB_mul - A[i,m] * B[j,m]>= -epsilon_eq)
+                model.addConstr(ABC_mul - AB_mul * C[k,m]<= epsilon_eq)
+                model.addConstr(ABC_mul - AB_mul * C[k,m]>=-epsilon_eq)
                 
                 expr += ABC_mul
 
@@ -73,8 +75,8 @@ for i in range(9):
             expr -= target
             #model.addGenConstrAbs(diff, expr)
             #err_matmul += diff
-            model.addConstr(expr<=0.1)
-            model.addConstr(expr>=-0.1)
+            model.addConstr(expr<=epsilon)
+            model.addConstr(expr>=-epsilon)
 
 #err_zeros = 0
 #
@@ -86,7 +88,7 @@ for i in range(9):
 #            model.addGenConstrAbs(err, matrix[i,j])
 #            err_zeros += err
 
-model.setObjective(0, GRB.MINIMIZE)
+model.setObjective(epsilon+epsilon_eq*1e3, GRB.MINIMIZE)
 
 # 求解模型
 model.optimize()
