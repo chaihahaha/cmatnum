@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import csv
 import os
-import sys
 
 os.environ.setdefault("MPLCONFIGDIR", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "cache"))
 import matplotlib

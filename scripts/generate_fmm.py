@@ -21,7 +21,6 @@ from typing import Callable, Dict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fmmgen import Options, build_program, emit, load_from_triadset, load_from_txt, save_as_txt
-from fmmgen.algorithm import load_algorithm
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ALG_DIR = os.path.join(ROOT, "algorithms")
@@ -110,8 +109,6 @@ def emit_txt(name: str, outdir: str) -> None:
 
 
 def compare_schedulers(names, outdir: str) -> None:
-    from fmmgen.schedule import peak_memory, schedule
-
     rows = []
     for name in names:
         alg = load(name)

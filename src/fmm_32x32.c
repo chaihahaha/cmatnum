@@ -1,10 +1,16 @@
 #include "cmat.h"
 #include "fmm_32x32.h"
 
+unsigned long fmm_32x32_fast_calls = 0;
+unsigned long fmm_32x32_blas_calls = 0;
+
 int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
     shape_uint height = A.shape[0];
     shape_uint width = A.shape[1];
-    if (height <= 1024 || width <= 1024) {
+    if (A.shape[1] != B.shape[0] || C.shape[0] != height || C.shape[1] != B.shape[1] ||
+        height <= (shape_uint)fmm_base_block || width <= (shape_uint)fmm_base_block ||
+        !(height % 32 == 0 && width % 32 == 0 && B.shape[1] % 32 == 0 && height / 32 == width / 32)) {
+        fmm_32x32_blas_calls++;
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                     C.shape[0], C.shape[1], A.shape[1],
                     1.0, A.data[0], A.arena_shape[1],
@@ -12,10 +18,7 @@ int fmm_32x32(double_cmat C, double_cmat A, double_cmat B) {
                     0.0, C.data[0], C.arena_shape[1]);
         return 0;
     }
-    if (!(height % 32 == width % 32 && height % 32 == 0 && height / 32 == width / 32)) {
-        //return matmul_double(C, A, B);
-        return -1;
-    }
+    fmm_32x32_fast_calls++;
     shape_uint N = height;
     shape_uint BL = N/32;
     shape_uint NS = BL*BL;

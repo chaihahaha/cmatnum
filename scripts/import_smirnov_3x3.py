@@ -8,7 +8,6 @@ generator can consume the algorithm like any other.
 """
 
 import os
-import sys
 
 import sympy as sp
 

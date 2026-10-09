@@ -170,7 +170,7 @@ def _render_lincomb(dst: str, terms: Sequence[Tuple[str, sp.Expr]], resolve) -> 
             f"(double_cmat[]){{{srcs}}}, (double[]){{{coeffs}}});")
 
 
-def emit(prog: Program, threshold: int = 0) -> Tuple[str, str]:
+def emit(prog: Program) -> Tuple[str, str]:
     """Return the (header, source) text for a compiled program."""
     alg, opts = prog.alg, prog.opts
     R, K, S = alg.a_rows, alg.a_cols, alg.b_cols

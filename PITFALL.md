@@ -71,3 +71,48 @@ macOS + Accelerate 下 `__attribute__((weak_import))` 仍然会在链接期报
 本机没有 GNU `timeout`（`timeout: command not found`）；`/bin/ps` 在沙箱下被拒。
 按 AGENTS.md：长时间任务统一用 `tmux new -d -s <name>` 启动，用
 `tmux capture-pane -p` 查看，`pgrep -fl` 确认进程。
+
+## 8. 旧 `gen_3x3_code.py` 产出的 fmm_3x3 与新生成器的差异
+
+重构后曾出现“新 fmm_3x3 比旧的误差大”的错觉：用 `base = N/3` 在 N=243/2187
+上比较时，旧版给出**零误差**——因为旧版把阈值硬编码成 `height <= 10000`，
+这些尺寸直接走了 BLAS 分支，根本没跑算法。
+
+把旧版的阈值也换成 `fmm_base_block` 后重新比较（`tests/compare_legacy_3x3.c`，
+旧产物保存在 `tests/legacy_fmm_3x3.c`）：
+
+| N | 新 vs BLAS | 旧 vs BLAS | 新 vs 旧 |
+| --- | --- | --- | --- |
+| 243 | 1.0245e-02 | 1.0245e-02 | 1.55e-03 |
+| 2187 | 1.0009e-02 | 1.0009e-02 | 2.59e-03 |
+| 6561 | 1.6798e-02 | 1.6105e-02 | 3.35e-03 |
+
+即两者精度一致，差异只在结合顺序（浮点舍入）层面。
+**教训**：比较两个实现时先确认双方走的是同一条代码路径，否则会把
+“旧版直接调 BLAS”误读成“旧版更准”。
+
+## 9. 生成器的性能陷阱（32x32 规模）
+
+把生成器从“每个算法一个脚本”统一之后，在 32x32（15136 个秩一项）上踩了三个坑：
+
+1. **`_parse_linear_form()` 用 `expr += ...` 累加**：sympy 每次 `Add` 都会重新
+   规范化/排序，15136 行 × ~32 项 → **428 秒**。改成最后一次性 `sp.Add(*terms)`
+   后降到 **23 秒**。
+2. **`limit_cse()` 是 O(n_kept × n_dropped) 次 `subs`**：在 4x4 上表现为结果错误
+   （见第 1 条），在 32x32 上是纯粹的性能灾难。改成对拓扑有序的替换列表做
+   一趟前向展开（用依赖已解析的表达式）后是线性的。
+3. **`schedule_legacy()` / `schedule_legacy_split()` 用 networkx**：
+   `g.remove_edge()` + 每一步 `g.out_degree()` + `list(g.successors())`，
+   在 ~16000 个节点上是 O(V²) 次 networkx 调用，实际上会“卡住”。
+   改成普通的邻接表 + Kahn 拓扑排序。
+
+即便如此，`sympy.cse` 本身在 15136 个 32 项线性型上仍需 **~27 ms/表达式**
+（约 7 分钟/侧，A/B 两侧），内存占用也很大；`order='none'` 并不更快。
+因此 `src/fmm_32x32.c` 目前仍是**重构前生成器产出**的版本，
+只做了两处最小改动以便接入新的 benchmark：
+  * 增加 `fmm_32x32_fast_calls` / `fmm_32x32_blas_calls` 计数器；
+  * 把硬编码阈值 `1024` 换成 `fmm_base_block`，并把“尺寸不整除就 `return -1`”
+    改成回退到 `cblas_dgemm`（原来那样会静默返回未初始化的结果）。
+
+`scripts/generate_fmm.py 32x32` 仍然可用，只是需要较长时间；
+CSE 结果会缓存到 `cache/cse_32x32_*.pickle`，只需付一次代价。
