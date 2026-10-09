@@ -15,6 +15,22 @@
 #define shape_uint uint32_t
 #define shape_int int32_t
 
+/* ------------------------------------------------------------------ *
+ * Runtime configuration and allocation accounting.
+ *
+ * ``fmm_base_block`` is the sub-matrix dimension at or below which the
+ * generated recursive fast-multiplication routines fall back to BLAS.
+ * ``cmat_memory_limit`` (bytes, 0 = unlimited) caps the total memory the
+ * matrix helpers are allowed to hand out, so a benchmark can fail loudly
+ * instead of being killed by the OOM killer.
+ * ------------------------------------------------------------------ */
+extern int fmm_base_block;
+extern size_t cmat_memory_limit;
+extern size_t cmat_allocated_bytes;
+extern size_t cmat_peak_bytes;
+
+size_t cmat_reset_peak(void);
+
 
 struct int_cmat {
     int* arena; // keep all the data in one arena
@@ -79,6 +95,10 @@ int assign_double_slice(double_cmat m1, double_cmat m2, shape_int slice0[2], sha
 int assign_double_clone(double_cmat m1, double_cmat m2);
 
 int matlincomb_double_contiguous(double_cmat res, shape_uint n_mats, double_cmat* mats, int8_t* coeffs);
+
+int matlincomb_double_init(double_cmat res, shape_uint n_mats, double_cmat* mats, const double* coeffs);
+
+int matzero_double(double_cmat m);
 
 int matadd_int(int_cmat m1, int_cmat m2, int_cmat m3);
 

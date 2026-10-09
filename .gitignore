@@ -64,3 +64,20 @@ build/
 *.bk
 *.txt
 grbnodes*
+
+# project generated / transient
+/results/
+/reports/
+/logs/
+/cache/
+/archive/
+/state/
+__pycache__/
+*.pyc
+
+# algorithm descriptions and Maple sources are algorithm inputs: keep them
+!algorithms/
+!algorithms/**
+!assets/
+!assets/**
+/imgs/

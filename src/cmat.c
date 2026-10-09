@@ -3,6 +3,54 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+/* ------------------------------------------------------------------ *
+ * Runtime configuration / allocation accounting (see cmat.h).
+ * ------------------------------------------------------------------ */
+int fmm_base_block = 64;
+size_t cmat_memory_limit = 0;
+size_t cmat_allocated_bytes = 0;
+size_t cmat_peak_bytes = 0;
+
+size_t cmat_reset_peak(void) {
+    cmat_peak_bytes = cmat_allocated_bytes;
+    return cmat_peak_bytes;
+}
+
+static void* cmat_malloc(size_t n) {
+    if (n == 0) {
+        n = 1;
+    }
+    if (cmat_memory_limit && cmat_allocated_bytes + n > cmat_memory_limit) {
+        fprintf(stderr,
+                "cmat: refusing to allocate %zu bytes; %zu already in use, limit is %zu bytes\n",
+                n, cmat_allocated_bytes, cmat_memory_limit);
+        exit(2);
+    }
+    void* p = malloc(n);
+    if (p == NULL) {
+        fprintf(stderr, "cmat: malloc(%zu) failed (%zu bytes in use)\n", n, cmat_allocated_bytes);
+        exit(2);
+    }
+    cmat_allocated_bytes += n;
+    if (cmat_allocated_bytes > cmat_peak_bytes) {
+        cmat_peak_bytes = cmat_allocated_bytes;
+    }
+    return p;
+}
+
+static void cmat_free(void* p, size_t n) {
+    if (p == NULL) {
+        return;
+    }
+    if (n <= cmat_allocated_bytes) {
+        cmat_allocated_bytes -= n;
+    } else {
+        cmat_allocated_bytes = 0;
+    }
+    free(p);
+}
+
+
 int is_contiguous_double(double_cmat m) {
     if (m.offset[1] == 0 && m.arena_shape[1] == m.shape[1]) {
         return 1;
@@ -55,8 +103,8 @@ int create_double_matrix(shape_uint shape[2], double_cmat* p_new_mat) {
     //printf("shape %d %d\n", shape[0], shape[1]);
     // create a matrix with 0.0 in shape [shape[0], shape[1]]
     shape_uint N = shape[0] * shape[1];
-    (*p_new_mat).data = (double **)malloc(shape[0] * sizeof(double *));
-    (*p_new_mat).arena = malloc(N * sizeof(double));
+    (*p_new_mat).data = (double **)cmat_malloc(shape[0] * sizeof(double *));
+    (*p_new_mat).arena = cmat_malloc(N * sizeof(double));
     (*p_new_mat).shape[0] = shape[0];
     (*p_new_mat).shape[1] = shape[1];
     (*p_new_mat).arena_shape[0] = shape[0];
@@ -232,7 +280,7 @@ double_cmat slice_double_matrix(double_cmat mat, shape_int slice0[2], shape_int 
     slice1[1] = MIN(slice1[1], mat.shape[1]);
     double_cmat new_mat;
     shape_uint shape[2] = {slice0[1] - slice0[0], slice1[1] - slice1[0]};
-    new_mat.data = (double **)malloc(shape[0] * sizeof(double *));
+    new_mat.data = (double **)cmat_malloc(shape[0] * sizeof(double *));
     new_mat.arena = mat.arena;
     new_mat.shape[0] = shape[0];
     new_mat.shape[1] = shape[1];
@@ -280,8 +328,8 @@ int create_double_contiguous_from_slice(double_cmat *dest, double_cmat *src) {
     shape_uint cols = src->shape[1];
 
     // Allocate memory for the new matrix
-    dest->arena = (double*)malloc(rows * cols * sizeof(double));
-    dest->data = (double**)malloc(rows * sizeof(double*));
+    dest->arena = (double*)cmat_malloc(rows * cols * sizeof(double));
+    dest->data = (double**)cmat_malloc(rows * sizeof(double*));
     for (i = 0; i < rows; i++) {
         dest->data[i] = &dest->arena[i * cols];
     }
@@ -400,6 +448,59 @@ int matlincomb_double_contiguous(double_cmat res, shape_uint n_mats, double_cmat
     for (shape_uint i = 0; i < n_mats; i++) {
         cblas_daxpy(n_elems, coeffs[i], mats[i].data[0], 1, res.data[0], 1);
     }
+    return 0;
+}
+
+int matlincomb_double_init(double_cmat res, shape_uint n_mats, double_cmat* mats, const double* coeffs) {
+    /* res = coeffs[0]*mats[0] + ... + coeffs[n_mats-1]*mats[n_mats-1]
+     *
+     * Unlike matlincomb_double_contiguous() this does not assume res is zeroed
+     * (it would be wrong to zero it: res may alias one of the sources when a
+     * scratch buffer is recycled), and it does not require the coefficients to
+     * be small integers.  All operands must have res' shape.
+     */
+    if (n_mats <= 0) {
+        return -1;
+    }
+    shape_uint rows = res.shape[0];
+    shape_uint cols = res.shape[1];
+    shape_uint n_elems = rows * cols;
+    int contiguous = is_contiguous_double(res);
+    for (shape_uint i = 0; i < n_mats && contiguous; i++) {
+        contiguous = is_contiguous_double(mats[i]);
+    }
+    if (contiguous) {
+        cblas_dcopy(n_elems, mats[0].data[0], 1, res.data[0], 1);
+        if (coeffs[0] != 1.0) {
+            cblas_dscal(n_elems, coeffs[0], res.data[0], 1);
+        }
+        for (shape_uint i = 1; i < n_mats; i++) {
+            cblas_daxpy(n_elems, coeffs[i], mats[i].data[0], 1, res.data[0], 1);
+        }
+    } else {
+#ifdef CMAT_TRACE_LINCOMB
+        if (getenv("CMAT_TRACE")) {
+            fprintf(stderr, "lincomb(dst %p %ux%u) n=%u contig=0:", (void*)res.data[0], rows, cols, n_mats);
+            for (shape_uint i = 0; i < n_mats; i++)
+                fprintf(stderr, " %g*%p", coeffs[i], (void*)mats[i].data[0]);
+            fprintf(stderr, "\n");
+        }
+#endif
+        for (shape_uint r = 0; r < rows; r++) {
+            cblas_dcopy(cols, mats[0].data[r], 1, res.data[r], 1);
+            if (coeffs[0] != 1.0) {
+                cblas_dscal(cols, coeffs[0], res.data[r], 1);
+            }
+            for (shape_uint i = 1; i < n_mats; i++) {
+                cblas_daxpy(cols, coeffs[i], mats[i].data[r], 1, res.data[r], 1);
+            }
+        }
+    }
+    return 0;
+}
+
+int matzero_double(double_cmat m) {
+    memset(m.data[0], 0, (size_t)m.shape[0] * m.shape[1] * sizeof(double));
     return 0;
 }
 
@@ -726,9 +827,9 @@ int free_float_matrix(float_cmat m) {
 
 int free_double_matrix(double_cmat m) {
     //printf("free\n");
-    free(m.data);
+    cmat_free(m.data, (size_t)m.shape[0] * sizeof(double *));
     if (m.arena_shape[0] == m.shape[0] && m.arena_shape[1] == m.shape[1]) {
-        free(m.arena);
+        cmat_free(m.arena, (size_t)m.arena_shape[0] * m.arena_shape[1] * sizeof(double));
     }
     return 0;
 }
