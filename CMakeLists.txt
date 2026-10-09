@@ -17,19 +17,15 @@ endif()
 #   cmake .. -DCFMM_ALGORITHMS=3x3;3x3x6;4x4
 set(CFMM_ALGORITHMS "3x3;3x3x6;4x4;32x32" CACHE STRING "generated fmm kernels to build")
 
-set(CFMM_SOURCES
-    src/cmat.c
-    src/matmul.c
-    src/benchmark.c
-)
+set(CFMM_KERNELS)
 foreach(alg IN LISTS CFMM_ALGORITHMS)
-    list(APPEND CFMM_SOURCES src/fmm_${alg}.c)
+    list(APPEND CFMM_KERNELS src/fmm_${alg}.c)
     string(TOUPPER "${alg}" alg_upper)
     string(REPLACE "X" "_" alg_upper "${alg_upper}")
     list(APPEND CFMM_DEFS CFMM_HAVE_${alg_upper}=1)
 endforeach()
 
-add_executable(${PROJECT_NAME} ${CFMM_SOURCES})
+add_executable(${PROJECT_NAME} src/cmat.c src/matmul.c src/benchmark.c ${CFMM_KERNELS})
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${CFMM_DEFS})
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_compile_options(${PROJECT_NAME} PRIVATE -O3 -march=native -D_GNU_SOURCE -Wall -Wno-unused-variable)
@@ -43,4 +39,20 @@ endif()
 find_package(OpenMP)
 if(OpenMP_C_FOUND)
     target_link_libraries(${PROJECT_NAME} OpenMP::OpenMP_C)
+endif()
+
+# ---------------------------------------------------------------------- #
+# tests
+# ---------------------------------------------------------------------- #
+option(CFMM_BUILD_TESTS "build the correctness test-suite" ON)
+if(CFMM_BUILD_TESTS)
+    enable_testing()
+    add_executable(test_fmm tests/test_fmm.c src/cmat.c src/matmul.c ${CFMM_KERNELS})
+    target_compile_definitions(test_fmm PRIVATE ${CFMM_DEFS})
+    target_include_directories(test_fmm PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+    target_compile_options(test_fmm PRIVATE -O2 -D_GNU_SOURCE)
+    if(BLAS_FOUND)
+        target_link_libraries(test_fmm ${BLAS_LIBRARIES})
+    endif()
+    add_test(NAME correctness COMMAND test_fmm)
 endif()

@@ -49,6 +49,16 @@ cmake --build build -j
 cmake -S . -B build -DCFMM_ALGORITHMS="3x3;3x3x6;4x4"
 ```
 
+## Tests
+
+```sh
+cmake --build build -j && ctest --test-dir build --output-on-failure
+```
+
+`tests/test_fmm.c` compares every built kernel against `cblas_dgemm` on
+conforming and non-conforming shapes (the non-conforming cases must fall back
+to BLAS).
+
 ## Generating kernels
 
 ```sh

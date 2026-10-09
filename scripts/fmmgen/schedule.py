@@ -194,34 +194,58 @@ def _weighted_peak(graph: Graph, order: Sequence[str]) -> Fraction:
     return peak
 
 
+def _legacy_order(graph: Graph, outputs: Set[str], prescheduled: Sequence[str] = ()) -> List[str]:
+    """Greedy in the original priority order, without networkx.
+
+    Priority is ``(is_output, index_of_last_use, out_degree)`` descending, which
+    is what ``compute_optimized_order()`` used in the original generators.
+    ``prescheduled`` nodes are emitted first and treated as already available.
+    """
+    pre = list(prescheduled)
+    pre_set = set(pre)
+
+    indeg = {n: sum(1 for d in node.deps if d not in pre_set) for n, node in graph.nodes.items()}
+    # Kalman/Kahn topological order (used only for index_of_last_use)
+    ready = [n for n in graph.nodes if n not in pre_set and indeg[n] == 0]
+    topo: List[str] = []
+    while ready:
+        ready.sort()
+        cur = ready.pop(0)
+        topo.append(cur)
+        for c in graph.nodes[cur].consumers:
+            if c in pre_set:
+                continue
+            indeg[c] -= 1
+            if indeg[c] == 0:
+                ready.append(c)
+
+    index_of_last_use = {n: 0 for n in graph.nodes}
+    for i, n in enumerate(topo):
+        for d in graph.nodes[n].deps:
+            if d not in pre_set:
+                index_of_last_use[d] = i
+
+    is_output = {n: n in outputs for n in graph.nodes}
+    indeg = {n: sum(1 for d in node.deps if d not in pre_set) for n, node in graph.nodes.items()}
+    ready = [n for n in graph.nodes if n not in pre_set and indeg[n] == 0]
+    order: List[str] = list(pre)
+    while ready:
+        ready.sort(key=lambda n: (is_output[n], index_of_last_use[n],
+                                  len(graph.nodes[n].consumers)), reverse=True)
+        cur = ready.pop(0)
+        order.append(cur)
+        for c in graph.nodes[cur].consumers:
+            if c in pre_set:
+                continue
+            indeg[c] -= 1
+            if indeg[c] == 0:
+                ready.append(c)
+    return order
+
+
 def schedule_legacy(graph: Graph, outputs: Set[str]) -> List[str]:
     """The original heuristic: greedy on (is_output, last-use index, out-degree)."""
-    import networkx as nx
-
-    g = nx.DiGraph()
-    for n, node in graph.nodes.items():
-        g.add_node(n)
-        for d in node.deps:
-            g.add_edge(d, n)
-
-    topo = list(nx.topological_sort(g))
-    index_of_last_use: Dict[str, int] = {n: 0 for n in g.nodes}
-    for i, node in enumerate(topo):
-        for pred in g.predecessors(node):
-            index_of_last_use[pred] = i
-
-    is_output = {n: n in outputs for n in g.nodes}
-    ready = [n for n in g.nodes if g.in_degree(n) == 0]
-    order: List[str] = []
-    while ready:
-        ready.sort(key=lambda n: (is_output[n], index_of_last_use[n], g.out_degree(n)), reverse=True)
-        current = ready.pop(0)
-        order.append(current)
-        for succ in list(g.successors(current)):
-            g.remove_edge(current, succ)
-            if g.in_degree(succ) == 0:
-                ready.append(succ)
-    return order
+    return _legacy_order(graph, outputs)
 
 
 def schedule_legacy_split(graph: Graph, outputs: Set[str]) -> List[str]:
@@ -233,48 +257,31 @@ def schedule_legacy_split(graph: Graph, outputs: Set[str]) -> List[str]:
     That is what this scheduler models, so it is the honest baseline for
     measuring how much the joint scheduler improves peak scratch memory.
     """
-    import networkx as nx
-
     pre = [n for n, node in graph.nodes.items() if node.kind == COMB and node.shape_key == 1]
-    pre_set = set(pre)
-    rest = [n for n in graph.nodes if n not in pre_set]
-
-    g = nx.DiGraph()
-    g.add_nodes_from(rest)
-    for n in rest:
-        for d in graph.nodes[n].deps:
-            if d not in pre_set:
-                g.add_edge(d, n)
-
-    topo = list(nx.topological_sort(g))
-    last_use = {n: 0 for n in g.nodes}
-    for i, node in enumerate(topo):
-        for pred in g.predecessors(node):
-            last_use[pred] = i
-
-    is_output = {n: n in outputs for n in g.nodes}
-    ready = [n for n in g.nodes if g.in_degree(n) == 0]
-    order = list(pre)
-    while ready:
-        ready.sort(key=lambda n: (is_output[n], last_use[n], g.out_degree(n)), reverse=True)
-        current = ready.pop(0)
-        order.append(current)
-        for succ in list(g.successors(current)):
-            g.remove_edge(current, succ)
-            if g.in_degree(succ) == 0:
-                ready.append(succ)
-    return order
+    return _legacy_order(graph, outputs, prescheduled=pre)
 
 
-def _greedy(graph: Graph, rng=None) -> List[str]:
+def _greedy(graph: Graph, rng=None, tie_mode: str = "prod") -> List[str]:
     """Area-aware greedy list scheduling.
 
     At every step we consider all ready nodes and pick the one that leaves the
     smallest live scratch area.  Scheduling a COMB adds its block area,
     scheduling a PROD frees every operand for which it was the last consumer.
+
+    The primary key (resulting live area) is often tied, so ``tie_mode``
+    chooses the secondary key:
+
+    ``prod``
+        prefer products, then the node that kills the most operands (default);
+    ``unlock``
+        prefer the node that makes the most of its own consumers ready, which
+        keeps the schedule close to a depth-first traversal;
+    ``soon``
+        prefer the node with the fewest remaining consumers.
     """
     remaining = {n: len(node.consumers) for n, node in graph.nodes.items()}
     indeg = {n: len(node.deps) for n, node in graph.nodes.items()}
+    remaining_indeg = dict(indeg)
     ready: List[str] = [n for n, d in indeg.items() if d == 0]
     live: Dict[str, Fraction] = {}
     total = Fraction(0)
@@ -292,6 +299,13 @@ def _greedy(graph: Graph, rng=None) -> List[str]:
         add = node.weight if node.kind == COMB else Fraction(0)
         pressure = total + add
         jitter = (rng.random() * 1e-6) if rng is not None else 0.0
+
+        if tie_mode == "unlock":
+            unlock = sum(1 for c in node.consumers if remaining_indeg[c] == 1)
+            return (float(pressure) + jitter, -unlock, 0 if node.kind == PROD else 1, -deaths)
+        if tie_mode == "soon":
+            return (float(pressure) + jitter, len(node.consumers),
+                    0 if node.kind == PROD else 1, -deaths)
         return (float(pressure) + jitter, 0 if node.kind == PROD else 1, -deaths, -float(freed))
 
     while ready:
@@ -307,6 +321,7 @@ def _greedy(graph: Graph, rng=None) -> List[str]:
             live[best] = node.weight
             total += node.weight
         for succ in node.consumers:
+            remaining_indeg[succ] -= 1
             indeg[succ] -= 1
             if indeg[succ] == 0:
                 ready.append(succ)
@@ -373,13 +388,16 @@ def schedule_best(graph: Graph, outputs: Set[str] = frozenset(),
         schedule_legacy_split(graph, set(outputs)),
         schedule_greedy(graph),
         schedule_dfs(graph),
+        _greedy(graph, tie_mode="unlock"),
+        _greedy(graph, tie_mode="soon"),
     ]
     best = min(candidates, key=lambda o: _weighted_peak(graph, o))
     best_peak = _weighted_peak(graph, best)
 
     rng = random.Random(seed)
     for _ in range(restarts):
-        order = _greedy(graph, rng)
+        mode = ("prod", "unlock", "soon")[_ % 3]
+        order = _greedy(graph, rng, tie_mode=mode)
         peak = _weighted_peak(graph, order)
         if peak < best_peak:
             best_peak, best = peak, order
