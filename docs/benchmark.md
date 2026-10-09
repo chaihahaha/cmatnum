@@ -110,7 +110,22 @@ scripts/run_benchmarks.sh            # results/{scaling,base_sweep,size_sweep}.c
 
 ## 4. 内存
 
-`--mem-limit` 生效，超出时 `cmat` 打印原因并 `exit(2)`，不会被 OOM killer 杀掉。
+`--mem-limit` 生效，两条路径都验证过：
+
+```
+$ cfmm --alg 4x4 --n 8192 --base 2048 --mem-limit 500
+# 4x4: M=8192 K=8192 N=8192, A/B/C alone need 1.50 GiB
+# skipping 4x4: does not fit in the 500 MiB limit          # 事前估算，直接跳过
+
+$ cfmm --alg 4x4 --n 8192 --base 2048 --mem-limit 2200
+cmat: refusing to allocate 33554432 bytes; 2282242048 already in use,
+      limit is 2306867200 bytes                            # 运行中触顶，exit(2)
+```
+
+即：先做一次保守的占用估算（`3N² + N²`）决定是否跳过，
+运行中再由 `cmat` 的记账兜底 `exit(2)`，同时 `benchmark` 设置了
+`RLIMIT_AS = limit + 8 GiB` 作为最后一道保险（让 BLAS 自己的分配的
+失败先于系统 OOM killer）。
 峰值分配量（`cmat_peak_bytes`）在 CSV 的 `peak_alloc_MB` 列，
 与 `getrusage` 的 `max_rss_MB` 基本一致（差距来自 BLAS 自己的 workspace）。
 
