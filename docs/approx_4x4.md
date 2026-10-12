@@ -105,7 +105,9 @@ Results:
 * 2x2x2, K=6: best objective 1.0 → rel. err 3.535e-1, matching ALS ⇒ the
   `1/√8` value looks like the true global optimum.
 * 3x3x3, K=19: 300 s / 900 s of spatial branch & bound only reached 9.8e-1 —
-  far **worse** than the 2.8e-1 that ALS finds in seconds.
+  far **worse** than the 2.8e-1 that ALS finds in seconds. Warm-starting from the
+  ALS solution (700 s) does not help either: Gurobi abandons the incumbent and
+  finishes at 9.813e-1 again.
 * 4x4x4, R=43 (warm started from the ALS solution, 900 s, 593 nodes): objective
   60 vs. 5.02 for the ALS solution — Gurobi could not even match the warm start.
 
