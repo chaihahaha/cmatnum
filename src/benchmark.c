@@ -33,6 +33,15 @@
 #if defined(CFMM_HAVE_4_4)
 #include "fmm_4x4.h"
 #endif
+#if defined(CFMM_HAVE_4_4R43)
+#include "fmm_4x4r43.h"
+#endif
+#if defined(CFMM_HAVE_4_4R46)
+#include "fmm_4x4r46.h"
+#endif
+#if defined(CFMM_HAVE_4_4R47)
+#include "fmm_4x4r47.h"
+#endif
 #if defined(CFMM_HAVE_32_32)
 #include "fmm_32x32.h"
 #endif
@@ -62,6 +71,16 @@ static alg_entry ALGS[] = {
 #endif
 #if defined(CFMM_HAVE_4_4)
     {"4x4", fmm_4x4, 1e-9, 4, 4, 4, &fmm_4x4_fast_calls, &fmm_4x4_blas_calls, 0},
+#endif
+#if defined(CFMM_HAVE_4_4R43)
+    /* rank-43/46/47 approximate 4x4x4 (border-rank style search) */
+    {"4x4r43", fmm_4x4r43, 2e-1, 4, 4, 4, &fmm_4x4r43_fast_calls, &fmm_4x4r43_blas_calls, 0},
+#endif
+#if defined(CFMM_HAVE_4_4R46)
+    {"4x4r46", fmm_4x4r46, 2e-1, 4, 4, 4, &fmm_4x4r46_fast_calls, &fmm_4x4r46_blas_calls, 0},
+#endif
+#if defined(CFMM_HAVE_4_4R47)
+    {"4x4r47", fmm_4x4r47, 2e-1, 4, 4, 4, &fmm_4x4r47_fast_calls, &fmm_4x4r47_blas_calls, 0},
 #endif
 #if defined(CFMM_HAVE_32_32)
     {"32x32", fmm_32x32, 1e-9, 32, 32, 32, &fmm_32x32_fast_calls, &fmm_32x32_blas_calls, 0},

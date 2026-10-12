@@ -19,6 +19,16 @@
   <https://fmm.univ-lille.fr>
 - 快速矩阵乘法代码生成与实现：<https://github.com/arbenson/fast-matmul>
 - Smirnov rank-20 3x3x3（近似 / border rank）：见 README 的 [8]。
+- Dumas, Pernet, Sedoglavic, *A non-commutative algorithm for multiplying 4x4
+  matrices using 48 non-complex multiplications*, arXiv:2506.13242
+  <https://arxiv.org/abs/2506.13242> —— `assets/4x4x4_tensor.mpl` 里那套
+  rank-48、系数为 {0,±1,±1/2,±1/4,±1/8} 的算法出自这里（AlphaEvolve 的复数解
+  经 isotropy 投影到有理数）。文中提到 4x4x4 在特征 2 下有 rank-47 的算法。
+- OpenEvolve 的 matmul 例子（AlphaEvolve 类搜索）：
+  <https://github.com/algorithmicsuperintelligence/openevolve>
+- 4x4x4 张量的 border rank ≤ 46、3x3x3 的 border rank = 20，见 Smirnov 2013
+  Table 1（本仓库 `assets/smirnov_approx_matmul.pdf`，文本已导出到
+  `tmp/smirnov.txt`）。
 - `sympy.cse` 文档：<https://docs.sympy.org/latest/modules/simplify/simplify.html#sympy.simplify.cse_main.cse>
 
 ## 数学身份

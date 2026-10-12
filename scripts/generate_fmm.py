@@ -35,12 +35,21 @@ ALGORITHMS: Dict[str, Callable[[], object]] = {
         os.path.join(ALG_DIR, "m_3x3x6.txt"), os.path.join(ALG_DIR, "C_3x3x6.txt"), "3x3x6"),
     "4x4": lambda: load_from_triadset(
         os.path.join(ASSET_DIR, "4x4x4_tensor.mpl"), "4x4"),
+    # rank-reduced *approximate* 4x4x4 algorithms (Smirnov-style border-rank
+    # search, see scripts/approx4x4/ and docs/approx_4x4.md)
+    "4x4r46": lambda: load_from_txt(
+        os.path.join(ALG_DIR, "m_4x4r46.txt"), os.path.join(ALG_DIR, "C_4x4r46.txt"), "4x4r46"),
+    "4x4r47": lambda: load_from_txt(
+        os.path.join(ALG_DIR, "m_4x4r47.txt"), os.path.join(ALG_DIR, "C_4x4r47.txt"), "4x4r47"),
+    "4x4r43": lambda: load_from_txt(
+        os.path.join(ALG_DIR, "m_4x4r43.txt"), os.path.join(ALG_DIR, "C_4x4r43.txt"), "4x4r43"),
     "32x32": lambda: load_from_txt(
         os.path.join(ALG_DIR, "m_32x32.txt"), os.path.join(ALG_DIR, "C_32x32.txt"), "32x32"),
 }
 
 #: per-algorithm defaults for CSE inlining
-MIN_TERMS = {"3x3": (2, 2), "3x3x6": (3, 2), "4x4": (3, 3), "32x32": (3, 3)}
+MIN_TERMS = {"3x3": (2, 2), "3x3x6": (3, 2), "4x4": (3, 3), "32x32": (3, 3),
+             "4x4r46": (3, 3), "4x4r47": (3, 3), "4x4r43": (3, 3)}
 
 
 #: source files whose modification invalidates the parsed-algorithm cache
@@ -48,6 +57,9 @@ ALGORITHM_SOURCES = {
     "3x3": ["algorithms/m_3x3.txt", "algorithms/C_3x3.txt"],
     "3x3x6": ["algorithms/m_3x3x6.txt", "algorithms/C_3x3x6.txt"],
     "4x4": ["assets/4x4x4_tensor.mpl"],
+    "4x4r46": ["algorithms/m_4x4r46.txt", "algorithms/C_4x4r46.txt"],
+    "4x4r47": ["algorithms/m_4x4r47.txt", "algorithms/C_4x4r47.txt"],
+    "4x4r43": ["algorithms/m_4x4r43.txt", "algorithms/C_4x4r43.txt"],
     "32x32": ["algorithms/m_32x32.txt", "algorithms/C_32x32.txt"],
 }
 

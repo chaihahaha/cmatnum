@@ -77,12 +77,26 @@ class Program:
         }
 
 
+def _nice(coeff: sp.Expr) -> sp.Expr:
+    """Normalise a coefficient without destroying exact rationals.
+
+    ``sp.nsimplify`` is used to turn CSE-produced floats back into readable
+    rationals, but applied to an *exact* rational it first converts to a float
+    and then hunts for an algebraic closed form, e.g.
+    ``nsimplify(Rational(3514958, 77847587))`` returns a product of 181st roots.
+    Exact rationals are therefore passed through untouched.
+    """
+    if coeff.is_Rational:
+        return coeff
+    return sp.nsimplify(coeff, rational=True)
+
+
 def _linear_terms(expr: sp.Expr) -> List[Tuple[str, sp.Expr]]:
     """Split a linear form into (symbol, coefficient) pairs."""
     terms = []
     for term in sp.Add.make_args(sp.expand(expr)):
         coeff, sym = term.as_coeff_Mul()
-        terms.append((str(sym), sp.nsimplify(coeff)))
+        terms.append((str(sym), _nice(coeff)))
     return terms
 
 
@@ -281,7 +295,7 @@ int {opts.fn_name}(double_cmat C, double_cmat A, double_cmat B);
                 w(_render_lincomb("tmpB", b_terms, prog.cname))
             w(f"    {opts.fn_name}(m, {a_arg}, {b_arg});")
             for (i, j, coeff) in node.c_targets:
-                w(f"    cblas_daxpy(NC, {_ccnum(sp.nsimplify(coeff * scale))}, m.data[0], 1, C_{i}_{j}.data[0], 1);")
+                w(f"    cblas_daxpy(NC, {_ccnum(_nice(coeff * scale))}, m.data[0], 1, C_{i}_{j}.data[0], 1);")
     w("")
 
     w("    /*--- write back ------------------------------------------------*/")

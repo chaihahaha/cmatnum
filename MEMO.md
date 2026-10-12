@@ -30,6 +30,28 @@
       3x3 精度一致（差异只在舍入层面）。
 - [x] 删除旧的 `src/main.c`（已被 `src/benchmark.c` 取代）。
 
+
+## 本轮：4x4x4 低秩近似（Smirnov 方法）
+
+目标：把 rank-48 的精确 4x4 算法改成 rank ≤ 43 的近似算法，
+使 omega = log_4(R) < log_3(20) = 2.7268，且矩阵乘法结果相对误差 ≤ 20%。
+
+结论：**未能达成，且证据表明该目标不可达**（详见 `docs/approx_4x4.md`）。
+
+- 工具：`scripts/approx4x4/`（batch_als / warm_start / compose2x2 / gurobi_cp /
+  gurobi_4x4 / metric_search / calibrate_3x3 / degenerate_search / ridge_continuation）。
+- rank/误差（张量 Frobenius 相对误差）：
+  47 → 1.25e-1，46 → 1.77e-1，45 → 2.18e-1，44 → 2.51e-1，43 → 2.80e-1。
+  实测 benchmark 误差约为张量误差的 2–2.5 倍，故 rank 43 约 4–6e-1。
+- 关键证据（border-rank 悬崖）：2x2x2 的 rank-6 全局最优 = 1/√8 ≈ 3.54e-1
+  （ALS 与 Gurobi 一致）；3x3x3 从 rank 20（border rank，5.6e-3）降到 rank 19
+  即跳到 ~2.8e-1。4x4x4 的 border rank 是 46，rank 43 已低于它 3 级。
+- 2x2x2 复合路线（7×6 = 42）误差恒为 3.54e-1，且 ALS 无法改进（是不动点）。
+- Gurobi 在这种强非凸问题上打不过多起点 ALS：3x3 rank-19 全局 900 s 只到 9.8e-1，
+  4x4 rank-43 900 s 目标值 60 而 ALS 是 5.0。
+- 产出：`algorithms/m_4x4r{43,46,47}.txt`、`src/fmm_4x4r{43,46,47}.c`，
+  已接入 generator / CMake / benchmark / ctest（宽松回归容差）。
+
 ## 待办 / 可能后续
 
 - [ ] 编译成本：`src/fmm_32x32.c`（25 MiB）用 `-O3 -march=native` 编译
@@ -46,6 +68,9 @@
       小块效率只有大块的 1/4，这是快速算法在中等规模输给 BLAS 的主因）。
 - [ ] `legacy` 调度优先级里的 `index_of_last_use` 方向可疑，
       可以试试改成升序或换成“最远下次使用”启发式。
+- [ ] 复现 Smirnov 的 (4,4,4;46) 函数解（论文未给出系数，2208 个函数、467 个非零）
+       是唯一可能改变 rank<46 行为的起点；配合论文 eq.(4)-(5) 的逐步离散化启发式。
+- [ ] 若仍要更小指数，方向不是 4x4：需要在别的格式上找更好的 rank/误差前沿。
 - [ ] `solve3x3.py`（GUROBI 求解 rank-17 3x3）与本轮改动无关，
       工作区里它的改动是用户自己的，未提交。
 

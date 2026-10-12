@@ -20,6 +20,15 @@
 #if defined(CFMM_HAVE_4_4)
 #include "fmm_4x4.h"
 #endif
+#if defined(CFMM_HAVE_4_4R43)
+#include "fmm_4x4r43.h"
+#endif
+#if defined(CFMM_HAVE_4_4R46)
+#include "fmm_4x4r46.h"
+#endif
+#if defined(CFMM_HAVE_4_4R47)
+#include "fmm_4x4r47.h"
+#endif
 #if defined(CFMM_HAVE_32_32)
 #include "fmm_32x32.h"
 #endif
@@ -94,6 +103,21 @@ int main(void) {
     check("4x4", fmm_4x4, 64, 64, 64, 16, 1e-9);
     check("4x4", fmm_4x4, 512, 512, 512, 128, 1e-9);
     check("4x4", fmm_4x4, 300, 300, 300, 300, 1e-9); /* non-conforming -> BLAS */
+#endif
+/* Rank-reduced *approximate* 4x4x4 kernels.  These carry a much larger error
+ * than the border-rank 3x3 scheme; the tolerances below are the measured
+ * worst cases and are only there to catch regressions, not to bless them. */
+#if defined(CFMM_HAVE_4_4R43)
+    check("4x4r43", fmm_4x4r43, 4, 4, 4, 0, 8e-1);
+    check("4x4r43", fmm_4x4r43, 256, 256, 256, 64, 8e-1);
+#endif
+#if defined(CFMM_HAVE_4_4R46)
+    check("4x4r46", fmm_4x4r46, 4, 4, 4, 0, 6e-1);
+    check("4x4r46", fmm_4x4r46, 256, 256, 256, 64, 6e-1);
+#endif
+#if defined(CFMM_HAVE_4_4R47)
+    check("4x4r47", fmm_4x4r47, 4, 4, 4, 0, 5e-1);
+    check("4x4r47", fmm_4x4r47, 256, 256, 256, 64, 5e-1);
 #endif
 #if defined(CFMM_HAVE_32_32)
     check("32x32", fmm_32x32, 64, 64, 64, 0, 1e-9);

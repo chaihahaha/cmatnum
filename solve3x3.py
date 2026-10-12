@@ -1,6 +1,7 @@
 import gurobipy as gp
 from gurobipy import GRB
 import numpy as np
+import pickle
 
 # 定义非零张量元素
 T_nonzero = {
@@ -32,7 +33,7 @@ model.Params.Method = 2
 # 参数设置
 rank = 17  # 降低分解秩
 #M = GRB.INFINITY
-M = 1e5
+M = 1e7
 #epsilon = 1e-2  # 放宽精度
 
 # 创建核心变量（连续型）
@@ -41,6 +42,15 @@ B = model.addVars(9, rank, lb=-M, ub=M, name="B")
 C = model.addVars(9, rank, lb=-M, ub=M, name="C")
 epsilon = model.addVar(lb=0, ub=0.1, name="epsilon")
 epsilon_eq = model.addVar(lb=0, ub=1e-4, name="epsilon_eq")
+epsilon.Start = 0.1
+epsilon_eq.Start = 1e-4
+with open('vars_0.3_zero.pickle','rb') as f:
+    solved_vars = pickle.load(f)
+for i in range(9):
+    for j in range(rank):
+        A[i,j].Start = solved_vars[f'A[{i},{j}]']
+        B[i,j].Start = solved_vars[f'B[{i},{j}]']
+        C[i,j].Start = solved_vars[f'C[{i},{j}]']
 
 err_matmul = 0
 
@@ -52,7 +62,9 @@ for i in range(9):
             expr = 0
             for m in range(rank):
                 AB_mul = model.addVar(lb=-M, ub=M, name=f"AB_mul_{i}_{j}_{k}_{m}")
+                AB_mul.Start = solved_vars[f"AB_mul_{i}_{j}_{k}_{m}"]
                 ABC_mul = model.addVar(lb=-M, ub=M, name=f"ABC_mul_{i}_{j}_{k}_{m}")
+                ABC_mul.Start = solved_vars[f"ABC_mul_{i}_{j}_{k}_{m}"]
                 #ABdiff_mul = model.addVar(lb=-M, ub=M, name=f"ABdiff_mul_{i}_{j}_{k}_{m}")
                 #ABCdiff_mul = model.addVar(lb=-M, ub=M, name=f"ABCdiff_mul_{i}_{j}_{k}_{m}")
                 #model.addGenConstrNL(ABC_mul, A[i,m] * B[j,m] * C[k,m])
@@ -78,17 +90,18 @@ for i in range(9):
             model.addConstr(expr<=epsilon)
             model.addConstr(expr>=-epsilon)
 
-#err_zeros = 0
-#
-#for i in range(9):
-#    for j in range(rank):
-#        # For each element in A, B, C, create a binary variable indicating if it's within [-epsilon, epsilon]
-#        for i_mat, matrix in enumerate([A, B, C]):
-#            err = model.addVar(lb=-M, ub=M, name=f"err_zero_{i}_{j}_{k}")
-#            model.addGenConstrAbs(err, matrix[i,j])
-#            err_zeros += err
+err_zeros = 0
 
-model.setObjective(epsilon+epsilon_eq*1e3, GRB.MINIMIZE)
+for i in range(9):
+    for j in range(rank):
+        # For each element in A, B, C, create a binary variable indicating if it's within [-epsilon, epsilon]
+        for mat_name, matrix in zip(['A', 'B'], [A, B]):
+            err = model.addVar(lb=-M, ub=M, name=f"err_zero_{i}_{j}_{mat_name}")
+            err.Start = abs(solved_vars[f'{mat_name}[{i},{j}]'])
+            model.addGenConstrAbs(err, matrix[i,j])
+            err_zeros += err
+
+model.setObjective(err_zeros*1e-7+epsilon*1e2+epsilon_eq*1e5, GRB.MINIMIZE)
 
 # 求解模型
 model.optimize()
@@ -99,7 +112,6 @@ if model.status == GRB.OPTIMAL:
 else:
     print("未找到可行解，状态码:", model.status)
 solved_vars = {v.VarName: v.X for v in model.getVars()}
-import pickle
 with open("vars.pickle", "wb") as f:
     pickle.dump(solved_vars, f)
 

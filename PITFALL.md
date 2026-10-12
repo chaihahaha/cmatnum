@@ -116,3 +116,43 @@ macOS + Accelerate 下 `__attribute__((weak_import))` 仍然会在链接期报
 
 `scripts/generate_fmm.py 32x32` 仍然可用，只是需要较长时间；
 CSE 结果会缓存到 `cache/cse_32x32_*.pickle`，只需付一次代价。
+
+## 10. `sympy.nsimplify` 会破坏"不漂亮"的精确有理系数（生成器 bug）
+
+`scripts/fmmgen/codegen.py` 的 `_linear_terms()` 对每个系数调用 `sp.nsimplify()`，
+本意是把 CSE 产生的浮点系数还原成好看的分数。但对一个**精确有理数**它也会先转成
+浮点再反解闭形式，于是
+
+    nsimplify(Rational(3514958, 77847587))
+      -> 7*2**(8/181)*3**(116/181)*5**(29/362)*7**(113/362)/675
+
+随后 `sp.Rational(...)` 抛 `TypeError: invalid input`，`generate_fmm.py` 生成
+带随机有理系数的算法时直接失败（含 2 的幂系数的 3x3/4x4 恰好不触发）。
+
+**修复**：新增 `_nice()`，`coeff.is_Rational` 时原样返回，否则才
+`sp.nsimplify(coeff, rational=True)`。
+
+## 11. 4x4x4 低秩近似：border rank 是一个"悬崖"而不是斜坡
+
+想做 rank ≤ 43 的 4x4 近似算法（为把 omega 压到 log_3(20)=2.7268 以下）时，
+反复撞到同一堵墙：**一旦低于 border rank，误差不是慢慢变大，而是直接跳到 25–35%**。
+
+- 2x2x2：border rank = rank = 7，rank-6 的全局最优是 1/√8 ≈ 3.54e-1
+  （多起点 ALS 与 Gurobi `NonConvex=2` 给出同一个值，所以很可能是真的全局最优）。
+- 3x3x3：border rank = 20，rank-20（Smirnov Table 6 @ x=2^-7）误差 5.6e-3；
+  rank-19 立刻变成 2.8e-1。
+- 4x4x4：border rank = 46；rank 47/46/45/44/43 的张量误差
+  1.25e-1 / 1.77e-1 / 2.18e-1 / 2.51e-1 / 2.80e-1。
+
+**教训**：不要把 border rank 当成"可以再往下砍几级"的预算。想再降 rank，
+需要有该 rank 上的**结构化（Laurent 多项式）解**，而不是从上一个解砍项 + 局部优化；
+后者只会落进 `sqrt(k)/8` 那族"丢单项式"的局部极小。
+
+## 12. Gurobi 在这类三线性张量分解上通常打不过多起点 ALS
+
+`NonConvex=2` 的空间分支定界对 4096 个三线性方程（线性化后 ~4.7e4 个双线性项）
+完全没有竞争力：3x3x3 rank-19 跑 900 s 只到 9.8e-1（ALS 秒级给 2.8e-1），
+4x4x4 rank-43 热启动 900 s 目标值 60（ALS 是 5.0）。小规模（2x2x2，K=6/7）
+可以用来**验证** ALS 是否到达全局最优，但别指望它在大规模上找解。
+另外 `gurobi_cp.py` 的 `--warm-dir` 文件名约定要和实际 npz 名字对齐，
+否则热启动会静默失效、从头开始（本轮踩过一次）。

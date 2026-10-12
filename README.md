@@ -31,10 +31,17 @@ runtime-tunable block threshold the routines call `cblas_dgemm`.
 | `3x3` | 20 | 3x3x3 | log₃ 20 = 2.727 (approximate, Smirnov border rank) |
 | `3x3x6` | 40 | 3x3x6 | 40/54 of the naive work per level |
 | `4x4` | 48 | 4x4x4 | log₄ 48 = **2.792481250** (exact) |
+| `4x4r47` | 47 | 4x4x4 | log₄ 47 = 2.777 (approximate, ~25–38 % error) |
+| `4x4r46` | 46 | 4x4x4 | log₄ 46 = 2.762 (approximate, ~29–44 % error) |
+| `4x4r43` | 43 | 4x4x4 | log₄ 43 = 2.713 (approximate, ~41–59 % error) |
 | `32x32` | 15136 | 32x32x32 | log₃₂ 15136 = 2.777 |
 
 The `4x4` kernel is generated from `assets/4x4x4_tensor.mpl`, a Maple
 `TriadSet` of 48 rank-one triads.  See `docs/fmm_4x4.md`.
+
+The `4x4r*` kernels are rank-reduced **approximate** 4x4x4 schemes obtained with
+Smirnov's border-rank search method; `docs/approx_4x4.md` documents the method,
+the rank/error frontier and why ranks below the border rank 46 are expensive.
 
 ## Build
 
